@@ -1,0 +1,14 @@
+# The Docker image that will be used to build your app
+image: hub.cloud.ctripcorp.com/devops/centos7.2:0.0.1
+pages:
+  script:
+    - echo "Building the static site..."
+    - rm -rf public
+    - mkdir -p public
+    - mv dist public
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+  environment: production

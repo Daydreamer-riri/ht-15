@@ -1,4 +1,3 @@
-import satori from 'satori';
 import { OpCard } from '@/components/Playground';
 import { FONT_FAMILY_NORMAL, loadFonts } from './font';
 
@@ -18,6 +17,8 @@ export async function gen() {
       weight: 600 as const,
     },
   ];
+
+  const satori = (await import('satori')).default;
 
   const svg = await satori(
     <OpCard />,
