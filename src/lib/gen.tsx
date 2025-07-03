@@ -84,8 +84,5 @@ export async function uploadImageAndCopyUrl() {
     throw new Error('上传图片失败，未返回图片地址');
   }
 
-  const clipboardItem = new ClipboardItem({
-    'text/plain': url,
-  });
-  await navigator.clipboard.write([clipboardItem]);
+  await navigator.clipboard.writeText(url);
 }
