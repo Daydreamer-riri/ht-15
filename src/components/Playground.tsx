@@ -1,4 +1,7 @@
 import { getDefaultStore, useAtomValue } from 'jotai';
+import arrow from '@/assets/arrow.png';
+import bg from '@/assets/bg.png';
+import qrcodebg from '@/assets/qrcode-bg.png';
 import { FONT_FAMILY_NORMAL } from '@/lib/font';
 import { avatarAtom, highlightAtom, jobAchievementAtom, nameAtom, qrcodeAtom, serviceExperienceAtom, travelExperienceAtom } from '@/store';
 
@@ -27,18 +30,26 @@ export function OpCard() {
         style={{
           width: 596,
           height: 815,
-          backgroundImage: 'linear-gradient(0deg, rgb(255, 255, 255) 27.16%, rgb(220, 236, 255) 93.64%, rgb(184, 216, 255) 156.86%)',
+          backgroundImage: `linear-gradient(0deg, #e9f1f9 220px, #fff 270px, rgb(255, 255, 255) 27.16%, rgb(220, 236, 255) 93.64%, rgb(184, 216, 255) 156.86%)`,
           borderRadius: 16,
           left: 12,
           top: 95,
           position: 'absolute',
           display: 'flex',
         }}
-      />
+      >
+        <img
+          src={bg}
+          style={{
+            objectFit: 'contain',
+            width: 596,
+            height: 596 / 149 * 125,
+          }}
+        />
+      </div>
       <div style={{ position: 'relative', display: 'flex' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           {store.get(avatarAtom) ? (
-
             <img
               src={URL.createObjectURL(store.get(avatarAtom)!)}
               style={{ width: 184.75, height: 276, objectFit: 'cover' }}
@@ -122,7 +133,6 @@ export function OpCard() {
         style={{
           width: 620,
           height: 230,
-          boxShadow: 'rgba(50, 50, 93, 0.25) 0px -20px 50px -20px',
           borderRadius: '0 0 16px 16px',
           backgroundImage: 'linear-gradient(-180deg, rgb(204, 228, 255) 0%, rgb(255, 255, 255) 57.36%)',
           position: 'absolute',
@@ -131,6 +141,7 @@ export function OpCard() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          borderTop: '1px solid #fff',
         }}
       >
         <div style={{
@@ -170,14 +181,39 @@ export function OpCard() {
               微信沟通更及时
             </div>
           </div>
-          <div style={{ width: 158, height: 158, position: 'relative', display: 'flex' }}>
+          <img
+            src={arrow}
+            style={{ position: 'absolute', width: 118, height: 33, left: 233, top: 82 }}
+          />
+          <div
+            style={{
+              width: 158,
+              height: 158,
+              position: 'relative',
+              display: 'flex',
+              // backgroundImage: `url(${qrcodebg})`,
+              padding: 4,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <img
+              src={qrcodebg}
+              style={{ position: 'absolute', width: 158, height: 158, left: 0, top: 0 }}
+            />
             {store.get(qrcodeAtom) ? (
               <img
                 src={URL.createObjectURL(store.get(qrcodeAtom)!)}
-                style={{ width: 158, height: 158, objectFit: 'cover', borderRadius: 8 }}
+                style={{
+                  width: 142,
+                  height: 142,
+                  objectFit: 'cover',
+                  borderRadius: 4,
+                  position: 'relative',
+                }}
               />
             ) : (
-              <div style={{ width: 158, height: 158, backgroundColor: '#f0f0f0', borderRadius: 8 }} />
+              <div style={{ width: 158, height: 158, borderRadius: 8 }} />
             )}
           </div>
         </div>

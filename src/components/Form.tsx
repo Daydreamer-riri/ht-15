@@ -2,7 +2,7 @@ import { useAtom } from 'jotai';
 import { Loader2Icon } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { copyImage, downloadImage } from '@/lib/gen';
+import { copyImage, downloadImage, uploadImageAndCopyUrl } from '@/lib/gen';
 import { avatarAtom, highlightAtom, jobAchievementAtom, nameAtom, qrcodeAtom, serviceExperienceAtom, travelExperienceAtom } from '@/store';
 import { Button } from './ui/button';
 import { Card, CardAction, CardContent, CardFooter } from './ui/card';
@@ -11,12 +11,12 @@ import { Label } from './ui/label';
 
 export function Form() {
   const [name, setName] = useAtom(nameAtom);
-  const [avatar, setAvatar] = useAtom(avatarAtom);
+  const [_avatar, setAvatar] = useAtom(avatarAtom);
   const [highlight, setHighlight] = useAtom(highlightAtom);
   const [jobAchievement, setJobAchievement] = useAtom(jobAchievementAtom);
   const [travelExperience, setTravelExperience] = useAtom(travelExperienceAtom);
   const [serviceExperience, setServiceExperience] = useAtom(serviceExperienceAtom);
-  const [qrcode, setQrcode] = useAtom(qrcodeAtom);
+  const [_qrcode, setQrcode] = useAtom(qrcodeAtom);
 
   return (
     <Card className="flex-1">
@@ -94,6 +94,7 @@ export function Form() {
         <CardAction className="gap-2 flex-row flex">
           <Copy />
           <Download />
+          <Upload />
         </CardAction>
       </CardFooter>
     </Card>
@@ -160,6 +161,38 @@ function Download() {
         style={{ display: loading ? 'inline-block' : 'none' }}
       />
       下载
+    </Button>
+  );
+}
+
+function Upload() {
+  const [loading, setLoading] = useState(false);
+
+  return (
+    <Button
+      disabled={loading}
+      onClick={async () => {
+        setLoading(true);
+        uploadImageAndCopyUrl()
+          .then(() => {
+            toast('复制链接成功');
+          })
+          .catch((e: Error) => {
+            toast(e.message);
+          })
+          .finally(() => {
+            setTimeout(() => {
+              setLoading(false);
+            }, 200);
+          });
+      }}
+    >
+      <Loader2Icon
+        className="animate-spin"
+        size={16}
+        style={{ display: loading ? 'inline-block' : 'none' }}
+      />
+      上传并复制链接
     </Button>
   );
 }
