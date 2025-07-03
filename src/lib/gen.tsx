@@ -68,46 +68,24 @@ export async function downloadImage() {
 export async function uploadImageAndCopyUrl() {
   const data = await gen();
 
-  const params = {
-    imageInfo: {
-      fileBytes: encode(data),
-      fileName: `op_${store.get(nameAtom)}_card_${Date.now()}.png`,
-    },
-    imageOption: {
-      localStoreImage: true,
-    },
-  };
-
-  const res = await fetch('http://m.ctrip.com/restapi/soa2/22314/uploadImage', {
+  const blob = new Blob([data], { type: 'image/png' });
+  const res = await fetch('http://uploadimg.fws.qa.nt.ctripcorp.com/image/v1/api/upload?public=1&channel=ttl_post_share_repo', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'image/png',
     },
-    body: JSON.stringify(params),
+    body: blob,
   });
 
   const result = await res.json();
-  if (result.errorCode !== 0) {
-    throw new Error(result.errorMessage || '上传图片失败');
-  }
-  const imageUrl = result.imagePathInfo?.imageUrl;
+  const { url } = result || {};
 
-  if (!imageUrl) {
+  if (!url) {
     throw new Error('上传图片失败，未返回图片地址');
   }
 
   const clipboardItem = new ClipboardItem({
-    'text/plain': imageUrl,
+    'text/plain': url,
   });
   await navigator.clipboard.write([clipboardItem]);
-}
-
-function encode(uint8array: Uint8Array<ArrayBufferLike>) {
-  const { fromCharCode } = String;
-
-  const output: string[] = [];
-  for (let i = 0, { length } = uint8array; i < length; i++) {
-    output.push(fromCharCode(uint8array[i]));
-  }
-  return btoa(output.join(''));
 }
