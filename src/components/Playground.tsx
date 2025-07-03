@@ -69,7 +69,6 @@ export function OpCard() {
               justifyContent: 'center',
               background: 'linear-gradient(-180deg, rgb(7, 77, 158) -49.3%, rgb(17, 17, 17) 100%)',
               borderRadius: 8,
-              borderTop: '2px solid #fff',
               lineHeight: '44px',
             }}
           >
