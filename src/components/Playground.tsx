@@ -52,7 +52,7 @@ export function OpCard() {
           {store.get(avatarAtom) ? (
             <img
               src={URL.createObjectURL(store.get(avatarAtom)!)}
-              style={{ width: 184.75, height: 276, objectFit: 'cover' }}
+              style={{ width: 276, height: 276, objectFit: 'cover' }}
             />
           ) : (
             <div style={{ width: 184.75, height: 276 }} />
