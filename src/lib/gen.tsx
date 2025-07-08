@@ -69,7 +69,7 @@ export async function uploadImageAndCopyUrl() {
   const data = await gen();
 
   const blob = new Blob([data], { type: 'image/png' });
-  const res = await fetch('https://uploadimg.fws.qa.nt.ctripcorp.com/image/v1/api/upload?public=1&channel=ttl_post_share_repo', {
+  const res = await fetch('https://uploadimg.fx.ctripcorp.com/image/v1/api/upload?public=1&channel=ttl_post_share_repo', {
     method: 'POST',
     headers: {
       'Content-Type': 'image/png',
