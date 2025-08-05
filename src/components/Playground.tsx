@@ -164,7 +164,7 @@ export function OpCard() {
         <div style={{ width: 523, height: 158, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <div style={{ color: '#555555', fontSize: 24, display: 'flex' }}>
-              扫描企微二维码
+              保存图片，微信扫一扫
             </div>
             <div
               style={{
@@ -177,7 +177,7 @@ export function OpCard() {
                 display: 'flex',
               }}
             >
-              微信沟通更及时
+              咨询预定更及时
             </div>
           </div>
           <img
