@@ -182,7 +182,7 @@ export function OpCard() {
           </div>
           <img
             src={arrow}
-            style={{ position: 'absolute', width: 118, height: 33, left: 233, top: 82 }}
+            style={{ position: 'absolute', width: 118, height: 33, left: 276, top: 110 }}
           />
           <div
             style={{
