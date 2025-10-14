@@ -111,18 +111,18 @@ export function OpCard() {
               </span>
             </span>
           </div>
-          <div style={{ marginTop: 45, width: 519, height: 147, color: '#111111', fontSize: 24, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div style={{ width: 519, height: 252, color: '#111111', fontSize: 24, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-start', gap: 12 }}>
               <span style={{ flexShrink: 0 }}>岗位成就：</span>
-              <span>{store.get(jobAchievementAtom)}</span>
+              <span style={{ width: 387 }}>{store.get(jobAchievementAtom)}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-start', gap: 12 }}>
               <span style={{ flexShrink: 0 }}>旅行经历：</span>
-              <span>{store.get(travelExperienceAtom)}</span>
+              <span style={{ width: 387 }}>{store.get(travelExperienceAtom)}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-start', gap: 12 }}>
               <span style={{ flexShrink: 0 }}>服务经历：</span>
-              <span>{store.get(serviceExperienceAtom)}</span>
+              <span style={{ width: 387 }}>{store.get(serviceExperienceAtom)}</span>
             </div>
           </div>
         </div>
