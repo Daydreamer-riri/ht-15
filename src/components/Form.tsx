@@ -3,7 +3,8 @@ import { Loader2Icon } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { copyImage, downloadImage, uploadImageAndCopyUrl } from '@/lib/gen';
-import { avatarAtom, highlightAtom, jobAchievementAtom, nameAtom, qrcodeAtom, serviceExperienceAtom, travelExperienceAtom } from '@/store';
+import { languages } from '@/lib/i18n';
+import { avatarAtom, highlightAtom, jobAchievementAtom, languageAtom, nameAtom, qrcodeAtom, serviceExperienceAtom, travelExperienceAtom } from '@/store';
 import { Button } from './ui/button';
 import { Card, CardAction, CardContent, CardFooter } from './ui/card';
 import { Input } from './ui/input';
@@ -17,6 +18,7 @@ export function Form() {
   const [travelExperience, setTravelExperience] = useAtom(travelExperienceAtom);
   const [serviceExperience, setServiceExperience] = useAtom(serviceExperienceAtom);
   const [_qrcode, setQrcode] = useAtom(qrcodeAtom);
+  const [language, setLanguage] = useAtom(languageAtom);
 
   return (
     <Card className="flex-1">
@@ -90,7 +92,19 @@ export function Form() {
           </div>
         </form>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="justify-between">
+        <select
+          id="language"
+          className="flex h-10 w-24 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          value={language}
+          onChange={e => setLanguage(e.target.value as any)}
+        >
+          {languages.map(lang => (
+            <option key={lang.value} value={lang.value}>
+              {lang.label}
+            </option>
+          ))}
+        </select>
         <CardAction className="gap-2 flex-row flex">
           <Copy />
           <Download />

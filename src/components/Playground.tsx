@@ -3,7 +3,8 @@ import arrow from '@/assets/arrow.png';
 import bg from '@/assets/bg.png';
 import qrcodebg from '@/assets/qrcode-bg.png';
 import { FONT_FAMILY_NORMAL } from '@/lib/font';
-import { avatarAtom, highlightAtom, jobAchievementAtom, nameAtom, qrcodeAtom, serviceExperienceAtom, travelExperienceAtom } from '@/store';
+import { translations } from '@/lib/i18n';
+import { avatarAtom, highlightAtom, jobAchievementAtom, languageAtom, nameAtom, qrcodeAtom, serviceExperienceAtom, travelExperienceAtom } from '@/store';
 
 const store = getDefaultStore();
 
@@ -15,6 +16,7 @@ export function Playground() {
   useAtomValue(travelExperienceAtom);
   useAtomValue(serviceExperienceAtom);
   useAtomValue(qrcodeAtom);
+  useAtomValue(languageAtom);
 
   return (
     <div className="flex-1">
@@ -24,6 +26,9 @@ export function Playground() {
 }
 
 export function OpCard() {
+  const language = store.get(languageAtom);
+  const t = translations[language];
+
   return (
     <div style={{ width: 620, height: 934, position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <div
@@ -72,7 +77,7 @@ export function OpCard() {
               lineHeight: '44px',
             }}
           >
-            携程官方推荐导购
+            {t.title}
           </div>
           <div
             style={{
@@ -113,15 +118,15 @@ export function OpCard() {
           </div>
           <div style={{ width: 519, height: 252, color: '#111111', fontSize: 24, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <div style={{ display: 'flex', justifyContent: 'flex-start', gap: 12 }}>
-              <span style={{ flexShrink: 0 }}>岗位成就：</span>
+              <span style={{ flexShrink: 0 }}>{t.jobAchievement}：</span>
               <span style={{ width: 387 }}>{store.get(jobAchievementAtom)}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-start', gap: 12 }}>
-              <span style={{ flexShrink: 0 }}>旅行经历：</span>
+              <span style={{ flexShrink: 0 }}>{t.travelExperience}：</span>
               <span style={{ width: 387 }}>{store.get(travelExperienceAtom)}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-start', gap: 12 }}>
-              <span style={{ flexShrink: 0 }}>服务经历：</span>
+              <span style={{ flexShrink: 0 }}>{t.serviceExperience}：</span>
               <span style={{ width: 387 }}>{store.get(serviceExperienceAtom)}</span>
             </div>
           </div>
