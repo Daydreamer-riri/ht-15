@@ -120,7 +120,6 @@ export function OpCard() {
           </div>
           <div
             style={{
-              height: 45,
               color: '#0f4999',
               fontSize: 32,
               fontWeight: 600,
