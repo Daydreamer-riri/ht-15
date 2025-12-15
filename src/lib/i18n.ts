@@ -14,41 +14,62 @@ export const translations: Record<Language, {
   jobAchievement: string;
   travelExperience: string;
   serviceExperience: string;
+  quoteStart: string;
+  quoteEnd: string;
+  colon: string;
 }> = {
   zh: {
     title: '携程官方推荐导购',
     jobAchievement: '岗位成就',
     travelExperience: '旅行经历',
     serviceExperience: '服务经历',
+    quoteStart: '“',
+    quoteEnd: '”',
+    colon: '：',
   },
   yue: {
     title: '携程官方推荐购物向导',
     jobAchievement: '岗位成就',
     travelExperience: '旅行经历',
     serviceExperience: '服务经历',
+    quoteStart: '“',
+    quoteEnd: '”',
+    colon: '：',
   },
   en: {
     title: 'Ctrip Official Shopping Guide',
     jobAchievement: 'Career Achievements',
     travelExperience: 'Travel Experience',
     serviceExperience: 'Service Experience',
+    quoteStart: '"',
+    quoteEnd: '"',
+    colon: ':',
   },
   ja: {
     title: 'トリップドットコム公式おすすめショッピングガイド',
     jobAchievement: '職務実績',
     travelExperience: '旅行経験',
     serviceExperience: 'サービス経験',
+    quoteStart: '「',
+    quoteEnd: '」',
+    colon: '：',
   },
   ko: {
     title: '트립닷컴 공식 추천 쇼핑 가이드',
     jobAchievement: '직무 성과',
     travelExperience: '여행 경험',
     serviceExperience: '서비스 경험',
+    quoteStart: '"',
+    quoteEnd: '"',
+    colon: ':',
   },
   th: {
     title: 'ไกด์ช้อปปิ้งแนะนำอย่างเป็นทางการจาก Trip.com',
     jobAchievement: 'ความสำเร็จในหน้าที่การงาน',
     travelExperience: 'ประสบการณ์การเดินทาง',
     serviceExperience: 'ประสบการณ์การบริการ',
+    quoteStart: '"',
+    quoteEnd: '"',
+    colon: ':',
   },
 };

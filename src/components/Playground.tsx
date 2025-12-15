@@ -138,7 +138,7 @@ export function OpCard() {
             >
               {/* <span style={{ position: 'absolute', display: 'flex', height: 11, width: '80%', background: '#006FF6', opacity: 0.2, left: '10%', bottom: 0, zIndex: '0' }} /> */}
               <span style={{ zIndex: '1', position: 'relative' }}>
-                “ <span style={{ background: 'linear-gradient(to bottom,#0000 30px,#006ff633 27px)' }}>{store.get(highlightAtom)}</span> ”
+                {t.quoteStart}<span style={{ background: 'linear-gradient(to bottom,#0000 30px,#006ff633 30px)' }}>{store.get(highlightAtom)}</span>{t.quoteEnd}
               </span>
             </span>
           </div>
@@ -153,15 +153,15 @@ export function OpCard() {
           }}
           >
             <div style={fieldStyle}>
-              <span style={labelStyle}>{t.jobAchievement}：</span>
+              <span style={labelStyle}>{t.jobAchievement}{t.colon}</span>
               <span style={{ width: 387 }}>{store.get(jobAchievementAtom)}</span>
             </div>
             <div style={fieldStyle}>
-              <span style={labelStyle}>{t.travelExperience}：</span>
+              <span style={labelStyle}>{t.travelExperience}{t.colon}</span>
               <span style={{ width: 387 }}>{store.get(travelExperienceAtom)}</span>
             </div>
             <div style={fieldStyle}>
-              <span style={labelStyle}>{t.serviceExperience}：</span>
+              <span style={labelStyle}>{t.serviceExperience}{t.colon}</span>
               <span style={{ width: 387 }}>{store.get(serviceExperienceAtom)}</span>
             </div>
           </div>
