@@ -153,15 +153,15 @@ export function OpCard() {
           >
             <div style={fieldStyle}>
               <span style={labelStyle}>{t.jobAchievement}{t.colon}</span>
-              <span style={{ width: 387 }}>{store.get(jobAchievementAtom)}</span>
+              <span style={isCJK ? { width: 387 } : undefined}>{store.get(jobAchievementAtom)}</span>
             </div>
             <div style={fieldStyle}>
               <span style={labelStyle}>{t.travelExperience}{t.colon}</span>
-              <span style={{ width: 387 }}>{store.get(travelExperienceAtom)}</span>
+              <span style={isCJK ? { width: 387 } : undefined}>{store.get(travelExperienceAtom)}</span>
             </div>
             <div style={fieldStyle}>
               <span style={labelStyle}>{t.serviceExperience}{t.colon}</span>
-              <span style={{ width: 387 }}>{store.get(serviceExperienceAtom)}</span>
+              <span style={isCJK ? { width: 387 } : undefined}>{store.get(serviceExperienceAtom)}</span>
             </div>
           </div>
         </div>
