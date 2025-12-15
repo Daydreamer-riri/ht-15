@@ -48,7 +48,7 @@ export function Form() {
               <Input
                 id="highlight"
                 required
-                maxLength={15}
+                // maxLength={15}
                 value={highlight}
                 onChange={e => setHighlight(e.target.value)}
               />
@@ -100,7 +100,10 @@ export function Form() {
           onChange={e => setLanguage(e.target.value as any)}
         >
           {languages.map(lang => (
-            <option key={lang.value} value={lang.value}>
+            <option
+              key={lang.value}
+              value={lang.value}
+            >
               {lang.label}
             </option>
           ))}

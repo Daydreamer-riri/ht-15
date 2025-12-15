@@ -123,6 +123,9 @@ export function OpCard() {
               fontWeight: 600,
               fontFamily: FONT_FAMILY_NORMAL,
               display: 'flex',
+              maxWidth: 519,
+              textAlign: 'center',
+              lineHeight: '38px',
             }}
           >
             <span
@@ -130,13 +133,22 @@ export function OpCard() {
                 position: 'relative',
               }}
             >
-              <span style={{ position: 'absolute', display: 'flex', height: 11, width: '80%', background: '#006FF6', opacity: 0.2, left: '10%', bottom: 0, zIndex: '0' }} />
+              {/* <span style={{ position: 'absolute', display: 'flex', height: 11, width: '80%', background: '#006FF6', opacity: 0.2, left: '10%', bottom: 0, zIndex: '0' }} /> */}
               <span style={{ zIndex: '1', position: 'relative' }}>
-                “ {store.get(highlightAtom)} ”
+                “ <span style={{ background: 'linear-gradient(to bottom,#0000 30px,#006ff633 27px)' }}>{store.get(highlightAtom)}</span> ”
               </span>
             </span>
           </div>
-          <div style={{ width: 519, height: 252, color: '#111111', fontSize: 24, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div style={{
+            width: 519,
+            height: language === 'zh' ? 252 : 400,
+            color: '#111111',
+            fontSize: 24,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+          }}
+          >
             <div style={fieldStyle}>
               <span style={labelStyle}>{t.jobAchievement}：</span>
               <span style={{ width: 387 }}>{store.get(jobAchievementAtom)}</span>
