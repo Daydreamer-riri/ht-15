@@ -46,7 +46,10 @@ export function OpCard() {
   };
 
   return (
-    <div style={{ width: 620, height: 934, position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div
+      id="IMAGE_ROOT"
+      style={{ width: 620, height: 934, position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+    >
       <div
         style={{
           width: 596,
