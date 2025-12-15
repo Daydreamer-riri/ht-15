@@ -29,13 +29,29 @@ export function OpCard() {
   const language = store.get(languageAtom);
   const t = translations[language];
 
+  const isCJK = ['zh', 'ja', 'ko', 'yue'].includes(language);
+
+  const fieldStyle: React.CSSProperties = {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    columnGap: 12,
+    flexDirection: isCJK ? 'row' : 'column',
+    marginBottom: isCJK ? 4 : 12,
+    fontSize: isCJK ? 24 : 20,
+  };
+
+  const labelStyle: React.CSSProperties = {
+    flexShrink: 0,
+    opacity: isCJK ? 1 : 0.5,
+  };
+
   return (
     <div style={{ width: 620, height: 934, position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <div
         style={{
           width: 596,
           height: 815,
-          backgroundImage: `linear-gradient(0deg, #e9f1f9 220px, #fff 270px, rgb(255, 255, 255) 27.16%, rgb(220, 236, 255) 93.64%, rgb(184, 216, 255) 156.86%)`,
+          backgroundImage: `linear-gradient(0deg, ${language === 'zh' ? '#e9f1f9 220px,' : ''} #fff 270px, rgb(255, 255, 255) 27.16%, rgb(220, 236, 255) 93.64%, rgb(184, 216, 255) 156.86%)`,
           borderRadius: 16,
           left: 12,
           top: 95,
@@ -64,8 +80,9 @@ export function OpCard() {
           )}
           <div
             style={{
-              width: 262,
-              height: 48,
+              minWidth: 262,
+              maxWidth: 480,
+              // height: 48,
               marginTop: -8,
               fontSize: 24,
               color: '#fff',
@@ -74,7 +91,10 @@ export function OpCard() {
               justifyContent: 'center',
               background: 'linear-gradient(-180deg, rgb(7, 77, 158) -49.3%, rgb(17, 17, 17) 100%)',
               borderRadius: 8,
-              lineHeight: '44px',
+              lineHeight: '30px',
+              padding: '10px 24px',
+              textAlign: 'center',
+              textWrap: 'balance',
             }}
           >
             {t.title}
@@ -117,111 +137,113 @@ export function OpCard() {
             </span>
           </div>
           <div style={{ width: 519, height: 252, color: '#111111', fontSize: 24, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <div style={{ display: 'flex', justifyContent: 'flex-start', gap: 12 }}>
-              <span style={{ flexShrink: 0 }}>{t.jobAchievement}：</span>
+            <div style={fieldStyle}>
+              <span style={labelStyle}>{t.jobAchievement}：</span>
               <span style={{ width: 387 }}>{store.get(jobAchievementAtom)}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-start', gap: 12 }}>
-              <span style={{ flexShrink: 0 }}>{t.travelExperience}：</span>
+            <div style={fieldStyle}>
+              <span style={labelStyle}>{t.travelExperience}：</span>
               <span style={{ width: 387 }}>{store.get(travelExperienceAtom)}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-start', gap: 12 }}>
-              <span style={{ flexShrink: 0 }}>{t.serviceExperience}：</span>
+            <div style={fieldStyle}>
+              <span style={labelStyle}>{t.serviceExperience}：</span>
               <span style={{ width: 387 }}>{store.get(serviceExperienceAtom)}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div
-        style={{
-          width: 620,
-          height: 230,
-          borderRadius: '0 0 16px 16px',
-          backgroundImage: 'linear-gradient(-180deg, rgb(204, 228, 255) 0%, rgb(255, 255, 255) 57.36%)',
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderTop: '1px solid #fff',
-        }}
-      >
-        <div style={{
-          width: 12,
-          height: 14,
-          backgroundImage: 'linear-gradient(-49.4deg, #3C66CE 50%, rgba(255, 255, 255, 0) 50%)',
-          position: 'absolute',
-          left: 0,
-          top: -14,
-        }}
-        />
-        <div style={{
-          width: 12,
-          height: 14,
-          backgroundImage: 'linear-gradient(49.4deg, #3C66CE 50%, rgba(255, 255, 255, 0) 50%)',
-          position: 'absolute',
-          right: 0,
-          top: -14,
-        }}
-        />
-        <div style={{ width: 523, height: 158, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ color: '#555555', fontSize: 24, display: 'flex' }}>
-              保存图片，微信扫一扫
+      {language === 'zh' ? (
+        <div
+          style={{
+            width: 620,
+            height: 230,
+            borderRadius: '0 0 16px 16px',
+            backgroundImage: 'linear-gradient(-180deg, rgb(204, 228, 255) 0%, rgb(255, 255, 255) 57.36%)',
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderTop: '1px solid #fff',
+          }}
+        >
+          <div style={{
+            width: 12,
+            height: 14,
+            backgroundImage: 'linear-gradient(-49.4deg, #3C66CE 50%, rgba(255, 255, 255, 0) 50%)',
+            position: 'absolute',
+            left: 0,
+            top: -14,
+          }}
+          />
+          <div style={{
+            width: 12,
+            height: 14,
+            backgroundImage: 'linear-gradient(49.4deg, #3C66CE 50%, rgba(255, 255, 255, 0) 50%)',
+            position: 'absolute',
+            right: 0,
+            top: -14,
+          }}
+          />
+          <div style={{ width: 523, height: 158, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <div style={{ color: '#555555', fontSize: 24, display: 'flex' }}>
+                保存图片，微信扫一扫
+              </div>
+              <div
+                style={{
+                  color: 'transparent',
+                  backgroundImage: 'linear-gradient(-108.06deg, rgb(0, 119, 255) -3.88%, rgb(17, 17, 17) 55.97%, rgb(17, 17, 17) 140.68%)',
+                  backgroundClip: 'text',
+                  WebkitBackgroundClip: 'text',
+                  fontSize: 28,
+                  fontWeight: 600,
+                  display: 'flex',
+                }}
+              >
+                咨询预定更及时
+              </div>
             </div>
+            <img
+              src={arrow}
+              style={{ position: 'absolute', width: 118, height: 33, left: 276, top: 110 }}
+            />
             <div
               style={{
-                color: 'transparent',
-                backgroundImage: 'linear-gradient(-108.06deg, rgb(0, 119, 255) -3.88%, rgb(17, 17, 17) 55.97%, rgb(17, 17, 17) 140.68%)',
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                fontSize: 28,
-                fontWeight: 600,
+                width: 158,
+                height: 158,
+                position: 'relative',
                 display: 'flex',
+                // backgroundImage: `url(${qrcodebg})`,
+                padding: 4,
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
             >
-              咨询预定更及时
+              <img
+                src={qrcodebg}
+                style={{ position: 'absolute', width: 158, height: 158, left: 0, top: 0 }}
+              />
+              {store.get(qrcodeAtom) ? (
+                <img
+                  src={URL.createObjectURL(store.get(qrcodeAtom)!)}
+                  style={{
+                    width: 142,
+                    height: 142,
+                    objectFit: 'cover',
+                    borderRadius: 4,
+                    position: 'relative',
+                  }}
+                />
+              ) : (
+                <div style={{ width: 158, height: 158, borderRadius: 8 }} />
+              )}
             </div>
           </div>
-          <img
-            src={arrow}
-            style={{ position: 'absolute', width: 118, height: 33, left: 276, top: 110 }}
-          />
-          <div
-            style={{
-              width: 158,
-              height: 158,
-              position: 'relative',
-              display: 'flex',
-              // backgroundImage: `url(${qrcodebg})`,
-              padding: 4,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <img
-              src={qrcodebg}
-              style={{ position: 'absolute', width: 158, height: 158, left: 0, top: 0 }}
-            />
-            {store.get(qrcodeAtom) ? (
-              <img
-                src={URL.createObjectURL(store.get(qrcodeAtom)!)}
-                style={{
-                  width: 142,
-                  height: 142,
-                  objectFit: 'cover',
-                  borderRadius: 4,
-                  position: 'relative',
-                }}
-              />
-            ) : (
-              <div style={{ width: 158, height: 158, borderRadius: 8 }} />
-            )}
-          </div>
         </div>
-      </div>
+      ) : null}
     </div>
   );
 }
