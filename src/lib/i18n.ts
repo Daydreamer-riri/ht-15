@@ -28,7 +28,7 @@ export const translations: Record<Language, {
     colon: '：',
   },
   yue: {
-    title: '携程官方推荐购物向导',
+    title: 'Trip.com 官方售前支援',
     jobAchievement: '岗位成就',
     travelExperience: '旅行经历',
     serviceExperience: '服务经历',
@@ -37,7 +37,7 @@ export const translations: Record<Language, {
     colon: '：',
   },
   en: {
-    title: 'Ctrip Official Shopping Guide',
+    title: 'Trip.com official pre-sales support',
     jobAchievement: 'Career Achievements',
     travelExperience: 'Travel Experience',
     serviceExperience: 'Service Experience',
@@ -46,7 +46,7 @@ export const translations: Record<Language, {
     colon: ':',
   },
   ja: {
-    title: 'トリップドットコム公式おすすめショッピングガイド',
+    title: 'Trip.com公式事前販売サポート',
     jobAchievement: '職務実績',
     travelExperience: '旅行経験',
     serviceExperience: 'サービス経験',
@@ -55,7 +55,7 @@ export const translations: Record<Language, {
     colon: '：',
   },
   ko: {
-    title: '트립닷컴 공식 추천 쇼핑 가이드',
+    title: '트립닷컴 공식 사전판매 지원',
     jobAchievement: '직무 성과',
     travelExperience: '여행 경험',
     serviceExperience: '서비스 경험',
@@ -64,7 +64,7 @@ export const translations: Record<Language, {
     colon: ':',
   },
   th: {
-    title: 'ไกด์ช้อปปิ้งแนะนำอย่างเป็นทางการจาก Trip.com',
+    title: 'ฝ่ายบริการก่อนการขายอย่างเป็นทางการของ Trip.com',
     jobAchievement: 'ความสำเร็จในหน้าที่การงาน',
     travelExperience: 'ประสบการณ์การเดินทาง',
     serviceExperience: 'ประสบการณ์การบริการ',
