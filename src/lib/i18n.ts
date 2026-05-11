@@ -9,6 +9,13 @@ export const languages: { value: Language; label: string }[] = [
   { value: 'th', label: 'ไทย' },
 ];
 
+export type ServiceRole = 'shopping_guide' | 'vacation_manager';
+
+export const serviceRoles: { value: ServiceRole; label: string }[] = [
+  { value: 'shopping_guide', label: '携程官方推荐导购' },
+  { value: 'vacation_manager', label: '携程度假旅游管家' },
+];
+
 export const translations: Record<Language, {
   title: string;
   jobAchievement: string;

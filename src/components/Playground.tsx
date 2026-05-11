@@ -4,7 +4,7 @@ import bg from '@/assets/bg.png';
 import qrcodebg from '@/assets/qrcode-bg.png';
 import { FONT_FAMILY_NORMAL } from '@/lib/font';
 import { translations } from '@/lib/i18n';
-import { avatarAtom, highlightAtom, jobAchievementAtom, languageAtom, nameAtom, qrcodeAtom, serviceExperienceAtom, travelExperienceAtom } from '@/store';
+import { avatarAtom, highlightAtom, jobAchievementAtom, languageAtom, nameAtom, qrcodeAtom, serviceExperienceAtom, serviceRoleAtom, travelExperienceAtom } from '@/store';
 
 const store = getDefaultStore();
 
@@ -17,6 +17,7 @@ export function Playground() {
   useAtomValue(serviceExperienceAtom);
   useAtomValue(qrcodeAtom);
   useAtomValue(languageAtom);
+  useAtomValue(serviceRoleAtom);
 
   return (
     <div className="flex-1">
@@ -28,6 +29,8 @@ export function Playground() {
 export function OpCard() {
   const language = store.get(languageAtom);
   const t = translations[language];
+  const serviceRole = store.get(serviceRoleAtom);
+  const titleText = serviceRole === 'vacation_manager' ? '携程度假旅游管家' : t.title;
 
   const isCJK = ['zh', 'ja', 'ko', 'yue'].includes(language);
 
@@ -100,7 +103,7 @@ export function OpCard() {
               textWrap: 'balance',
             }}
           >
-            {t.title}
+            {titleText}
           </div>
           <div
             style={{

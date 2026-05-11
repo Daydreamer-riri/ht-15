@@ -3,8 +3,8 @@ import { Loader2Icon } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { copyImage, downloadImage, uploadImageAndCopyUrl } from '@/lib/gen';
-import { languages } from '@/lib/i18n';
-import { avatarAtom, highlightAtom, jobAchievementAtom, languageAtom, nameAtom, qrcodeAtom, serviceExperienceAtom, travelExperienceAtom } from '@/store';
+import { languages, serviceRoles, type ServiceRole } from '@/lib/i18n';
+import { avatarAtom, highlightAtom, jobAchievementAtom, languageAtom, nameAtom, qrcodeAtom, serviceExperienceAtom, serviceRoleAtom, travelExperienceAtom } from '@/store';
 import { Button } from './ui/button';
 import { Card, CardAction, CardContent, CardFooter } from './ui/card';
 import { Input } from './ui/input';
@@ -19,12 +19,31 @@ export function Form() {
   const [serviceExperience, setServiceExperience] = useAtom(serviceExperienceAtom);
   const [_qrcode, setQrcode] = useAtom(qrcodeAtom);
   const [language, setLanguage] = useAtom(languageAtom);
+  const [serviceRole, setServiceRole] = useAtom(serviceRoleAtom);
 
   return (
     <Card className="flex-1">
       <CardContent>
         <form>
           <div className="flex flex-col gap-6">
+            <div className="grid gap-2">
+              <Label htmlFor="serviceRole">选择服务角色</Label>
+              <select
+                id="serviceRole"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                value={serviceRole}
+                onChange={e => setServiceRole(e.target.value as ServiceRole)}
+              >
+                {serviceRoles.map(r => (
+                  <option
+                    key={r.value}
+                    value={r.value}
+                  >
+                    {r.label}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div className="grid gap-2">
               <Label htmlFor="name">姓名</Label>
               <Input
