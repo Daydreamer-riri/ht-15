@@ -1,50 +1,15 @@
 import { domToBlob } from 'modern-screenshot';
 import { nameAtom, store } from '@/store';
 
-export const toPngConfig = { fitTo: { mode: 'zoom', value: 2 } } as const;
-
 export async function gen() {
   const root = document.getElementById('IMAGE_ROOT');
   const dataUrl = await domToBlob(root!);
   return dataUrl;
-
-  // const fonts = await loadFonts();
-  // const fontsConfig = [
-  //   {
-  //     name: FONT_FAMILY_NORMAL,
-  //     data: fonts.notoSansSC_regular!,
-  //     weight: 400 as const,
-  //   },
-  //   {
-  //     name: FONT_FAMILY_NORMAL,
-  //     data: fonts.notoSansSC_bold!,
-  //     weight: 600 as const,
-  //   },
-  // ];
-  //
-  // const satori = (await import('satori')).default;
-  //
-  // const svg = await satori(
-  //   <OpCard />,
-  //   {
-  //     width: 620,
-  //     height: 934,
-  //     fonts: fontsConfig,
-  //   },
-  // );
-  //
-  // // return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
-  //
-  // const resvgJS = new resvg.Resvg(svg, { ...toPngConfig });
-  // const pngData = resvgJS.render(); // Output PNG data, Uint8Array
-  // const pngBuffer = pngData.asPng();
-  // return pngBuffer; // Return the PNG buffer
 }
 
 export async function copyImage() {
   try {
     const blob = await gen();
-    // const blob = new Blob([data], { type: 'image/png' });
     const clipboardItem = new ClipboardItem({
       [blob.type]: blob,
     });
@@ -57,7 +22,6 @@ export async function copyImage() {
 
 export async function downloadImage() {
   const blob = await gen();
-  // const blob = new Blob([data], { type: 'image/png' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
@@ -71,7 +35,6 @@ export async function downloadImage() {
 export async function uploadImageAndCopyUrl() {
   const blob = await gen();
 
-  // const blob = new Blob([data], { type: 'image/png' });
   const res = await fetch('https://uploadimg.fx.ctripcorp.com/image/v1/api/upload?public=1&channel=ttl_post_share_repo', {
     method: 'POST',
     headers: {
