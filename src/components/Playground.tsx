@@ -49,7 +49,9 @@ export function OpCard() {
     opacity: isCJK ? 1 : 0.5,
   };
 
-  const extraHeight = language === 'zh' ? 84 : 0;
+  const hasVisa = store.get(visaAtom).trim().length === 0;
+
+  const extraHeight = (language === 'zh' && hasVisa) ? 84 : 0;
 
   return (
     <div
@@ -169,7 +171,7 @@ export function OpCard() {
               <span style={labelStyle}>{t.serviceExperience}{t.colon}</span>
               <span style={isCJK ? { width: 387 } : undefined}>{store.get(serviceExperienceAtom)}</span>
             </div>
-            {language === 'zh' ? (
+            {(language === 'zh' && hasVisa) ? (
               <div style={fieldStyle}>
                 <span style={labelStyle}>{t.visa}{t.colon}</span>
                 <span style={isCJK ? { width: 387 } : undefined}>{store.get(visaAtom)}</span>
