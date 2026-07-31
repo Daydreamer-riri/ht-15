@@ -21,6 +21,7 @@ export const translations: Record<Language, {
   jobAchievement: string;
   travelExperience: string;
   serviceExperience: string;
+  visa: string;
   quoteStart: string;
   quoteEnd: string;
   colon: string;
@@ -30,6 +31,7 @@ export const translations: Record<Language, {
     jobAchievement: '岗位成就',
     travelExperience: '旅行经历',
     serviceExperience: '服务经历',
+    visa: '签证专长',
     quoteStart: '“',
     quoteEnd: '”',
     colon: '：',
@@ -39,6 +41,7 @@ export const translations: Record<Language, {
     jobAchievement: '岗位成就',
     travelExperience: '旅行经历',
     serviceExperience: '服务经历',
+    visa: '簽證專長',
     quoteStart: '“',
     quoteEnd: '”',
     colon: '：',
@@ -48,6 +51,7 @@ export const translations: Record<Language, {
     jobAchievement: 'Career Achievements',
     travelExperience: 'Travel Experience',
     serviceExperience: 'Service Experience',
+    visa: 'Visa Expertise',
     quoteStart: '"',
     quoteEnd: '"',
     colon: ':',
@@ -57,6 +61,7 @@ export const translations: Record<Language, {
     jobAchievement: '職務実績',
     travelExperience: '旅行経験',
     serviceExperience: 'サービス経験',
+    visa: 'ビザ専門分野',
     quoteStart: '「',
     quoteEnd: '」',
     colon: '：',
@@ -66,6 +71,7 @@ export const translations: Record<Language, {
     jobAchievement: '직무 성과',
     travelExperience: '여행 경험',
     serviceExperience: '서비스 경험',
+    visa: '비자 전문 분야',
     quoteStart: '"',
     quoteEnd: '"',
     colon: ':',
@@ -75,6 +81,7 @@ export const translations: Record<Language, {
     jobAchievement: 'ความสำเร็จในหน้าที่การงาน',
     travelExperience: 'ประสบการณ์การเดินทาง',
     serviceExperience: 'ประสบการณ์การบริการ',
+    visa: 'ความเชี่ยวชาญด้านวีซ่า',
     quoteStart: '"',
     quoteEnd: '"',
     colon: ':',

@@ -3,8 +3,8 @@ import { Loader2Icon } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { copyImage, downloadImage, uploadImageAndCopyUrl } from '@/lib/gen';
-import { languages, serviceRoles, type ServiceRole } from '@/lib/i18n';
-import { avatarAtom, highlightAtom, jobAchievementAtom, languageAtom, nameAtom, qrcodeAtom, serviceExperienceAtom, serviceRoleAtom, travelExperienceAtom } from '@/store';
+import { languages, type ServiceRole, serviceRoles } from '@/lib/i18n';
+import { avatarAtom, highlightAtom, jobAchievementAtom, languageAtom, nameAtom, qrcodeAtom, serviceExperienceAtom, serviceRoleAtom, travelExperienceAtom, visaAtom } from '@/store';
 import { Button } from './ui/button';
 import { Card, CardAction, CardContent, CardFooter } from './ui/card';
 import { Input } from './ui/input';
@@ -17,6 +17,7 @@ export function Form() {
   const [jobAchievement, setJobAchievement] = useAtom(jobAchievementAtom);
   const [travelExperience, setTravelExperience] = useAtom(travelExperienceAtom);
   const [serviceExperience, setServiceExperience] = useAtom(serviceExperienceAtom);
+  const [visa, setVisa] = useAtom(visaAtom);
   const [_qrcode, setQrcode] = useAtom(qrcodeAtom);
   const [language, setLanguage] = useAtom(languageAtom);
   const [serviceRole, setServiceRole] = useAtom(serviceRoleAtom);
@@ -97,6 +98,15 @@ export function Form() {
                 required
                 value={serviceExperience}
                 onChange={e => setServiceExperience(e.target.value)}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="签证专长">签证专长</Label>
+              <Input
+                id="签证专长"
+                required
+                value={visa}
+                onChange={e => setVisa(e.target.value)}
               />
             </div>
             <div className="grid gap-2">

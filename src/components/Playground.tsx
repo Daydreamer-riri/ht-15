@@ -4,7 +4,7 @@ import bg from '@/assets/bg.png';
 import qrcodebg from '@/assets/qrcode-bg.png';
 import { FONT_FAMILY_NORMAL } from '@/lib/font';
 import { translations } from '@/lib/i18n';
-import { avatarAtom, highlightAtom, jobAchievementAtom, languageAtom, nameAtom, qrcodeAtom, serviceExperienceAtom, serviceRoleAtom, travelExperienceAtom } from '@/store';
+import { avatarAtom, highlightAtom, jobAchievementAtom, languageAtom, nameAtom, qrcodeAtom, serviceExperienceAtom, serviceRoleAtom, travelExperienceAtom, visaAtom } from '@/store';
 
 const store = getDefaultStore();
 
@@ -18,6 +18,7 @@ export function Playground() {
   useAtomValue(qrcodeAtom);
   useAtomValue(languageAtom);
   useAtomValue(serviceRoleAtom);
+  useAtomValue(visaAtom);
 
   return (
     <div className="flex-1">
@@ -48,15 +49,17 @@ export function OpCard() {
     opacity: isCJK ? 1 : 0.5,
   };
 
+  const extraHeight = language === 'zh' ? 84 : 0;
+
   return (
     <div
       id="IMAGE_ROOT"
-      style={{ width: 620, height: 934, position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+      style={{ width: 620, height: 934 + extraHeight, position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
     >
       <div
         style={{
           width: 596,
-          height: 815,
+          height: 815 + extraHeight,
           backgroundImage: `linear-gradient(0deg, ${language === 'zh' ? '#e9f1f9 220px,' : ''} #fff 270px, rgb(255, 255, 255) 27.16%, rgb(220, 236, 255) 93.64%, rgb(184, 216, 255) 156.86%)`,
           borderRadius: 16,
           left: 12,
@@ -146,7 +149,7 @@ export function OpCard() {
           </div>
           <div style={{
             width: 519,
-            height: language === 'zh' ? 252 : 400,
+            height: language === 'zh' ? 252 + extraHeight : 400,
             color: '#111111',
             fontSize: 24,
             display: 'flex',
@@ -166,6 +169,15 @@ export function OpCard() {
               <span style={labelStyle}>{t.serviceExperience}{t.colon}</span>
               <span style={isCJK ? { width: 387 } : undefined}>{store.get(serviceExperienceAtom)}</span>
             </div>
+            {language === 'zh' ? (
+              <div style={fieldStyle}>
+                <span style={labelStyle}>{t.visa}{t.colon}</span>
+                <span style={isCJK ? { width: 387 } : undefined}>{store.get(visaAtom)}</span>
+              </div>
+
+            ) : null}
+            {' '}
+
           </div>
         </div>
       </div>
