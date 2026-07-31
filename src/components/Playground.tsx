@@ -49,7 +49,7 @@ export function OpCard() {
     opacity: isCJK ? 1 : 0.5,
   };
 
-  const hasVisa = store.get(visaAtom).trim().length === 0;
+  const hasVisa = store.get(visaAtom).trim().length !== 0;
 
   const extraHeight = (language === 'zh' && hasVisa) ? 84 : 0;
 
