@@ -12,7 +12,7 @@ export const languages: { value: Language; label: string }[] = [
 export type ServiceRole = 'shopping_guide' | 'vacation_manager';
 
 export const serviceRoles: { value: ServiceRole; label: string }[] = [
-  { value: 'shopping_guide', label: '携程官方推荐导购' },
+  { value: 'shopping_guide', label: '携程官方旅行顾问' },
   { value: 'vacation_manager', label: '携程度假旅游管家' },
 ];
 
@@ -27,7 +27,7 @@ export const translations: Record<Language, {
   colon: string;
 }> = {
   zh: {
-    title: '携程官方推荐导购',
+    title: '携程官方旅行顾问',
     jobAchievement: '岗位成就',
     travelExperience: '旅行经历',
     serviceExperience: '服务经历',
