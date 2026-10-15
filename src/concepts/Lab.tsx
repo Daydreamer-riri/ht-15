@@ -4,8 +4,8 @@ import './lab.css';
 
 const VARIANTS = [
   {
-    key: '',
-    tag: '现状',
+    key: 'classic',
+    tag: '原版',
     name: '地图 + 抽屉',
     desc: '信息完整，但七天长得一模一样，看不出这是一趟什么样的旅行。',
   },
