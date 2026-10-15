@@ -6,7 +6,7 @@ import { defineConfig } from 'vite';
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: '/dingzhi-common/shopping-guide-business-card-gen',
+  base: '/hackathon-15/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

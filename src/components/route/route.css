@@ -1,0 +1,168 @@
+.rp-marker {
+  background: none;
+  border: none;
+}
+
+/* 所有标注以锚点为底部中心 */
+.rp-anchor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -100%);
+  font-family: inherit;
+  line-height: 1.3;
+  pointer-events: none;
+}
+
+.rp-label {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 2px);
+  transform: translateY(-50%);
+  max-width: 120px;
+  font-size: 12px;
+  color: #111;
+  white-space: normal;
+  word-break: keep-all;
+  width: max-content;
+  text-shadow:
+    -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff,
+    0 0 3px #fff;
+}
+
+/* 编号图钉 */
+.rp-pin {
+  position: relative;
+  width: 26px;
+  height: 32px;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.25));
+}
+
+.rp-pin svg {
+  display: block;
+}
+
+.rp-pin__text {
+  position: absolute;
+  inset: 0 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.rp-pin .rp-label {
+  top: 13px;
+  left: 28px;
+}
+
+/* 航班圆形图标 */
+.rp-round {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  color: #fff;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
+  transform: translateY(50%);
+}
+
+/* 总览：城市标注 */
+.rp-city {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-bottom: 6px;
+}
+
+.rp-city::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  border-radius: 50%;
+  background: #006ff6;
+  border: 2px solid #fff;
+  box-sizing: border-box;
+}
+
+.rp-city__days {
+  margin-bottom: -2px;
+  margin-left: -1px;
+  padding: 0 5px;
+  border-radius: 8px 8px 8px 0;
+  background: #006ff6;
+  color: #fff;
+  font-size: 10.4px;
+  font-weight: 500;
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.rp-city__box {
+  padding: 2px 6px;
+  border-radius: 0 4px 4px 4px;
+  border: 1px solid #006ff6;
+  background: #fff;
+  color: #111;
+  font-size: 12.5px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.rp-city__pois {
+  margin-top: 2px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  border: 1px solid #1bc28a;
+  background: #fff;
+}
+
+.rp-city__poi {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: #111;
+  font-size: 10.4px;
+  font-weight: 500;
+  line-height: 15px;
+  white-space: nowrap;
+}
+
+.rp-city__poi::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #1bc28a;
+}
+
+/* 待安排灰色标注 */
+.rp-todo {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background: #9aa1ad;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
+  transform: translateY(50%);
+}
+
+.leaflet-container {
+  font-family: inherit;
+  background: #e6eef5;
+}
+
+.leaflet-control-attribution {
+  font-size: 9px;
+}

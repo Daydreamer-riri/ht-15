@@ -120,5 +120,6 @@
 }
 
 body {
-  background-color: var(--color-muted);
+  background-color: #f2f3f5;
+  -webkit-tap-highlight-color: transparent;
 }
