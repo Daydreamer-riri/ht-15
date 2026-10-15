@@ -5,6 +5,19 @@ export type Place = PoiUnit | CustomUnit;
 /** rest 基本不开车 | easy 轻松 | normal 正常 | hard 长途驾驶日 */
 export type Intensity = 'rest' | 'easy' | 'normal' | 'hard';
 
+/** 地貌：影响沿途场景的配色与造型 */
+export type Biome = 'desert' | 'mountain' | 'lake';
+
+const BIOME_RULES: [RegExp, Biome][] = [
+  [/湖|海|河/, 'lake'],
+  [/沙漠|魔鬼城|吐鲁番|戈壁|机场/, 'desert'],
+  [/喀纳斯|白哈巴|观鱼台|独库|村|山/, 'mountain'],
+];
+
+export function biomeOf(name: string): Biome | undefined {
+  return BIOME_RULES.find(([re]) => re.test(name))?.[1];
+}
+
 export interface DayPhoto {
   src: string;
   thumb: string;

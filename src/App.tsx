@@ -14,6 +14,9 @@ const CONCEPTS: Partial<Record<string, Concept>> = {
   cinema: lazy(() => import('./concepts/cinema/Cinema').then(m => ({ default: m.Cinema }))),
   road: lazy(() => import('./concepts/road/Road').then(m => ({ default: m.Road }))),
   journal: lazy(() => import('./concepts/journal/Journal').then(m => ({ default: m.Journal }))),
+  metro: lazy(() => import('./concepts/metro/Metro').then(m => ({ default: m.Metro }))),
+  pixel: lazy(() => import('./concepts/pixel/Pixel').then(m => ({ default: m.Pixel }))),
+  film: lazy(() => import('./concepts/film/Film').then(m => ({ default: m.Film }))),
   lab: lazy(() => import('./concepts/Lab').then(m => ({ default: m.Lab }))),
 };
 

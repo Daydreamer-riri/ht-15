@@ -120,14 +120,16 @@
     padding: 36px 20px 60px;
   }
 
+  .lab-grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
   .lab-phone {
-    display: none;
+    --s: 0.62;
   }
 
   .lab-meta {
-    width: 100%;
-    padding: 18px;
-    border-radius: 16px;
-    background: #17181c;
+    width: min(100%, calc(390px * 0.62 + 16px));
   }
 }

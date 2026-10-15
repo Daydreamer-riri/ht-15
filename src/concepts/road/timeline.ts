@@ -1,10 +1,11 @@
-import type { DaySummary, TripSummary } from '../shared/trip';
+import type { Biome, DaySummary, TripSummary } from '../shared/trip';
 import type { LatLng, Leg, Unit } from '@/data/types';
 import { distanceKm, mercator } from '../shared/geo';
-import { parseKm, parseMinutes } from '../shared/trip';
+import { biomeOf, parseKm, parseMinutes } from '../shared/trip';
 
 export type SignKind = 'gantry' | 'poi' | 'hotel' | 'flight' | 'return' | 'custom' | 'finish';
-export type Biome = 'desert' | 'mountain' | 'lake';
+
+export type { Biome };
 
 export interface LegGeo {
   points: LatLng[];
@@ -41,16 +42,6 @@ function legGeo(leg: Leg): LegGeo {
     cum.push(cum[i - 1] + distanceKm(leg.points[i - 1], leg.points[i]));
   }
   return { points: leg.points, cum, total: cum.at(-1) || 1 };
-}
-
-const BIOME_RULES: [RegExp, Biome][] = [
-  [/湖|海|河/, 'lake'],
-  [/沙漠|魔鬼城|吐鲁番|戈壁|机场/, 'desert'],
-  [/喀纳斯|白哈巴|观鱼台|独库|村|山/, 'mountain'],
-];
-
-function biomeOf(name: string): Biome | undefined {
-  return BIOME_RULES.find(([re]) => re.test(name))?.[1];
 }
 
 function unitName(u: Unit) {

@@ -27,6 +27,24 @@ const VARIANTS = [
     name: '旅行手账 · 拼贴',
     desc: '拍立得、邮戳、登机牌、行李牌、便利贴：把行程做成一本能翻、能和同伴一起写的手账。',
   },
+  {
+    key: 'metro',
+    tag: 'D',
+    name: '行程线路图',
+    desc: '七天画成一张地铁图：每天一条色线、两端回折，站点是景点和住宿，点站点看详情。',
+  },
+  {
+    key: 'pixel',
+    tag: 'E',
+    name: '像素公路',
+    desc: '16-bit 公路游戏：低分辨率画布逐格放大，滚动就是往前开，地貌和昼夜一路变化。',
+  },
+  {
+    key: 'film',
+    tag: 'F',
+    name: '胶卷明信片',
+    desc: '全程装进一卷 35mm：片头倒计时、齿孔、漏光与划痕，横向过片，看冲印信息。',
+  },
 ];
 
 export function Lab({ itinerary }: { itinerary: Itinerary }) {
@@ -40,7 +58,7 @@ export function Lab({ itinerary }: { itinerary: Itinerary }) {
           {' '}
           {itinerary.name}
         </p>
-        <h1>同一份行程，三种讲法</h1>
+        <h1>同一份行程，七种讲法</h1>
         <p>数据完全来自现有页面，每个原型都能直接上手操作（建议点开单独页面，用手机尺寸体验）。</p>
       </header>
       <ul className="lab-grid">
