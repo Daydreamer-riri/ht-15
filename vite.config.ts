@@ -6,7 +6,7 @@ import { defineConfig } from 'vite';
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: '/hackathon-15/',
+  base: '/ding.zhao/hackathon-15/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
