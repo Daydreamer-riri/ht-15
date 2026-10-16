@@ -91,6 +91,36 @@ export function Lab({ itinerary }: { itinerary: Itinerary }) {
           </li>
         ))}
       </ul>
+
+      <section className="lab-pc">
+        <div className="lab-pc__head">
+          <span className="lab-tag">PC</span>
+          <h2>大屏放映厅</h2>
+          <p>
+            同一个
+            {' '}
+            <code>?v=cinema</code>
+            {' '}
+            链接，宽度到 1024 以上会自动换成大屏布局：左侧逐日片单、中间主舞台（当天大图 + 环线高亮 + 照片切换）、右侧当日行程、底部整趟 2,908 km 的时间轴。支持 ← → 切换、空格放映。窄窗口会退回手机版。
+          </p>
+          <a
+            href={href('cinema')}
+            target="_blank"
+            rel="noreferrer"
+          >
+            在新窗口打开（拉宽看效果）
+            <ExternalLink aria-hidden />
+          </a>
+        </div>
+        <div className="lab-laptop">
+          {/* eslint-disable-next-line react-dom/no-missing-iframe-sandbox -- 嵌入的是本站页面，模块脚本必须同源加载，sandbox 起不到隔离作用 */}
+          <iframe
+            title="PC 版放映厅"
+            src={href('cinema')}
+            loading="lazy"
+          />
+        </div>
+      </section>
     </main>
   );
 }

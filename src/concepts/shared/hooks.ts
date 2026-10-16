@@ -2,6 +2,18 @@ import { useEffect, useState } from 'react';
 
 const REDUCED_QUERY = '(prefers-reduced-motion: reduce)';
 
+export function useMediaQuery(query: string) {
+  const [matches, setMatches] = useState(() => window.matchMedia(query).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    const onChange = () => setMatches(mq.matches);
+    mq.addEventListener('change', onChange);
+    setMatches(mq.matches);
+    return () => mq.removeEventListener('change', onChange);
+  }, [query]);
+  return matches;
+}
+
 export function useReducedMotion() {
   const [reduced, setReduced] = useState(() => window.matchMedia(REDUCED_QUERY).matches);
   useEffect(() => {
