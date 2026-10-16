@@ -125,7 +125,7 @@ export function Film({ itinerary }: { itinerary: Itinerary }) {
       <header className="fl-head">
         <p className="fl-kicker">
           <span>35mm</span>
-          疆北行车胶片
+          北疆行车胶片
         </p>
         <h1>{trip.itinerary.name}</h1>
         <p className="fl-head__meta">{`${trip.dateRange} · ${Math.round(trip.totalKm).toLocaleString()} km · ${frames.length} 格`}</p>

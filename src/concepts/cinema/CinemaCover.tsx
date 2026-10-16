@@ -24,7 +24,7 @@ interface CoverProps {
   registerCard: (index: number, el: HTMLButtonElement | null) => void;
 }
 
-/** "七天六晚疆北" -> ["七天六晚", "疆北"] */
+/** "七天六晚北疆" -> ["七天六晚", "北疆"] */
 function splitTitle(name: string): [string, string] {
   const m = /^(.*[天晚])(.{1,4})$/.exec(name);
   return m ? [m[1], m[2]] : ['', name];
