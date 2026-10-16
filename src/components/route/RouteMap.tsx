@@ -1,7 +1,7 @@
-import type { Itinerary, LatLng, Unit } from '@/data/types';
+import type { Itinerary, LatLng } from '@/data/types';
 import L from 'leaflet';
 import { useEffect, useMemo, useRef } from 'react';
-import { arcPoints, COLORS, escapeHtml, formatDayRanges, itemNumbers, type TabKey } from './utils';
+import { arcPoints, COLORS, escapeHtml, formatDayRanges, itemNumbers, type TabKey, unitColor } from './utils';
 import 'leaflet/dist/leaflet.css';
 import './route.css';
 
@@ -28,16 +28,6 @@ function label(text: string) {
 
 function pinIcon(color: string, text: string, name?: string) {
   return icon(`<div class="rp-pin">${pinSvg(color)}<span class="rp-pin__text">${escapeHtml(text)}</span>${name ? label(name) : ''}</div>`);
-}
-
-function unitColor(unit: Unit) {
-  if (unit.kind === 'hotel') {
-    return COLORS.hotel;
-  }
-  if (unit.kind === 'custom') {
-    return COLORS.custom;
-  }
-  return COLORS.poi;
 }
 
 /** 总览：每个城市一个标注，带“第N天”和景点列表 */

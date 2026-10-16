@@ -1,1 +1,1 @@
-@import "tailwindcss";
+/* Tailwind 与设计 token 统一在 App.css 中引入，避免重复生成的默认工具类覆盖自定义主题 */

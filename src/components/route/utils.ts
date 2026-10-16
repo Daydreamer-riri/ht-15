@@ -1,16 +1,54 @@
-import type { Day, LatLng, Unit } from '@/data/types';
+import type { Day, Itinerary, LatLng, Unit } from '@/data/types';
 
 /** 'overview' 总览 | 'todo' 待安排 | number 第 N 天 */
 export type TabKey = 'overview' | 'todo' | number;
 
 export const COLORS = {
-  brand: '#006ff6',
-  flight: '#8188ff',
-  hotel: '#3290fa',
-  poi: '#1bc28a',
-  custom: '#ff8a00',
-  todo: '#9aa1ad',
+  brand: '#1f6fd6',
+  flight: '#7c70d8',
+  hotel: '#3a7be0',
+  poi: '#2a9d78',
+  custom: '#e07b2a',
+  todo: '#a39d93',
 } as const;
+
+/** 行程项对应的类别色（与地图图钉一致） */
+export function unitColor(unit: Unit) {
+  switch (unit.kind) {
+    case 'hotel':
+      return COLORS.hotel;
+    case 'custom':
+      return COLORS.custom;
+    case 'transport':
+      return COLORS.flight;
+    default:
+      return COLORS.poi;
+  }
+}
+
+/** 1 -> "01" */
+export const dayNo = (day: Day) => String(day.index).padStart(2, '0');
+
+/** 10月01日 -> 10/01 */
+export const shortDate = (label: string) => label.replace(/(\d+)月(\d+)日/, '$1/$2');
+
+/** 上海 → 吐鲁番 → 福海 */
+export const dayCities = (day: Day) => day.title ?? day.cities.map(c => c.name).join(' → ');
+
+/** 行程概要：天数、城市数、地点数 */
+export function tripStats(itinerary: Itinerary) {
+  const cities = new Set(itinerary.days.flatMap(d => d.cities.map(c => c.name)));
+  const places = itinerary.days.flatMap(d => d.items).filter(u => u.kind === 'poi' || u.kind === 'custom').length;
+  const first = itinerary.days[0];
+  const last = itinerary.days.at(-1);
+  return {
+    days: itinerary.days.length,
+    nights: Math.max(0, itinerary.days.length - 1),
+    cities: cities.size,
+    places,
+    range: (first && last) ? `${shortDate(first.label)} – ${shortDate(last.label)}` : '',
+  };
+}
 
 const HTML_ESCAPES: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#39;' };
 

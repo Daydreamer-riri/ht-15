@@ -21,7 +21,7 @@
   transform: translateY(-50%);
   max-width: 120px;
   font-size: 12px;
-  color: #111;
+  color: #1d1b18;
   white-space: normal;
   word-break: keep-all;
   width: max-content;
@@ -90,7 +90,7 @@
   height: 8px;
   margin-left: -4px;
   border-radius: 50%;
-  background: #006ff6;
+  background: #1f6fd6;
   border: 2px solid #fff;
   box-sizing: border-box;
 }
@@ -100,7 +100,7 @@
   margin-left: -1px;
   padding: 0 5px;
   border-radius: 8px 8px 8px 0;
-  background: #006ff6;
+  background: #1f6fd6;
   color: #fff;
   font-size: 10.4px;
   font-weight: 500;
@@ -111,9 +111,9 @@
 .rp-city__box {
   padding: 2px 6px;
   border-radius: 0 4px 4px 4px;
-  border: 1px solid #006ff6;
+  border: 1px solid #1f6fd6;
   background: #fff;
-  color: #111;
+  color: #1d1b18;
   font-size: 12.5px;
   font-weight: 500;
   white-space: nowrap;
@@ -123,7 +123,7 @@
   margin-top: 2px;
   padding: 1px 5px;
   border-radius: 4px;
-  border: 1px solid #1bc28a;
+  border: 1px solid #2a9d78;
   background: #fff;
 }
 
@@ -131,7 +131,7 @@
   display: flex;
   align-items: center;
   gap: 2px;
-  color: #111;
+  color: #1d1b18;
   font-size: 10.4px;
   font-weight: 500;
   line-height: 15px;
@@ -143,7 +143,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #1bc28a;
+  background: #2a9d78;
 }
 
 /* 待安排灰色标注 */
@@ -153,14 +153,24 @@
   height: 14px;
   border-radius: 50%;
   border: 2px solid #fff;
-  background: #9aa1ad;
+  background: #a39d93;
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
   transform: translateY(50%);
 }
 
 .leaflet-container {
   font-family: inherit;
-  background: #e6eef5;
+  background: #ece6da;
+}
+
+/* 瓦片略去饱和、偏暖，和纸色抽屉衔接；只作用于底图，不影响路线和标注 */
+.leaflet-tile-pane {
+  filter: saturate(0.55) sepia(0.18) contrast(0.95) brightness(1.02);
+}
+
+.rp-city__box,
+.rp-city__pois {
+  box-shadow: 0 2px 6px -2px rgb(60 45 25 / 0.25);
 }
 
 .leaflet-control-attribution {
