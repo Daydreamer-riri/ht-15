@@ -17,25 +17,27 @@
 .rp-label {
   position: absolute;
   top: 50%;
-  left: calc(100% + 2px);
+  left: calc(100% + 4px);
   transform: translateY(-50%);
   max-width: 120px;
-  font-size: 12px;
-  color: #1d1b18;
+  width: max-content;
+  padding: 1px 5px;
+  border: 1.5px solid #14110f;
+  background: #f7f2e8;
+  color: #14110f;
+  font-size: 11.5px;
+  font-weight: 700;
   white-space: normal;
   word-break: keep-all;
-  width: max-content;
-  text-shadow:
-    -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff,
-    0 0 3px #fff;
+  box-shadow: 2px 2px 0 #14110f;
 }
 
 /* 编号图钉 */
 .rp-pin {
   position: relative;
-  width: 26px;
-  height: 32px;
-  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.25));
+  width: 28px;
+  height: 34px;
+  filter: drop-shadow(2px 2px 0 rgb(20 17 15 / 0.9));
 }
 
 .rp-pin svg {
@@ -44,18 +46,17 @@
 
 .rp-pin__text {
   position: absolute;
-  inset: 0 0 6px;
+  inset: 0 0 7px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
-  font-size: 12.5px;
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 15px;
 }
 
 .rp-pin .rp-label {
   top: 13px;
-  left: 28px;
+  left: 31px;
 }
 
 /* 航班圆形图标 */
@@ -64,12 +65,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
-  border: 2px solid #fff;
-  color: #fff;
-  box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
+  border: 2px solid #14110f;
+  background: #f7f2e8;
+  color: #14110f;
+  box-shadow: 2px 2px 0 #14110f;
   transform: translateY(50%);
 }
 
@@ -78,7 +80,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding-bottom: 6px;
+  padding-bottom: 7px;
 }
 
 .rp-city::after {
@@ -86,93 +88,94 @@
   position: absolute;
   left: 50%;
   bottom: 0;
-  width: 8px;
-  height: 8px;
-  margin-left: -4px;
-  border-radius: 50%;
-  background: #1f6fd6;
-  border: 2px solid #fff;
+  width: 10px;
+  height: 10px;
+  margin-left: -5px;
+  background: #14110f;
+  border: 2px solid #f7f2e8;
   box-sizing: border-box;
+  transform: rotate(45deg);
 }
 
 .rp-city__days {
-  margin-bottom: -2px;
-  margin-left: -1px;
-  padding: 0 5px;
-  border-radius: 8px 8px 8px 0;
-  background: #1f6fd6;
-  color: #fff;
-  font-size: 10.4px;
-  font-weight: 500;
-  line-height: 16px;
+  padding: 1px 5px;
+  background: #14110f;
+  color: #ffc21a;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 14px;
   white-space: nowrap;
 }
 
 .rp-city__box {
-  padding: 2px 6px;
-  border-radius: 0 4px 4px 4px;
-  border: 1px solid #1f6fd6;
-  background: #fff;
-  color: #1d1b18;
+  padding: 1px 6px;
+  border: 1.5px solid #14110f;
+  background: #f7f2e8;
+  color: #14110f;
   font-size: 12.5px;
-  font-weight: 500;
+  font-weight: 800;
   white-space: nowrap;
+  box-shadow: 2px 2px 0 #14110f;
 }
 
 .rp-city__pois {
-  margin-top: 2px;
-  padding: 1px 5px;
-  border-radius: 4px;
-  border: 1px solid #2a9d78;
+  margin-top: 3px;
+  padding: 2px 6px;
+  border: 1.5px solid #14110f;
   background: #fff;
+  box-shadow: 2px 2px 0 #14110f;
 }
 
 .rp-city__poi {
   display: flex;
   align-items: center;
-  gap: 2px;
-  color: #1d1b18;
-  font-size: 10.4px;
-  font-weight: 500;
+  gap: 3px;
+  color: #14110f;
+  font-size: 10.5px;
+  font-weight: 600;
   line-height: 15px;
   white-space: nowrap;
 }
 
 .rp-city__poi::before {
   content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #2a9d78;
+  width: 5px;
+  height: 5px;
+  background: #14110f;
 }
 
-/* 待安排灰色标注 */
+/* 待安排标注 */
 .rp-todo {
   position: relative;
   width: 14px;
   height: 14px;
-  border-radius: 50%;
-  border: 2px solid #fff;
-  background: #a39d93;
-  box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
-  transform: translateY(50%);
+  border: 2px solid #14110f;
+  box-shadow: 2px 2px 0 #14110f;
+  transform: translateY(50%) rotate(45deg);
+}
+
+.rp-todo .rp-label {
+  transform: translateY(-50%) rotate(-45deg);
+  transform-origin: left center;
 }
 
 .leaflet-container {
   font-family: inherit;
-  background: #ece6da;
+  background: #efe8da;
 }
 
-/* 瓦片略去饱和、偏暖，和纸色抽屉衔接；只作用于底图，不影响路线和标注 */
+/* 底图去色、提亮，让高饱和路线成为主角 */
 .leaflet-tile-pane {
-  filter: saturate(0.55) sepia(0.18) contrast(0.95) brightness(1.02);
-}
-
-.rp-city__box,
-.rp-city__pois {
-  box-shadow: 0 2px 6px -2px rgb(60 45 25 / 0.25);
+  filter: grayscale(1) contrast(0.9) brightness(1.08) sepia(0.12);
 }
 
 .leaflet-control-attribution {
   font-size: 9px;
+}
+
+.leaflet-control-scale-line {
+  border-color: #14110f;
+  background: rgb(247 242 232 / 0.85);
+  color: #14110f;
+  font-weight: 700;
 }

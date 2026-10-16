@@ -4,7 +4,8 @@ import { ThemeProvider } from '@/components/theme-provider.tsx';
 import App from './App.tsx';
 import { Toaster } from './components/ui/sonner.tsx';
 import './index.css';
-import '@fontsource/noto-serif-sc/700.css';
+import '@fontsource/anton/400.css';
+import '@fontsource/noto-serif-sc/900.css';
 import './lib/font';
 
 createRoot(document.getElementById('root')!).render(

@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@fontsource/anton':
+        specifier: 5.2.7
+        version: 5.2.7
       '@fontsource/noto-serif-sc':
         specifier: 5.2.8
         version: 5.2.8
@@ -446,6 +449,9 @@ packages:
   '@eslint/plugin-kit@0.3.3':
     resolution: {integrity: sha512-1+WqvgNMhmlAambTvT3KPtCl/Ibr68VldY2XY40SL1CE0ZXiakFR/cbTspaF5HsnpDMvcYYoJHfl4980NBjGag==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@fontsource/anton@5.2.7':
+    resolution: {integrity: sha512-fiPl7Kx0HC50Ws2uRkNC+QLVK8xPFUB9E+IxFdSA6tbNTZWe7HOq8IxYqkERIzsIBvYj6nrU+7uNMUM9vNLxig==}
 
   '@fontsource/noto-serif-sc@5.2.8':
     resolution: {integrity: sha512-C7fAr+d1GjOAw1qIbntsnqbA3l5dkdzcmNNgeCXLC8QZ7VNubL7MTrX8UcYKHceX4mI//z8gGtXbOeeQrB6P7g==}
@@ -3086,6 +3092,8 @@ snapshots:
     dependencies:
       '@eslint/core': 0.15.1
       levn: 0.4.1
+
+  '@fontsource/anton@5.2.7': {}
 
   '@fontsource/noto-serif-sc@5.2.8': {}
 

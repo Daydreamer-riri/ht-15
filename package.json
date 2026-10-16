@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/anton": "5.2.7",
     "@fontsource/noto-serif-sc": "5.2.8",
     "@tailwindcss/vite": "^4.1.11",
     "clsx": "^2.1.1",
