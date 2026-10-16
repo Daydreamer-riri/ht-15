@@ -134,7 +134,17 @@ export function dayHero(day: Day): PoiUnit | HotelUnit | undefined {
     ?? day.items.find((u): u is HotelUnit => u.kind === 'hotel');
 }
 
-/** 行程概要：天数、城市数、地点数、总里程 */
+/** 封面大图：优先选名称包含 cover.hero 的景点，否则用首日封面 */
+export function coverHero(itinerary: Itinerary) {
+  const { hero } = itinerary.cover;
+  const heroes = itinerary.days.map(dayHero);
+  return (hero ? heroes.find(u => u?.kind === 'poi' && u.name.includes(hero)) : undefined) ?? heroes.find(Boolean);
+}
+
+/** 出行方式对应的路段文案 */
+export const legLabel = (itinerary: Itinerary) => (itinerary.mode === 'walk' ? '步行' : '车程');
+
+/** 行程概要：天数、城市数、地点数、总里程、总路程时长 */
 export function tripStats(itinerary: Itinerary) {
   const cities = new Set(itinerary.days.flatMap(d => d.cities.map(c => c.name)));
   const first = itinerary.days[0];
@@ -145,6 +155,7 @@ export function tripStats(itinerary: Itinerary) {
     cities: cities.size,
     places: itinerary.days.flatMap(d => d.items).filter(isStop).length,
     km: itinerary.days.reduce((s, d) => s + dayStats(d).km, 0),
+    minutes: itinerary.days.reduce((s, d) => s + dayStats(d).minutes, 0),
     range: (first && last) ? `${shortDate(first.label)} – ${shortDate(last.label)}` : '',
   };
 }

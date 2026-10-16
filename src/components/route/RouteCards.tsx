@@ -1,6 +1,7 @@
 import type { Day, HotelUnit, Itinerary, Leg, PoiUnit, TransportUnit, Unit } from '@/data/types';
-import { ArrowUpRight, BedDouble, Clock, MapPin, Plane, Ticket, Trophy } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, BedDouble, Clock, MapPin, Plane, Ticket, Trophy } from 'lucide-react';
 import {
+  coverHero,
   dayCities,
   dayHero,
   dayNo,
@@ -9,6 +10,7 @@ import {
   formatDrive,
   formatKm,
   itemNumbers,
+  legLabel,
   pad2,
   parseMinutes,
   shortDate,
@@ -67,21 +69,59 @@ export function Marquee({ items, theme, reverse }: { items: string[]; theme: The
 
 /* ================= 封面 ================= */
 
-export function Cover({ itinerary, stats }: { itinerary: Itinerary; stats: ReturnType<typeof tripStats> }) {
-  const hero = itinerary.days.map(dayHero).find(u => u?.kind === 'poi' && u.name.includes('赛里木')) ?? dayHero(itinerary.days[0]);
-  const days = itinerary.days.length;
+/** 返回线路列表 */
+export function BackLink({ className = '' }: { className?: string }) {
   return (
-    <header className="relative bg-[#1e4fff] text-white">
+    <a
+      href="#/"
+      className={`inline-flex items-center gap-[4px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current ${className}`}
+    >
+      <ArrowLeft className="size-[14px]" />
+      全部线路
+    </a>
+  );
+}
+
+export function Cover({ itinerary, stats }: { itinerary: Itinerary; stats: ReturnType<typeof tripStats> }) {
+  const { cover } = itinerary;
+  const hero = coverHero(itinerary);
+  const days = itinerary.days.length;
+  const walk = itinerary.mode === 'walk';
+  const facts = walk
+    ? [
+        [stats.range.split(' – ')[0], '日期'],
+        [String(stats.places), '地点'],
+        [formatKm(stats.km), '公里'],
+        [formatDrive(stats.minutes), '步行'],
+      ]
+    : [
+        [stats.range.split(' – ')[0], '出发'],
+        [String(stats.cities), '城市'],
+        [String(stats.places), '地点'],
+        [formatKm(stats.km), '公里'],
+      ];
+  return (
+    <header
+      className="relative text-white"
+      style={{ background: cover.color }}
+    >
       {/* 刊头 */}
-      <div className="flex items-center justify-between px-[18px] pt-[max(14px,env(safe-area-inset-top))] pb-[10px] text-[11px] font-semibold tracking-[0.18em] uppercase">
-        <span>Trip Journal</span>
-        <span className="tabular-nums">No.07 · Autumn</span>
+      {/* 刊名行高小于字号会向上溢出，刊头需压在上层才能点到返回 */}
+      <div className="relative z-10 flex items-center justify-between px-[18px] pt-[max(8px,env(safe-area-inset-top))] pb-[4px] text-[11px] font-semibold tracking-[0.18em] uppercase">
+        <BackLink className="-ml-[6px] min-h-[32px] px-[6px] tracking-normal" />
+        <span className="tabular-nums">{cover.issue}</span>
       </div>
       <div className="px-[18px]">
         <div className="font-display text-[90px] leading-[0.86] tracking-[-0.01em] text-[#ffc21a] uppercase">
-          North
-          <br />
-          Xinjiang
+          {cover.headline.map((line, i) => (
+            <span
+              key={line}
+              className="block"
+            >
+              {line}
+              {i < cover.headline.length - 1 && <span className="sr-only"> </span>}
+            </span>
+          ))}
         </div>
       </div>
 
@@ -100,10 +140,9 @@ export function Cover({ itinerary, stats }: { itinerary: Itinerary; stats: Retur
           <div className="font-display text-[30px] leading-[28px]">
             {days}
             D
-            {stats.nights}
-            N
+            {stats.nights > 0 && `${stats.nights}N`}
           </div>
-          <div className="text-[10px] font-bold tracking-[0.1em]">自驾环线</div>
+          <div className="text-[10px] font-bold tracking-[0.1em]">{cover.badge}</div>
         </div>
         <div className="absolute bottom-[14px] left-[14px] bg-ink px-[8px] py-[4px] text-[11px] font-medium text-white">
           封面 ·
@@ -115,21 +154,13 @@ export function Cover({ itinerary, stats }: { itinerary: Itinerary; stats: Retur
       <div className="px-[18px] pt-[22px] pb-[26px]">
         <h1 className="font-serif text-[40px] leading-[46px] font-black tracking-[-0.01em]">{itinerary.name}</h1>
         <p className="mt-[8px] max-w-[30ch] text-[14px] leading-[22px] text-white/80">
-          从吐鲁番的火焰色沙漠出发，一路北上到喀纳斯的白桦林，再折向赛里木湖的蓝。
-          {stats.cities}
-          {' '}
-          座城市，
-          {formatKm(stats.km)}
-          {' '}
-          公里公路。
+          {cover.intro}
+          {walk
+            ? `全程步行约 ${formatKm(stats.km)} 公里。`
+            : `${stats.cities} 座城市，${formatKm(stats.km)} 公里公路。`}
         </p>
         <dl className="mt-[20px] grid grid-cols-4 border-t-2 border-white/90">
-          {[
-            [stats.range.split(' – ')[0], '出发'],
-            [String(stats.cities), '城市'],
-            [String(stats.places), '地点'],
-            [formatKm(stats.km), '公里'],
-          ].map(([n, k], i) => (
+          {facts.map(([n, k], i) => (
             <div
               key={k}
               className={`pt-[10px] ${i ? 'border-l-2 border-white/90 pl-[10px]' : ''}`}
@@ -139,13 +170,17 @@ export function Cover({ itinerary, stats }: { itinerary: Itinerary; stats: Retur
             </div>
           ))}
         </dl>
-        <Editors editors={itinerary.coEditors} />
+        <Editors
+          editors={itinerary.coEditors}
+          ring={cover.color}
+        />
+        {cover.credit && <p className="mt-[14px] text-[10.5px] text-white/60">{cover.credit}</p>}
       </div>
     </header>
   );
 }
 
-function Editors({ editors }: { editors: Itinerary['coEditors'] }) {
+function Editors({ editors, ring }: { editors: Itinerary['coEditors']; ring: string }) {
   const shown = editors.slice(0, 4);
   const rest = editors.length - shown.length;
   return (
@@ -160,11 +195,15 @@ function Editors({ editors }: { editors: Itinerary['coEditors'] }) {
             src={e.avatar}
             alt={e.nickName}
             referrerPolicy="no-referrer"
-            className="-ml-[8px] size-[30px] rounded-full border-2 border-[#1e4fff] bg-white/20 object-cover first:ml-0"
+            className="-ml-[8px] size-[30px] rounded-full border-2 bg-white/20 object-cover first:ml-0"
+            style={{ borderColor: ring }}
           />
         ))}
         {rest > 0 && (
-          <span className="-ml-[8px] flex size-[30px] items-center justify-center rounded-full border-2 border-[#1e4fff] bg-[#ffc21a] text-[11px] font-bold text-ink tabular-nums">
+          <span
+            className="-ml-[8px] flex size-[30px] items-center justify-center rounded-full border-2 bg-[#ffc21a] text-[11px] font-bold text-ink tabular-nums"
+            style={{ borderColor: ring }}
+          >
             +
             {rest}
           </span>
@@ -194,7 +233,13 @@ export function Contents({ itinerary, onJump }: { itinerary: Itinerary; onJump: 
         >
           Contents
         </h2>
-        <span className="pb-[3px] text-[12px] font-semibold text-ink/60">目录 · 7 章</span>
+        <span className="pb-[3px] text-[12px] font-semibold text-ink/60">
+          目录 ·
+          {' '}
+          {itinerary.days.length}
+          {' '}
+          章
+        </span>
       </div>
       <ol>
         {itinerary.days.map(d => {
@@ -238,7 +283,7 @@ export function Contents({ itinerary, onJump }: { itinerary: Itinerary; onJump: 
 
 /* ================= 章节 ================= */
 
-function ChapterOpener({ day, theme }: { day: Day; theme: Theme }) {
+function ChapterOpener({ itinerary, day, theme }: { itinerary: Itinerary; day: Day; theme: Theme }) {
   const hero = dayHero(day);
   const s = dayStats(day);
   return (
@@ -249,7 +294,9 @@ function ChapterOpener({ day, theme }: { day: Day; theme: Theme }) {
           {' '}
           {dayNo(day)}
           {' '}
-          / 07
+          /
+          {' '}
+          {pad2(itinerary.days.length)}
         </span>
         <span className="tabular-nums">
           {shortDate(day.label)}
@@ -275,7 +322,7 @@ function ChapterOpener({ day, theme }: { day: Day; theme: Theme }) {
           <dl className="mt-[14px] flex gap-[22px] border-t-2 border-current pt-[10px]">
             {[
               s.km > 0 && [formatKm(s.km), '公里'],
-              s.minutes > 0 && [formatDrive(s.minutes), '车程'],
+              s.minutes > 0 && [formatDrive(s.minutes), legLabel(itinerary)],
               s.stops > 0 && [String(s.stops), '站'],
             ].filter(Boolean).map(entry => {
               const [n, k] = entry as string[];
@@ -477,6 +524,7 @@ function SimpleTransportStop({ unit }: { unit: TransportUnit }) {
 }
 
 function CustomStop({ unit, no, theme }: { unit: Extract<Unit, { kind: 'custom' }>; no?: number; theme: Theme }) {
+  const time = [unit.playTime, unit.openStatus].filter(Boolean).join(' · ');
   return (
     <article className={`bg-white px-[14px] py-[12px] ${sticker}`}>
       <div className="flex items-center gap-[8px]">
@@ -491,6 +539,11 @@ function CustomStop({ unit, no, theme }: { unit: Extract<Unit, { kind: 'custom' 
           {unit.name}
         </h3>
       </div>
+      {time && (
+        <div className="mt-[6px] pl-[34px]">
+          <Meta icon={Clock}>{time}</Meta>
+        </div>
+      )}
       <Remark text={unit.remark} />
     </article>
   );
@@ -526,11 +579,28 @@ function Stop({ unit, no, theme }: { unit: Unit; no?: number; theme: Theme }) {
   }
 }
 
-const unitTarget = (u: Unit) => (u.kind === 'transport' ? u.from.name : u.name);
+/** 导航关键字；步行线路里的自定义点位（工区、茶水间等室内点）无法导航 */
+function unitTarget(u: Unit, walk: boolean) {
+  if (u.kind === 'transport') {
+    return u.from.name;
+  }
+  if (!walk) {
+    return u.name;
+  }
+  return u.kind === 'custom' ? undefined : `${u.city} ${u.name}`;
+}
 
-export function Chapter({ day, sectionRef, onShowMap }: { day: Day; sectionRef: (el: HTMLElement | null) => void; onShowMap: () => void }) {
+interface ChapterProps {
+  itinerary: Itinerary;
+  day: Day;
+  sectionRef: (el: HTMLElement | null) => void;
+  onShowMap: () => void;
+}
+
+export function Chapter({ itinerary, day, sectionRef, onShowMap }: ChapterProps) {
   const theme = dayTheme(day.index);
   const nums = itemNumbers(day.items);
+  const walk = itinerary.mode === 'walk';
   return (
     <section
       ref={sectionRef}
@@ -540,6 +610,7 @@ export function Chapter({ day, sectionRef, onShowMap }: { day: Day; sectionRef: 
       className="scroll-mt-0"
     >
       <ChapterOpener
+        itinerary={itinerary}
         day={day}
         theme={theme}
       />
@@ -556,7 +627,7 @@ export function Chapter({ day, sectionRef, onShowMap }: { day: Day; sectionRef: 
                 ? (
                     <LegRow
                       leg={u.leg}
-                      to={unitTarget(u)}
+                      to={unitTarget(u, walk)}
                     />
                   )
                 : (i > 0 && <div className="h-[18px]" />)}
@@ -670,9 +741,14 @@ export function Colophon({ itinerary }: { itinerary: Itinerary }) {
   return (
     <footer className="bg-ink px-[18px] pt-[30px] pb-[130px] text-paper">
       <div className="font-display text-[64px] leading-[0.9] text-[#ff5b23] uppercase">
-        See you
-        <br />
-        on the road
+        {itinerary.cover.outro.map(line => (
+          <span
+            key={line}
+            className="block"
+          >
+            {line}
+          </span>
+        ))}
       </div>
       <p className="mt-[16px] text-[12.5px] leading-[20px] text-paper/60">
         行程由
@@ -682,8 +758,10 @@ export function Colophon({ itinerary }: { itinerary: Itinerary }) {
         发起，
         {itinerary.coEditors.length}
         {' '}
-        人共同编辑。路线与距离为规划参考，出发前请以实时路况为准。
+        人共同编辑。
+        {itinerary.cover.note}
       </p>
+      <BackLink className="mt-[18px] text-[13px] font-bold text-paper" />
       <div
         aria-hidden
         className="mt-[20px] flex h-[10px]"

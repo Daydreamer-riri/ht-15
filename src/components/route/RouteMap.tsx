@@ -170,7 +170,7 @@ export function RouteMap({ itinerary, tab, bottomInset = 0, interactive = true }
     });
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       subdomains: 'abc',
-      maxZoom: 18,
+      maxZoom: 19,
       attribution: '&copy; OpenStreetMap',
     }).addTo(map);
     if (interactive) {
@@ -184,14 +184,15 @@ export function RouteMap({ itinerary, tab, bottomInset = 0, interactive = true }
     };
   }, [interactive]);
 
+  const maxZoom = itinerary.mapMaxZoom ?? 12;
   const fit = useMemo(() => (bounds: L.LatLngBounds | null, inset: number) => {
     const map = mapRef.current;
     if (!map || !bounds?.isValid()) {
       return;
     }
     map.invalidateSize();
-    map.fitBounds(bounds, { paddingTopLeft: [36, 44], paddingBottomRight: [36, inset + 28], maxZoom: 12, animate: true });
-  }, []);
+    map.fitBounds(bounds, { paddingTopLeft: [36, 44], paddingBottomRight: [36, inset + 28], maxZoom, animate: true });
+  }, [maxZoom]);
 
   useEffect(() => {
     const layer = layerRef.current;

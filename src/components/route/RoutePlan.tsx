@@ -5,7 +5,13 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { Backlog, Chapter, Colophon, Contents, Cover, Marquee } from './RouteCards';
 import { RouteMap } from './RouteMap';
-import { dayCities, dayNo, dayTheme, INK_THEME, themeVars, TODO_THEME, tripStats } from './utils';
+import { dayCities, dayNo, dayTheme, INK_THEME, themeVars, TODO_THEME, tripStats, unitShortName } from './utils';
+
+/** 封面跑马灯：城市太少（如园区线路）时改用沿途地点 */
+function marqueeItems(itinerary: Itinerary) {
+  const cities = [...new Set(itinerary.days.flatMap(d => d.cities.map(c => c.name)))];
+  return cities.length >= 3 ? cities : itinerary.days.flatMap(d => d.items.map(unitShortName));
+}
 
 /** 顶部章节条高度 */
 const BAR_HEIGHT = 52;
@@ -176,6 +182,8 @@ export function RoutePlan({ itinerary }: { itinerary: Itinerary }) {
   const coverRef = useRef<HTMLDivElement>(null);
   const sectionRefs = useRef(new Map<string, HTMLElement>());
   const stats = tripStats(itinerary);
+  /** 单日线路的总览只有一个城市框，直接展示当天的编号路线更有信息量 */
+  const loopTab: TabKey = itinerary.days.length === 1 ? itinerary.days[0].index : 'overview';
 
   const [current, setCurrent] = useState<TabKey>('overview');
   const [progress, setProgress] = useState(0);
@@ -252,7 +260,7 @@ export function RoutePlan({ itinerary }: { itinerary: Itinerary }) {
           />
           <Marquee
             theme={{ color: '#ffc21a', on: '#14110f' }}
-            items={itinerary.days.flatMap(d => d.cities.map(c => c.name)).filter((c, i, a) => a.indexOf(c) === i)}
+            items={marqueeItems(itinerary)}
           />
         </div>
 
@@ -264,20 +272,32 @@ export function RoutePlan({ itinerary }: { itinerary: Itinerary }) {
           <div className="flex items-end justify-between pb-[10px]">
             <h2 className="font-display text-[46px] leading-[40px] uppercase">The loop</h2>
             <span className="pb-[3px] text-right text-[11.5px] leading-[15px] font-semibold text-ink/60">
-              每种颜色
-              <br />
-              代表一天
+              {itinerary.days.length > 1
+                ? (
+                    <>
+                      每种颜色
+                      <br />
+                      代表一天
+                    </>
+                  )
+                : (
+                    <>
+                      点按
+                      <br />
+                      展开地图
+                    </>
+                  )}
             </span>
           </div>
           <button
             type="button"
-            onClick={() => openMap('overview')}
+            onClick={() => openMap(loopTab)}
             aria-label="打开全程地图"
             className="group relative block aspect-[4/3] w-full overflow-hidden border-2 border-ink shadow-[4px_4px_0_var(--color-ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
           >
             <RouteMap
               itinerary={itinerary}
-              tab="overview"
+              tab={loopTab}
               interactive={false}
             />
             <span className="absolute right-[10px] bottom-[10px] z-[500] flex items-center gap-[6px] border-2 border-ink bg-paper px-[10px] py-[6px] text-[12px] font-bold transition-transform duration-200 group-hover:-translate-y-[2px]">
@@ -295,6 +315,7 @@ export function RoutePlan({ itinerary }: { itinerary: Itinerary }) {
         {itinerary.days.map(d => (
           <Chapter
             key={d.index}
+            itinerary={itinerary}
             day={d}
             sectionRef={sectionRef(String(d.index))}
             onShowMap={() => openMap(d.index)}

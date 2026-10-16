@@ -2,7 +2,19 @@
 import type { Itinerary } from './types';
 
 export const itinerary: Itinerary = {
+  id: 'north-xinjiang',
   name: '七天六晚疆北',
+  mode: 'drive',
+  cover: {
+    headline: ['North', 'Xinjiang'],
+    issue: 'No.07 · Autumn',
+    badge: '自驾环线',
+    intro: '从吐鲁番的火焰色沙漠出发，一路北上到喀纳斯的白桦林，再折向赛里木湖的蓝。',
+    color: '#1e4fff',
+    hero: '赛里木',
+    outro: ['See you', 'on the road'],
+    note: '路线与距离为规划参考，出发前请以实时路况为准。',
+  },
   coEditors: [
     {
       nickName: 'DaydreamerRiri',

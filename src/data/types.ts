@@ -45,6 +45,8 @@ export interface CustomUnit extends UnitBase {
   kind: 'custom';
   name: string;
   position: LatLng;
+  playTime?: string;
+  openStatus?: string;
 }
 
 export interface TransportEnd {
@@ -81,8 +83,36 @@ export interface Day {
   returnLeg?: Leg & { target: string };
 }
 
+/** 封面与封底的杂志化文案 */
+export interface CoverMeta {
+  /** 封面英文大字，每项一行 */
+  headline: string[];
+  /** 刊号，如 No.07 · Autumn */
+  issue: string;
+  /** 封面贴纸下方的短标签，如“自驾环线” */
+  badge: string;
+  intro: string;
+  /** 封面底色 */
+  color: string;
+  /** 封面大图优先选用名称包含该关键字的景点 */
+  hero?: string;
+  /** 封底英文大字，每项一行 */
+  outro: string[];
+  /** 封底免责声明 */
+  note: string;
+  /** 图片版权署名 */
+  credit?: string;
+}
+
 export interface Itinerary {
+  /** 线路唯一标识，用于 URL hash */
+  id: string;
   name: string;
+  /** 出行方式，决定“车程/步行”等文案 */
+  mode: 'drive' | 'walk';
+  cover: CoverMeta;
+  /** 地图自适应时允许的最大缩放级别，默认 12；园区级线路需要更大 */
+  mapMaxZoom?: number;
   coEditors: { nickName: string; avatar: string; owner: boolean }[];
   days: Day[];
   toBePlanned: Unit[];
