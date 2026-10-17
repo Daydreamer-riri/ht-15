@@ -18,10 +18,10 @@ export function createNpcSession({request,onThinking,onReply,onError}){
 
 export function speechChunks(text){
   const sentences=String(text).replace(/[*#`]/g,'').match(/[^。！？!?；;\n]+[。！？!?；;\n]?/g)||[];
-  return sentences.flatMap(sentence=>{const out=[];while(sentence.length>70){let cut=sentence.lastIndexOf('，',65)+1;if(cut<20)cut=60;out.push(sentence.slice(0,cut));sentence=sentence.slice(cut);}if(sentence.trim())out.push(sentence.trim());return out;});
+  return sentences.flatMap(sentence=>{const out=[];while(sentence.length>46){let cut=sentence.lastIndexOf('，',41)+1;if(cut<15)cut=42;out.push(sentence.slice(0,cut));sentence=sentence.slice(cut);}if(sentence.trim())out.push(sentence.trim());return out;});
 }
 
-export function createNpcSpeech({synth,Utterance,onQueued=()=>{},onStart,onEnd,onCaption,onError}){
+export function createNpcSpeech({synth,Utterance,onQueued=()=>{},onComplete=()=>{},onStart,onEnd,onCaption,onError}){
   let generation=0,timer;
   function stop(){generation++;clearTimeout(timer);synth?.cancel();onEnd();}
   function speak(text){
@@ -29,7 +29,7 @@ export function createNpcSpeech({synth,Utterance,onQueued=()=>{},onStart,onEnd,o
     const id=generation,chunks=speechChunks(text);let index=0;onQueued();
     function next(){
       if(id!==generation)return;
-      if(index>=chunks.length){onCaption(text);onEnd();return;}
+      if(index>=chunks.length){onEnd();onComplete(text);return;}
       const part=chunks[index++],utterance=new Utterance(part);utterance.lang='zh-CN';utterance.rate=1.03;utterance.pitch=1.13;
       const voices=synth.getVoices();utterance.voice=voices.find(v=>v.lang==='zh-CN'&&/Ting|晓|Xiao|婷婷/.test(v.name))||voices.find(v=>v.lang==='zh-CN')||voices.find(v=>v.lang.startsWith('zh'))||null;
       const failure=()=>{if(id!==generation)return;stop();onCaption(text);onError('声音没有播放出来，点扬声器可以重播。');};

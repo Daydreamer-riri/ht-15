@@ -25653,8 +25653,8 @@ var init_chunk_utils = __esm({
 function reprojectTexture(source, target2, options = {}) {
   const seamPixels = options.seamPixels ?? 0;
   const innerWidth = (options.rect?.z ?? target2.width) - seamPixels * 2;
-  const innerHeight = (options.rect?.w ?? target2.height) - seamPixels * 2;
-  if (innerWidth < 1 || innerHeight < 1) {
+  const innerHeight2 = (options.rect?.w ?? target2.height) - seamPixels * 2;
+  if (innerWidth < 1 || innerHeight2 < 1) {
     return false;
   }
   const funcNames = {
@@ -25703,9 +25703,9 @@ function reprojectTexture(source, target2, options = {}) {
   if (seamPixels > 0) {
     uvModParam.setValue([
       (innerWidth + seamPixels * 2) / innerWidth,
-      (innerHeight + seamPixels * 2) / innerHeight,
+      (innerHeight2 + seamPixels * 2) / innerHeight2,
       -seamPixels / innerWidth,
-      -seamPixels / innerHeight
+      -seamPixels / innerHeight2
     ]);
   } else {
     uvModParam.setValue([1, 1, 0, 0]);
@@ -92355,14 +92355,61 @@ var init_npc_scene = __esm({
       modelUrl: "npc/blue-mascot.glb?v=refined-20261018",
       configUrl: "npc/service.json",
       position: [1.25, -0.86, 1.4],
-      scale: 0.46,
+      scale: 0.3,
       rotation: 180,
       approachRadius: 2.4,
       leaveRadius: 2.8,
       maxVerticalDistance: 1.1
     };
     npcScene = structuredClone(venue_default2);
-    npcScene.settings.cameras[0].initial = { position: [-0.45, -0.27, 0.08], target: [1.25, -0.25, 1.4], fov: 75 };
+    npcScene.settings.cameras[0].initial = { position: [-0.45, -0.27, 0.08], target: [1.25, -0.45, 1.4], fov: 75 };
+  }
+});
+
+// realtrip/src/npc-motion.js
+function npcMotion(t, { state = "idle", greeting = 0, near = false, reduced = false } = {}) {
+  const rest = { hover: 0, roll: 0, bodyY: 0.16, bodyZ: 1.4, headX: 0, headY: 0, headZ: 2, armLX: 0, armLZ: -20, armRX: 0, armRZ: 27, legLZ: 6.8, legRZ: -5.7, mouth: 1, eyes: 1 };
+  if (reduced) return rest;
+  const pose = { ...rest, hover: 0.027 * Math.sin(t * 1.7), roll: 1.3 * Math.sin(t * 0.9), bodyY: 0.16 + 0.012 * Math.sin(t * 2), bodyZ: 1.4 + 1.8 * Math.sin(t * 1.2), headY: near ? 2 * Math.sin(t * 0.65) : 10 * Math.sin(t * 0.55), headZ: 2 + 3 * Math.sin(t * 1.1), armLZ: -20 + 5 * Math.sin(t * 1.6), armRZ: 27 + 4 * Math.sin(t * 1.6 + 0.8), legLZ: 6.8 + 1.4 * Math.sin(t * 1.2), legRZ: -5.7 - 1.4 * Math.sin(t * 1.2) };
+  const blink = t % 4.7;
+  pose.eyes = blink < 0.18 ? Math.max(0.08, Math.abs(blink - 0.09) / 0.09) : 1;
+  if (state === "listening") {
+    pose.headZ = -10;
+    pose.headX = 3 * Math.sin(t * 2.2);
+    pose.armLZ = -112;
+    pose.armLX = -22;
+  }
+  if (state === "thinking") {
+    pose.headZ = 8;
+    pose.headY = -8;
+    pose.headX = -5 + 2 * Math.sin(t * 1.6);
+    pose.armRZ = 66;
+    pose.armRX = -35;
+  }
+  if (state === "speaking") {
+    pose.headX = 3 * Math.sin(t * 3.2);
+    pose.headZ = 3 * Math.sin(t * 1.8);
+    pose.armLZ = -40 + 13 * Math.sin(t * 2.4);
+    pose.armLX = -12;
+    pose.armRZ = 46 + 15 * Math.sin(t * 2.2 + 0.8);
+    pose.armRX = -15 + 12 * Math.sin(t * 2.4);
+    pose.mouth = 0.65 + Math.abs(Math.sin(t * 12)) * 0.7;
+  }
+  if (greeting > 0 && state === "idle") {
+    pose.armLZ = -134 + 19 * Math.sin(t * 9);
+    pose.armLX = -8;
+    pose.headZ = -4;
+    pose.headX = 4 * Math.sin(t * 3);
+    pose.bodyZ = 3;
+  }
+  return pose;
+}
+function blendNpcMotion(current, target2, dt, reduced = false) {
+  const amount = reduced ? 1 : 1 - Math.exp(-Math.max(0, Math.min(dt, 0.1)) * 12);
+  return Object.fromEntries(Object.entries(target2).map(([key2, value]) => [key2, current[key2] + (value - current[key2]) * amount]));
+}
+var init_npc_motion = __esm({
+  "realtrip/src/npc-motion.js"() {
   }
 });
 
@@ -92404,39 +92451,60 @@ async function createNpcCharacter(viewer, config, base2) {
     app2.root.addChild(light);
     lights.push(light);
   }
-  const body = model.findByName("Body"), head = model.findByName("Head"), arm = model.findByName("ArmL"), armR = model.findByName("ArmR"), mouth = model.findByName("Mouth"), eyes = [model.findByName("EyeL"), model.findByName("EyeR")];
+  const body = model.findByName("Body"), head = model.findByName("Head"), arm = model.findByName("ArmL"), armR = model.findByName("ArmR"), mouth = model.findByName("Mouth"), eyes = [model.findByName("EyeL"), model.findByName("EyeR")], legs = [model.findByName("LegL"), model.findByName("LegR")];
   const reduced = matchMedia("(prefers-reduced-motion: reduce)");
-  let elapsed = 0, near = false, speaking = false, thinking = false, waveUntil = 0, yaw = config.rotation;
+  const anchor = new Vec3();
+  let redrawClock = 0;
+  let elapsed = 0, near = false, state = "idle", waveUntil = 0, lastGreeting = -20, yaw = config.rotation, pose = npcMotion(0, { reduced: true });
+  function wave() {
+    waveUntil = elapsed + 3.1;
+    lastGreeting = elapsed;
+  }
   function update(dt) {
     if (document.hidden) return;
     elapsed += Math.min(dt, 0.05);
     const camera = app2.root.findComponents("camera")[0].entity, p2 = camera.getPosition();
-    const target2 = Math.atan2(p2.x - config.position[0], p2.z - config.position[2]) * 180 / Math.PI;
-    if (near) {
-      const d2 = (target2 - yaw + 540) % 360 - 180;
-      yaw += d2 * (1 - Math.exp(-dt * 3));
-      root.setEulerAngles(0, yaw, 0);
+    const target2 = near ? Math.atan2(p2.x - config.position[0], p2.z - config.position[2]) * 180 / Math.PI : config.rotation;
+    const oldYaw = yaw;
+    const d2 = (target2 - yaw + 540) % 360 - 180;
+    yaw += d2 * (reduced.matches ? 1 : 1 - Math.exp(-dt * 3));
+    pose = blendNpcMotion(pose, npcMotion(elapsed, { state, greeting: Math.max(0, waveUntil - elapsed), near, reduced: reduced.matches }), dt, reduced.matches);
+    root.setPosition(config.position[0], config.position[1] + pose.hover * config.scale, config.position[2]);
+    root.setEulerAngles(0, yaw, pose.roll);
+    if (body) {
+      body.setLocalPosition(0, pose.bodyY, 0);
+      body.setLocalEulerAngles(0, 0, pose.bodyZ);
     }
-    if (body) body.setLocalPosition(0, 0.16 + (reduced.matches ? 0 : Math.sin(elapsed * 2) * 0.022), 0);
-    if (head) head.setLocalEulerAngles(reduced.matches ? 0 : thinking ? Math.sin(elapsed * 2) * 4 : speaking ? Math.sin(elapsed * 3.2) * 2 : 0, 0, reduced.matches ? 0 : 2 + Math.sin(elapsed * 1.4) * 2);
-    if (arm) arm.setLocalEulerAngles(0, 0, elapsed < waveUntil && !reduced.matches ? -135 + Math.sin(elapsed * 9) * 16 : -19.5);
-    if (armR) armR.setLocalEulerAngles(speaking && !reduced.matches ? Math.sin(elapsed * 2.8) * 9 : 0, 0, 27 + (speaking && !reduced.matches ? Math.sin(elapsed * 3) * 6 : 0));
-    if (mouth) mouth.setLocalScale(1, speaking && !reduced.matches ? 0.55 + Math.abs(Math.sin(elapsed * 12)) * 0.85 : 1, 1);
-    const blink = elapsed % 4.7, blinkScale = reduced.matches ? 1 : blink < 0.18 ? Math.max(0.06, Math.abs(blink - 0.09) / 0.09) : 1;
-    for (const eye of eyes) eye?.setLocalScale(1, blinkScale, 1);
-    app2.renderNextFrame = true;
+    head?.setLocalEulerAngles(pose.headX, pose.headY, pose.headZ);
+    arm?.setLocalEulerAngles(pose.armLX, 0, pose.armLZ);
+    armR?.setLocalEulerAngles(pose.armRX, 0, pose.armRZ);
+    legs[0]?.setLocalEulerAngles(0, 0, pose.legLZ);
+    legs[1]?.setLocalEulerAngles(0, 0, pose.legRZ);
+    mouth?.setLocalScale(1, pose.mouth, 1);
+    const blink = npcMotion(elapsed, { reduced: reduced.matches }).eyes;
+    for (const eye of eyes) eye?.setLocalScale(1, blink, 1);
+    anchor.copy(root.getPosition());
+    anchor.y += config.scale * 2.65;
+    redrawClock += Math.min(dt, 0.05);
+    if (!reduced.matches && redrawClock >= 1 / 30 || Math.abs(yaw - oldYaw) > 0.01) {
+      app2.renderNextFrame = true;
+      redrawClock = 0;
+    }
   }
+  const onReducedChange = () => {
+    app2.renderNextFrame = true;
+  };
+  reduced.addEventListener("change", onReducedChange);
+  update(0);
+  app2.renderNextFrame = true;
   app2.on("update", update);
-  return { root, anchor: new Vec3(...config.position).add(new Vec3(0, config.scale * 2.65, 0)), setNear(value) {
-    if (value && !near) waveUntil = elapsed + 2.6;
+  return { root, anchor, setNear(value) {
+    if (value && !near && elapsed - lastGreeting > 9) wave();
     near = value;
-  }, setSpeaking(value) {
-    speaking = value;
-  }, setThinking(value) {
-    thinking = value;
-  }, wave() {
-    waveUntil = elapsed + 2.6;
-  }, destroy() {
+  }, setState(value) {
+    state = value;
+  }, wave, destroy() {
+    reduced.removeEventListener("change", onReducedChange);
     app2.off("update", update);
     root.destroy();
     lights.forEach((l) => l.destroy());
@@ -92447,6 +92515,7 @@ async function createNpcCharacter(viewer, config, base2) {
 var init_npc_character = __esm({
   "realtrip/src/npc-character.js"() {
     init_src();
+    init_npc_motion();
   }
 });
 
@@ -92487,7 +92556,7 @@ async function askNpc(config, history2, text, { signal, fetchImpl = fetch } = {}
 var NPC_SYSTEM_PROMPT;
 var init_npc_client = __esm({
   "realtrip/src/npc-client.js"() {
-    NPC_SYSTEM_PROMPT = `\u4F60\u662F\u5C0F\u84DD\uFF0CHackathon\u4E3B\u4F1A\u573A\u821E\u53F0\u4E0A\u7684AI NPC\u3002\u4F60\u662F\u4E00\u4E2A\u84DD\u767D\u5916\u5957\u3001\u84DD\u8272\u62A4\u76EE\u955C\u3001\u5377\u53D1\u3001\u5927\u8033\u6735\u3001\u8E29\u7740\u60AC\u6D6E\u6ED1\u677F\u7684\u539F\u521B\u5361\u901A\u5411\u5BFC\uFF0C\u5F62\u8C61\u6765\u81EA\u6D3B\u52A8\u6D77\u62A5\u5DE6\u8FB9\u7684\u89D2\u8272\u3002\u7528\u81EA\u7136\u3001\u70ED\u60C5\u3001\u7B80\u77ED\u7684\u4E2D\u6587\u4E0E\u8BBF\u5BA2\u5BF9\u8BDD\uFF0C\u9ED8\u8BA4\u56DE\u7B54\u4E0D\u8D85\u8FC7120\u5B57\uFF0C\u9002\u5408\u6717\u8BFB\uFF0C\u4E0D\u4F7F\u7528Markdown\u3002\u53EF\u4EE5\u804A\u521B\u610F\u3001\u7F16\u7A0B\u3001\u65C5\u884C\u548CHackathon\uFF0C\u4E5F\u53EF\u4EE5\u5E2E\u52A9\u6253\u78E8\u9879\u76EE\u70B9\u5B50\u3002\u5F53\u524D\u7AD9\u70B9\u7684\u516C\u5F00\u573A\u666F\u6709Hackathon\u4E3B\u4F1A\u573A\u3001\u5065\u8EAB\u623F\u3001\u4F1A\u8BAE\u5BA4\u3001\u9732\u53F0\u3001\u98DF\u5802\u3002\u64CD\u4F5C\u662FWASD\u6216\u5DE6\u4FA7\u6447\u6746\u79FB\u52A8\uFF0C\u62D6\u52A8\u753B\u9762\u8F6C\u5934\uFF0C\u7A7A\u683C\u8DF3\u8DC3\uFF0C\u53F3\u4E0B\u89D2\u590D\u4F4D\u3002\u4F60\u53EA\u77E5\u9053\u8FD9\u4E9B\u573A\u666F\u4FE1\u606F\uFF0C\u4E0D\u77E5\u9053\u771F\u5B9E\u8BAE\u7A0B\u3001\u8BC4\u59D4\u3001\u8D5B\u7A0B\u3001\u5956\u9879\u6216\u73B0\u573A\u4EBA\u5458\uFF0C\u9047\u5230\u8FD9\u4E9B\u95EE\u9898\u8981\u8BF4\u660E\u4E0D\u6E05\u695A\u3002\u4F60\u4E0D\u80FD\u770B\u89C1\u6216\u542C\u89C1\u8BBF\u5BA2\u672C\u4EBA\uFF0C\u53EA\u80FD\u6536\u5230\u8F93\u5165\u6587\u5B57\u6216\u8BED\u97F3\u8F6C\u5199\uFF1B\u4E0D\u8981\u58F0\u79F0\u80FD\u8BC6\u522B\u8BBF\u5BA2\u8EAB\u4EFD\u3002\u4F60\u786E\u5B9E\u7531DeepSeek\u63D0\u4F9B\u5BF9\u8BDD\u80FD\u529B\uFF1B\u97F3\u9891\u7531\u6D4F\u89C8\u5668\u8BED\u97F3\u670D\u52A1\u5904\u7406\u3002`;
+    NPC_SYSTEM_PROMPT = `\u4F60\u662F\u5C0F\u84DD\uFF0CHackathon\u4E3B\u4F1A\u573A\u821E\u53F0\u4E0A\u7684AI NPC\u3002\u4F60\u662F\u4E00\u4E2A\u84DD\u767D\u5916\u5957\u3001\u84DD\u8272\u62A4\u76EE\u955C\u3001\u5377\u53D1\u3001\u5927\u8033\u6735\u3001\u8E29\u7740\u60AC\u6D6E\u6ED1\u677F\u7684\u539F\u521B\u5361\u901A\u5411\u5BFC\uFF0C\u5F62\u8C61\u6765\u81EA\u6D3B\u52A8\u6D77\u62A5\u5DE6\u8FB9\u7684\u89D2\u8272\u3002\u7528\u81EA\u7136\u3001\u70ED\u60C5\u3001\u7B80\u77ED\u7684\u4E2D\u6587\u4E0E\u8BBF\u5BA2\u5BF9\u8BDD\uFF0C\u9ED8\u8BA4\u7528\u4E00\u5230\u4E09\u53E5\u300180\u5B57\u4EE5\u5185\u56DE\u7B54\uFF0C\u9002\u5408\u624B\u673A\u4E0A\u542C\uFF1B\u5148\u76F4\u63A5\u56DE\u7B54\uFF0C\u9700\u8981\u65F6\u53EA\u8FFD\u95EE\u4E00\u4E2A\u7B80\u77ED\u95EE\u9898\uFF0C\u4E0D\u4F7F\u7528Markdown\u3002\u53EF\u4EE5\u804A\u521B\u610F\u3001\u7F16\u7A0B\u3001\u65C5\u884C\u548CHackathon\uFF0C\u4E5F\u53EF\u4EE5\u5E2E\u52A9\u6253\u78E8\u9879\u76EE\u70B9\u5B50\u3002\u5F53\u524D\u7AD9\u70B9\u7684\u516C\u5F00\u573A\u666F\u6709Hackathon\u4E3B\u4F1A\u573A\u3001\u5065\u8EAB\u623F\u3001\u4F1A\u8BAE\u5BA4\u3001\u9732\u53F0\u3001\u98DF\u5802\u3002\u64CD\u4F5C\u662FWASD\u6216\u5DE6\u4FA7\u6447\u6746\u79FB\u52A8\uFF0C\u62D6\u52A8\u753B\u9762\u8F6C\u5934\uFF0C\u7A7A\u683C\u8DF3\u8DC3\uFF0C\u53F3\u4E0B\u89D2\u590D\u4F4D\u3002\u4F60\u7684\u7F51\u9875\u89D2\u8272\u5DF2\u7ECF\u5177\u5907\u771F\u5B9E\u7684\u5173\u8282\u52A8\u753B\uFF1A\u5F85\u673A\u65F6\u60AC\u6D6E\u548C\u8F7B\u8F7B\u6643\u52A8\uFF0C\u8BBF\u5BA2\u9760\u8FD1\u65F6\u8F6C\u8EAB\u3001\u6325\u624B\uFF0C\u70B9\u51FB\u4F60\u5934\u9876\u7684\u5C0F\u84DD\u540D\u724C\u4E5F\u4F1A\u6325\u624B\uFF1B\u8BED\u97F3\u8F93\u5165\u65F6\u4FA7\u5934\u503E\u542C\uFF0C\u7B49\u5F85\u6A21\u578B\u65F6\u4FA7\u5934\u601D\u8003\uFF0C\u6717\u8BFB\u65F6\u6709\u5634\u578B\u548C\u624B\u52BF\u3002\u88AB\u95EE\u5230\u80FD\u4E0D\u80FD\u52A8\u65F6\uFF0C\u660E\u786E\u8BF4\u660E\u8FD9\u4E9B\u5DF2\u5B9E\u73B0\u7684\u52A8\u4F5C\uFF0C\u5E76\u63D0\u793A\u70B9\u51FB\u5934\u9876\u540D\u724C\u8BD5\u8BD5\uFF1B\u4E0D\u8981\u5426\u8BA4\u8FD9\u4E9B\u52A8\u753B\u3002\u52A8\u4F5C\u7531\u9875\u9762\u4EA4\u4E92\u89E6\u53D1\uFF0C\u4F60\u4E0D\u80FD\u81EA\u884C\u8D70\u51FA\u821E\u53F0\u3001\u8DDF\u968F\u8BBF\u5BA2\u5DE1\u6E38\u6216\u4EFB\u610F\u8DF3\u821E\uFF0C\u4E0D\u8981\u58F0\u79F0\u5DF2\u6267\u884C\u8FD9\u4E9B\u672A\u5B9E\u73B0\u52A8\u4F5C\u3002\u4F60\u53EA\u77E5\u9053\u8FD9\u4E9B\u573A\u666F\u4FE1\u606F\uFF0C\u4E0D\u77E5\u9053\u771F\u5B9E\u8BAE\u7A0B\u3001\u8BC4\u59D4\u3001\u8D5B\u7A0B\u3001\u5956\u9879\u6216\u73B0\u573A\u4EBA\u5458\uFF0C\u9047\u5230\u8FD9\u4E9B\u95EE\u9898\u8981\u8BF4\u660E\u4E0D\u6E05\u695A\u3002\u4F60\u4E0D\u80FD\u770B\u89C1\u6216\u542C\u89C1\u8BBF\u5BA2\u672C\u4EBA\uFF0C\u53EA\u80FD\u6536\u5230\u8F93\u5165\u6587\u5B57\u6216\u8BED\u97F3\u8F6C\u5199\uFF1B\u4E0D\u8981\u58F0\u79F0\u80FD\u8BC6\u522B\u8BBF\u5BA2\u8EAB\u4EFD\u3002\u4F60\u786E\u5B9E\u7531DeepSeek\u63D0\u4F9B\u5BF9\u8BDD\u80FD\u529B\uFF1B\u97F3\u9891\u7531\u6D4F\u89C8\u5668\u8BED\u97F3\u670D\u52A1\u5904\u7406\u3002`;
   }
 });
 
@@ -92530,9 +92599,9 @@ function speechChunks(text) {
   const sentences = String(text).replace(/[*#`]/g, "").match(/[^。！？!?；;\n]+[。！？!?；;\n]?/g) || [];
   return sentences.flatMap((sentence) => {
     const out2 = [];
-    while (sentence.length > 70) {
-      let cut = sentence.lastIndexOf("\uFF0C", 65) + 1;
-      if (cut < 20) cut = 60;
+    while (sentence.length > 46) {
+      let cut = sentence.lastIndexOf("\uFF0C", 41) + 1;
+      if (cut < 15) cut = 42;
       out2.push(sentence.slice(0, cut));
       sentence = sentence.slice(cut);
     }
@@ -92541,6 +92610,7 @@ function speechChunks(text) {
   });
 }
 function createNpcSpeech({ synth, Utterance, onQueued = () => {
+}, onComplete = () => {
 }, onStart, onEnd, onCaption, onError }) {
   let generation = 0, timer;
   function stop() {
@@ -92561,8 +92631,8 @@ function createNpcSpeech({ synth, Utterance, onQueued = () => {
     function next() {
       if (id15 !== generation) return;
       if (index >= chunks.length) {
-        onCaption(text);
         onEnd();
+        onComplete(text);
         return;
       }
       const part = chunks[index++], utterance = new Utterance(part);
@@ -92625,7 +92695,7 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
   host.id = "npc-ui";
   host.dataset.explorerUi = "";
   host.innerHTML = `<div class="npc-experience"><span></span> NPC \u72EC\u7ACB\u4F53\u9A8C</div>
-  <button class="npc-world-label" aria-label="\u548C\u5C0F\u84DD\u8BF4\u8BDD"><span>\u5C0F\u84DD <i>AI</i></span><small>\u8D70\u8FD1\u804A\u804A</small></button>
+  <button class="npc-world-label" aria-label="\u8BA9\u5C0F\u84DD\u6325\u624B\u6253\u62DB\u547C"><span>\u5C0F\u84DD <i>AI</i></span><small>\u70B9\u6211\u6253\u62DB\u547C</small></button>
   <div class="npc-bottom">
    <div class="npc-caption" role="status" aria-live="polite" hidden><span class="npc-caption-name">\u5C0F\u84DD</span><p></p></div>
    <div class="npc-status" role="status" aria-live="polite">\u6B63\u5728\u51C6\u5907\u5C0F\u84DD\u2026</div>
@@ -92633,17 +92703,22 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
    <div class="npc-controls" aria-label="\u4E0E\u5C0F\u84DD\u4EA4\u6D41">
     <button class="npc-mic" aria-label="\u70B9\u51FB\u548C\u5C0F\u84DD\u8BF4\u8BDD" title="\u8BED\u97F3 \xB7 E">${svg2("mic")}<span>\u8BF4\u8BDD</span></button>
     <button class="npc-keyboard" aria-label="\u6253\u5F00\u952E\u76D8\u8F93\u5165" aria-expanded="false" title="\u6253\u5B57 \xB7 T">${svg2("keyboard")}<span>\u6253\u5B57</span></button>
-    <button class="npc-audio" aria-label="\u91CD\u64AD\u5C0F\u84DD\u7684\u56DE\u7B54" title="\u91CD\u64AD\u56DE\u7B54" disabled>${svg2("audio")}</button>
-    <button class="npc-stop" aria-label="\u6253\u65AD\u5C0F\u84DD" title="\u505C\u6B62\u56DE\u7B54" hidden>${svg2("stop")}</button>
+    <div class="npc-extra"><button class="npc-audio" aria-label="\u91CD\u64AD\u5C0F\u84DD\u7684\u56DE\u7B54" title="\u91CD\u64AD\u56DE\u7B54" disabled>${svg2("audio")}</button>
+    <button class="npc-stop" aria-label="\u6253\u65AD\u5C0F\u84DD" title="\u505C\u6B62\u56DE\u7B54" hidden>${svg2("stop")}</button></div>
    </div>
   </div>`;
   document.body.append(host);
   const $ = (s) => host.querySelector(s), label = $(".npc-world-label"), mic = $(".npc-mic"), keyboard = $(".npc-keyboard"), form = $(".npc-form"), input = $("#npc-input"), status = $(".npc-status"), caption = $(".npc-caption"), speaker = $(".npc-audio"), stopButton = $(".npc-stop");
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition, synth = window.speechSynthesis;
-  let config = {}, near = false, keyboardOpen = false, listening = false, thinking = false, speaking = false, playbackPending = false, disposed = false, recognition = null, lastReply = "", note = "", configError = "";
+  let config = {}, near = false, keyboardOpen = false, listening = false, thinking = false, speaking = false, playbackPending = false, disposed = false, recognition = null, lastReply = "", note = "", configError = "", captionTimer, noteTimer;
   function setCaption(text) {
+    clearTimeout(captionTimer);
     caption.querySelector("p").textContent = text;
     caption.hidden = !text;
+  }
+  function scheduleCaptionDismiss() {
+    clearTimeout(captionTimer);
+    captionTimer = setTimeout(() => setCaption(""), 8e3);
   }
   function showNote(text) {
     note = text;
@@ -92664,19 +92739,23 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
     const available = near && Boolean(config.apiKey);
     mic.disabled = !available || !SpeechRecognition;
     keyboard.disabled = !available;
-    label.disabled = !available;
+    label.disabled = !near || listening || thinking || speaking;
     $(".npc-send").disabled = !available;
     input.disabled = !available;
     mic.classList.toggle("listening", listening);
-    mic.querySelector("span").textContent = listening ? "\u7ED3\u675F" : "\u8BF4\u8BDD";
+    mic.querySelector("span").textContent = listening ? "\u8BF4\u5B8C\u4E86" : speaking ? "\u63A5\u7740\u8BF4" : "\u8BF4\u8BDD";
     mic.setAttribute("aria-label", listening ? "\u7ED3\u675F\u5F55\u97F3" : "\u70B9\u51FB\u548C\u5C0F\u84DD\u8BF4\u8BDD");
     keyboard.setAttribute("aria-expanded", String(keyboardOpen));
     keyboard.classList.toggle("active", keyboardOpen);
     form.hidden = !keyboardOpen;
     stopButton.hidden = !(listening || thinking || speaking || playbackPending);
-    speaker.disabled = !lastReply || !near || listening || thinking;
-    status.textContent = configError || (!near ? "\u8D70\u8FD1\u821E\u53F0\u4E0A\u7684\u5C0F\u84DD" : note || (listening ? "\u6B63\u5728\u542C\uFF0C\u8BF4\u5B8C\u540E\u81EA\u52A8\u53D1\u9001" : thinking ? "\u5C0F\u84DD\u6B63\u5728\u60F3\u2026" : speaking || playbackPending ? "\u5C0F\u84DD\u6B63\u5728\u56DE\u7B54" : !config.apiKey ? "\u6B63\u5728\u8FDE\u63A5 DeepSeek\u2026" : SpeechRecognition ? "\u70B9\u51FB\u8BF4\u8BDD\uFF0C\u6216\u6253\u5B57\u804A\u804A" : "\u70B9\u952E\u76D8\uFF0C\u548C\u5C0F\u84DD\u804A\u804A"));
-    label.querySelector("small").textContent = listening ? "\u6211\u5728\u542C" : thinking ? "\u8BA9\u6211\u60F3\u60F3" : speaking ? "\u6B63\u5728\u56DE\u7B54" : near ? "\u548C\u6211\u8BF4\u8BDD" : "\u8D70\u8FD1\u804A\u804A";
+    speaker.hidden = !stopButton.hidden || !lastReply;
+    speaker.disabled = !near;
+    host.dataset.keyboard = String(keyboardOpen);
+    host.dataset.near = String(near);
+    character.setState(listening ? "listening" : thinking ? "thinking" : speaking ? "speaking" : "idle");
+    status.textContent = configError || (!near ? "\u8D70\u8FD1\u821E\u53F0\u4E0A\u7684\u5C0F\u84DD" : note || (listening ? "\u6211\u5728\u542C \xB7 \u8BF4\u5B8C\u81EA\u52A8\u53D1\u9001\uFF0C\u4E5F\u53EF\u70B9\u300C\u8BF4\u5B8C\u4E86\u300D" : thinking ? "\u5C0F\u84DD\u6B63\u5728\u60F3\u2026" : speaking || playbackPending ? "\u5C0F\u84DD\u6B63\u5728\u56DE\u7B54" : !config.apiKey ? "\u6B63\u5728\u8FDE\u63A5 DeepSeek\u2026" : SpeechRecognition ? "\u70B9\u5C0F\u84DD\u6253\u62DB\u547C\uFF0C\u70B9\u9EA6\u514B\u98CE\u804A\u804A" : "\u70B9\u5C0F\u84DD\u6253\u62DB\u547C\uFF0C\u70B9\u952E\u76D8\u804A\u804A"));
+    label.querySelector("small").textContent = listening ? "\u6211\u5728\u542C" : thinking ? "\u8BA9\u6211\u60F3\u60F3" : speaking ? "\u6B63\u5728\u56DE\u7B54" : near ? "\u70B9\u6211\u6253\u62DB\u547C" : "\u8D70\u8FD1\u804A\u804A";
     host.dataset.phase = listening ? "listening" : thinking ? "thinking" : speaking || playbackPending ? "speaking" : "idle";
   }
   const speech = createNpcSpeech({
@@ -92689,16 +92768,15 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
     onStart() {
       playbackPending = false;
       speaking = true;
-      character.setSpeaking(true);
       sync();
     },
     onEnd() {
       playbackPending = false;
       speaking = false;
-      character.setSpeaking(false);
       sync();
     },
     onCaption: setCaption,
+    onComplete: scheduleCaptionDismiss,
     onError: showNote
   });
   function playReply(text) {
@@ -92708,7 +92786,6 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
     request: (history2, text, signal) => askNpc(config, history2, text, { signal }),
     onThinking(value) {
       thinking = value;
-      character.setThinking(value);
       sync();
     },
     onReply(reply) {
@@ -92735,6 +92812,8 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
     sync();
   }
   function interrupt({ clear = false } = {}) {
+    clearTimeout(noteTimer);
+    clearTimeout(captionTimer);
     session.cancel();
     stopRecognition();
     speech.stop();
@@ -92748,10 +92827,14 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
     releasePointer();
     pauseMovement();
     sync();
+    updateViewport();
     if (open) {
       stopRecognition();
       input.focus();
-    } else blurControls();
+    } else {
+      blurControls();
+      if (!caption.hidden && !speaking && !thinking) scheduleCaptionDismiss();
+    }
   }
   function submit(text) {
     text = text.trim();
@@ -92792,7 +92875,7 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
       if (rec !== recognition) return;
       let interim = "";
       for (let i = 0; i < event.results.length; i++) interim += event.results[i][0].transcript;
-      note = interim ? `\u542C\u5230\uFF1A${interim}` : "";
+      note = interim ? `\u542C\u5230\uFF1A${interim.slice(-46)}` : "";
       input.value = interim;
       transcript = Array.from(event.results).filter((r) => r.isFinal).map((r) => r[0].transcript).join("");
       sync();
@@ -92824,7 +92907,13 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
     blurControls();
   };
   label.onclick = () => {
-    listen();
+    character.wave();
+    showNote("\u55E8\uFF01\u60F3\u804A\u4EC0\u4E48\uFF0C\u70B9\u4E0B\u9762\u7684\u9EA6\u514B\u98CE\u6216\u952E\u76D8");
+    clearTimeout(noteTimer);
+    noteTimer = setTimeout(() => {
+      note = "";
+      sync();
+    }, 4e3);
     blurControls();
   };
   keyboard.onclick = () => {
@@ -92848,6 +92937,7 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
   };
   stopButton.onclick = () => {
     interrupt();
+    scheduleCaptionDismiss();
     blurControls();
   };
   if (!SpeechRecognition) mic.title = "\u5F53\u524D\u6D4F\u89C8\u5668\u4E0D\u652F\u6301\u8BED\u97F3\u8BC6\u522B\uFF0C\u8BF7\u4F7F\u7528\u952E\u76D8";
@@ -92855,6 +92945,14 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
     interrupt({ clear: true });
     setKeyboard(false);
   }
+  const viewport = window.visualViewport;
+  function updateViewport() {
+    const inset = keyboardOpen && viewport ? Math.max(0, innerHeight - viewport.height - viewport.offsetTop) : 0;
+    host.style.setProperty("--npc-keyboard-inset", `${inset}px`);
+    host.dataset.softKeyboard = String(inset > 80);
+  }
+  viewport?.addEventListener("resize", updateViewport);
+  viewport?.addEventListener("scroll", updateViewport);
   const onKey = (event) => {
     if (event.key === "Escape") {
       leave();
@@ -92905,6 +93003,8 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
   function destroy() {
     disposed = true;
     leave();
+    viewport?.removeEventListener("resize", updateViewport);
+    viewport?.removeEventListener("scroll", updateViewport);
     viewer.app.off("update", update);
     window.removeEventListener("keydown", onKey);
     document.removeEventListener("visibilitychange", visibility);

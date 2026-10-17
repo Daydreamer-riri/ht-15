@@ -1,4 +1,5 @@
 import {Entity,Color,Vec3,ShaderChunks} from 'playcanvas';
+import {npcMotion,blendNpcMotion} from './npc-motion.js';
 
 export async function createNpcCharacter(viewer,config,base){
   const app=viewer.app;
@@ -29,24 +30,36 @@ export async function createNpcCharacter(viewer,config,base){
   for(const [name,color,intensity,rotation] of [['NPC key',[1,.94,.88],.85,[65,180,0]],['NPC fill',[.8,.9,1],.4,[25,95,0]],['NPC rim',[.45,.8,1],.45,[35,0,0]]]){
     const light=new Entity(name);light.addComponent('light',{type:'directional',color:new Color(...color),intensity,castShadows:false,mask:2});light.setEulerAngles(...rotation);app.root.addChild(light);lights.push(light);
   }
-  const body=model.findByName('Body'),head=model.findByName('Head'),arm=model.findByName('ArmL'),armR=model.findByName('ArmR'),mouth=model.findByName('Mouth'),eyes=[model.findByName('EyeL'),model.findByName('EyeR')];
+  const body=model.findByName('Body'),head=model.findByName('Head'),arm=model.findByName('ArmL'),armR=model.findByName('ArmR'),mouth=model.findByName('Mouth'),eyes=[model.findByName('EyeL'),model.findByName('EyeR')],legs=[model.findByName('LegL'),model.findByName('LegR')];
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
-  let elapsed=0,near=false,speaking=false,thinking=false,waveUntil=0,yaw=config.rotation;
+  const anchor=new Vec3();
+  let redrawClock=0;
+  let elapsed=0,near=false,state='idle',waveUntil=0,lastGreeting=-20,yaw=config.rotation,pose=npcMotion(0,{reduced:true});
+  function wave(){waveUntil=elapsed+3.1;lastGreeting=elapsed;}
   function update(dt){
     if(document.hidden)return;
     elapsed+=Math.min(dt,.05);
     const camera=app.root.findComponents('camera')[0].entity,p=camera.getPosition();
-    const target=Math.atan2(p.x-config.position[0],p.z-config.position[2])*180/Math.PI;
-    if(near){const d=((target-yaw+540)%360)-180;yaw+=d*(1-Math.exp(-dt*3));root.setEulerAngles(0,yaw,0);}
-    if(body)body.setLocalPosition(0,.16+(reduced.matches?0:Math.sin(elapsed*2)*.022),0);
-    if(head)head.setLocalEulerAngles(reduced.matches?0:thinking?Math.sin(elapsed*2)*4:speaking?Math.sin(elapsed*3.2)*2:0,0,reduced.matches?0:2+Math.sin(elapsed*1.4)*2);
-    if(arm)arm.setLocalEulerAngles(0,0,elapsed<waveUntil&&!reduced.matches?-135+Math.sin(elapsed*9)*16:-19.5);
-    if(armR)armR.setLocalEulerAngles(speaking&&!reduced.matches?Math.sin(elapsed*2.8)*9:0,0,27+(speaking&&!reduced.matches?Math.sin(elapsed*3)*6:0));
-    if(mouth)mouth.setLocalScale(1,speaking&&!reduced.matches ? .55+Math.abs(Math.sin(elapsed*12))*.85 : 1,1);
-    const blink=elapsed%4.7,blinkScale=reduced.matches?1:blink<.18?Math.max(.06,Math.abs(blink-.09)/.09):1;
-    for(const eye of eyes)eye?.setLocalScale(1,blinkScale,1);
-    app.renderNextFrame=true;
+    const target=near?Math.atan2(p.x-config.position[0],p.z-config.position[2])*180/Math.PI:config.rotation;
+    const oldYaw=yaw;
+    const d=((target-yaw+540)%360)-180;yaw+=d*(reduced.matches?1:1-Math.exp(-dt*3));
+    pose=blendNpcMotion(pose,npcMotion(elapsed,{state,greeting:Math.max(0,waveUntil-elapsed),near,reduced:reduced.matches}),dt,reduced.matches);
+    root.setPosition(config.position[0],config.position[1]+pose.hover*config.scale,config.position[2]);root.setEulerAngles(0,yaw,pose.roll);
+    if(body){body.setLocalPosition(0,pose.bodyY,0);body.setLocalEulerAngles(0,0,pose.bodyZ);}
+    head?.setLocalEulerAngles(pose.headX,pose.headY,pose.headZ);
+    arm?.setLocalEulerAngles(pose.armLX,0,pose.armLZ);armR?.setLocalEulerAngles(pose.armRX,0,pose.armRZ);
+    legs[0]?.setLocalEulerAngles(0,0,pose.legLZ);legs[1]?.setLocalEulerAngles(0,0,pose.legRZ);
+    mouth?.setLocalScale(1,pose.mouth,1);
+    // Eyelids must close fast enough to be perceived as a blink, not a squint.
+    const blink=npcMotion(elapsed,{reduced:reduced.matches}).eyes;
+    for(const eye of eyes)eye?.setLocalScale(1,blink,1);
+    anchor.copy(root.getPosition());anchor.y+=config.scale*2.65;
+    // Idle avatar motion needs at most 30 redraws/s. Walking still requests its
+    // own frames; reduced-motion mode does not continuously redraw the venue.
+    redrawClock+=Math.min(dt,.05);
+    if((!reduced.matches&&redrawClock>=1/30)||Math.abs(yaw-oldYaw)>.01){app.renderNextFrame=true;redrawClock=0;}
   }
-  app.on('update',update);
-  return {root,anchor:new Vec3(...config.position).add(new Vec3(0,config.scale*2.65,0)),setNear(value){if(value&&!near)waveUntil=elapsed+2.6;near=value;},setSpeaking(value){speaking=value;},setThinking(value){thinking=value;},wave(){waveUntil=elapsed+2.6;},destroy(){app.off('update',update);root.destroy();lights.forEach(l=>l.destroy());app.assets.remove(asset);asset.unload();}};
+  const onReducedChange=()=>{app.renderNextFrame=true;};reduced.addEventListener('change',onReducedChange);
+  update(0);app.renderNextFrame=true;app.on('update',update);
+  return {root,anchor,setNear(value){if(value&&!near&&elapsed-lastGreeting>9)wave();near=value;},setState(value){state=value;},wave,destroy(){reduced.removeEventListener('change',onReducedChange);app.off('update',update);root.destroy();lights.forEach(l=>l.destroy());app.assets.remove(asset);asset.unload();}};
 }

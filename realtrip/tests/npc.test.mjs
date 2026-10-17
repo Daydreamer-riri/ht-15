@@ -1,6 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
+import {npcMotion,blendNpcMotion} from '../src/npc-motion.js';
 import {createNpcSession,createNpcSpeech,speechChunks} from '../src/npc-session.js';
 import {askNpc,conversationMessages} from '../src/npc-client.js';
 import {npcScene,npcConfig,isNearNpc} from '../src/npc-scene.js';
@@ -105,4 +106,32 @@ test('missing speech support and browser playback errors leave an actionable err
   createNpcSpeech({...callbacks}).speak('你好');assert.match(errors[0],/不能朗读/);
   const speech=createNpcSpeech({...callbacks,synth:{cancel(){},getVoices:()=>[],speak(){throw Error('blocked');}},Utterance:class{}});
   speech.speak('你好');assert.match(errors[1],/重播/);speech.stop();
+});
+
+test('gesture targets distinguish wave, listening, thought and speech without moving the NPC off stage',()=>{
+  const idle=npcMotion(2),wave=npcMotion(2,{greeting:1}),listen=npcMotion(2,{state:'listening'}),thought=npcMotion(2,{state:'thinking'}),speech=npcMotion(2,{state:'speaking'});
+  assert(wave.armLZ < -100);assert(listen.armLZ < -90);assert.equal(thought.headY,-8);assert.notEqual(speech.mouth,idle.mouth);
+  for(const state of ['idle','listening','thinking','speaking'])for(let t=0;t<30;t+=.1){
+    const p=npcMotion(t,{state,greeting:1});assert(Object.values(p).every(Number.isFinite));
+    assert(Math.abs(p.hover)<.03);assert(p.bodyY>.14&&p.bodyY<.18);assert(p.mouth>=.6&&p.mouth<=1.4);assert(p.eyes>=.08&&p.eyes<=1);
+  }
+});
+
+test('reduced motion is static and pose blending is frame-rate independent',()=>{
+  const rest=npcMotion(0,{reduced:true});
+  for(const state of ['idle','listening','thinking','speaking'])assert.deepEqual(npcMotion(3,{state,near:true,greeting:2,reduced:true}),rest);
+  const target=npcMotion(2,{greeting:2});let slow=rest,fast=rest;
+  for(let i=0;i<30;i++)slow=blendNpcMotion(slow,target,1/30);
+  for(let i=0;i<60;i++)fast=blendNpcMotion(fast,target,1/60);
+  for(const key of Object.keys(rest))assert(Math.abs(slow[key]-fast[key])<1e-8);
+  assert.deepEqual(blendNpcMotion(target,rest,0,true),rest);
+});
+
+test('completed speech retains only its last subtitle chunk and signals completion once',()=>{
+  const captions=[],completed=[],queue=[];
+  const speech=createNpcSpeech({synth:{cancel(){},getVoices:()=>[],speak:u=>queue.push(u)},Utterance:class{constructor(text){this.text=text;}},onStart(){},onEnd(){},onCaption:t=>captions.push(t),onComplete:t=>completed.push(t),onError:assert.fail});
+  const text='欢迎来到会场。一起聊聊创意吧。';
+  try{speech.speak(text);queue[0].onstart();queue[0].onend();queue[1].onstart();queue[1].onend();assert.equal(captions.at(-1),'一起聊聊创意吧。');assert.deepEqual(completed,[text]);}
+  finally{speech.stop();}
+  const chunks=speechChunks('想法'.repeat(80));assert(chunks.every(chunk=>chunk.length<=46));assert.equal(chunks.join(''),'想法'.repeat(80));
 });
