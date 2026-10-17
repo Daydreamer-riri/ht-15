@@ -7,10 +7,10 @@ import {explorerScenes,explorerScenePath} from '../src/explorer-ui.js';
 import {viewerPhysicsPlugin,exposeViewerPhysics} from '../../scripts/viewer-physics-plugin.mjs';
 
 const json=path=>JSON.parse(readFileSync(new URL(path,import.meta.url)));
-const hall=json('../src/insta360-5bfe.json'),floors=json('../src/two-floor.json');
+const hall=json('../src/venue.json'),floors=json('../src/two-floor.json');
 const solids=json('../public/two-floor/solids.json'),checks=json('../public/two-floor/navigation-checks.json');
-const metadata=json('../public/insta360-5bfe/scene.voxel.json');
-const bytes=readFileSync(new URL('../public/insta360-5bfe/scene.voxel.bin',import.meta.url));
+const metadata=json('../public/venue/scene.voxel.json');
+const bytes=readFileSync(new URL('../public/venue/scene.voxel.bin',import.meta.url));
 const binary=bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength);
 // Test the same pinned native physics exports as the browser bundle.
 const output=await build({entryPoints:['realtrip/src/dynamic-navigation.js'],plugins:[viewerPhysicsPlugin],bundle:true,write:false,format:'esm',platform:'node',external:['node:worker_threads'],logLevel:'silent'});
@@ -34,9 +34,9 @@ function controller(body,initial){
 }
 
 test('five scenes and old aliases stay within the same Pages entrance',()=>{
- assert.deepEqual(explorerScenes.map(([id])=>id),['insta360-5bfe','two-floor','building2','terrace','cafeteria']);
+ assert.deepEqual(explorerScenes.map(([id])=>id),['hackathon','two-floor','building2','terrace','cafeteria']);
  const base='/haojiaxu/hackathon-15/walk/';
- assert.equal(explorerScenePath('hackathon',base),base+'?scene=insta360-5bfe');
+ assert.equal(explorerScenePath('hackathon',base),base+'?scene=hackathon');
  assert.equal(explorerScenePath('honor-corridor',base),base+'?scene=two-floor');
  assert.throws(()=>exposeViewerPhysics('changed upstream'),/hook changed/);
 });

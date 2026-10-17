@@ -4,11 +4,11 @@
 
 - [北疆行程首页](https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/)：保留原有七套行程风格。
 - [演讲演示](https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/presentation/)：点击或 ↓ 逐条推进，↑ 回退，R 重来，F 全屏；最后的二维码进入本站食堂。
-- [实景漫游](https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/walk/)：默认阶梯报告厅；菜单仅包含阶梯报告厅、双层休息空间、2号楼、露台和食堂。前两个场景来自 junhaoqin/realtrip-walk-hackathon26，统一使用本站的界面和移动控制。
+- [实景漫游](https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/walk/)：默认Hackathon主会场；菜单仅包含Hackathon主会场、双层休息空间、2号楼、露台和食堂。前两个场景来自 junhaoqin/realtrip-walk-hackathon26，统一使用本站的界面和移动控制。
 - [凌空星球](https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/sky-soho/?view=planet)：凌空 SOHO 一日游，支持旋转、缩放、地点选择、俯瞰及日落光照。使用独立入口，不加入漫游场景菜单。
 - [北疆星球](https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/route-3d/?view=planet)：与凌空星球共用界面，可在顶部切换，也可返回实景漫游。
 
-山湖保留独立入口 `/walk/?scene=alpine-lake`，不加入公开场景菜单。旧场景参数如 `insta360` 和 `cafeteria-original` 在 `/walk/` 下仍可使用。
+山湖保留独立入口 `/walk/?scene=alpine-lake`，不加入公开场景菜单。旧场景参数如 `building2` 和 `cafeteria-original` 在 `/walk/` 下仍可使用。
 
 ## 开发与构建
 

@@ -1,5 +1,5 @@
 {
-  "title": "阶梯报告厅 · Insta360",
+  "title": "Hackathon主会场",
   "settings": {
     "version": 2,
     "tonemapping": "none",
@@ -59,8 +59,7 @@
       "jumpSpeed": 2.4
     }
   },
-  "contentUrl": "scene.sog",
-  "collisionUrl": "scene.voxel.json",
+  "contentUrl": "venue/scene.sog",
   "waypoints": {
     "start": {
       "position": [
@@ -105,6 +104,10 @@
       "fov": 90
     }
   },
-  "collisionMeshUrl": "scene.collision.glb",
-  "screensUrl": "screens.json"
+  "screensUrl": "venue/screens.json",
+  "navigation": {
+    "kind": "voxel-body",
+    "url": "venue/scene.voxel.json",
+    "speed": 1.65
+  }
 }

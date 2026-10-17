@@ -39,46 +39,52 @@
       "sha256": "53d57ac279f4950b75b80ce0a5a0a495f2042fd2b0f4ecc032a49c7a627f6a53"
     },
     {
-      "upstream": "dist/insta360-5bfe/scene.sog",
-      "local": "models/insta360-5bfe.sog",
+      "local": "models/venue.sog",
       "bytes": 16328425,
-      "sha256": "e4dfc6b5cf56f90546e7cab08dc6f1982c4c0a7360eef52530c3defcf137e106"
+      "sha256": "e4dfc6b5cf56f90546e7cab08dc6f1982c4c0a7360eef52530c3defcf137e106",
+      "upstreamBlob": "f7f6fc058e46ce02ff42f5ed696c609d7e2771cd"
     },
     {
-      "upstream": "dist/insta360-5bfe/scene.json",
-      "local": "public/insta360-5bfe/scene.json",
-      "bytes": 2060,
-      "sha256": "64b101914dc455f838260a1ad419ee175c0438138263763d9307fd2919010ecb"
+      "local": "public/venue/scene.json",
+      "bytes": 2051,
+      "sha256": "879fc2d5fb8c2366330c13aaeb1b939ea282ad8f17442a39a283efe351f07d93",
+      "upstreamBlob": "8269f9a44aedc29b03d2cc8fb04d048ab389a07e",
+      "upstreamSha256": "64b101914dc455f838260a1ad419ee175c0438138263763d9307fd2919010ecb",
+      "upstreamBytes": 2060,
+      "adaptation": "Local naming and documentation only; model and collision bytes unchanged."
     },
     {
-      "upstream": "dist/insta360-5bfe/scene.voxel.json",
-      "local": "public/insta360-5bfe/scene.voxel.json",
+      "local": "public/venue/scene.voxel.json",
       "bytes": 640,
-      "sha256": "8c71104aa96211f597e2ad3b17250b61a499cfd8b8dd68ece9a440a14483a092"
+      "sha256": "8c71104aa96211f597e2ad3b17250b61a499cfd8b8dd68ece9a440a14483a092",
+      "upstreamBlob": "9b804c2d4e4a9ec60604f2c7188b3d6f7ff55e01"
     },
     {
-      "upstream": "dist/insta360-5bfe/scene.voxel.bin",
-      "local": "public/insta360-5bfe/scene.voxel.bin",
+      "local": "public/venue/scene.voxel.bin",
       "bytes": 606740,
-      "sha256": "03a6739d0aab7f90c2ae02d857981751f32e8d6f44bd269e8ede0f59445233b7"
+      "sha256": "03a6739d0aab7f90c2ae02d857981751f32e8d6f44bd269e8ede0f59445233b7",
+      "upstreamBlob": "61f01df1baca1643750602c482b222ff04071f13"
     },
     {
-      "upstream": "dist/insta360-5bfe/screens.json",
-      "local": "public/insta360-5bfe/screens.json",
+      "local": "public/venue/screens.json",
       "bytes": 3369,
-      "sha256": "2787d5bc8107f19e1ce44a8733486cfb1e5a2357cf05260381a7f622d07bda54"
+      "sha256": "2787d5bc8107f19e1ce44a8733486cfb1e5a2357cf05260381a7f622d07bda54",
+      "upstreamBlob": "038d8dcf24c21b087dd53bf84fa3ebeb8105335e"
     },
     {
-      "upstream": "dist/insta360-5bfe/hackathon-screen.jpeg",
-      "local": "public/insta360-5bfe/hackathon-screen.jpeg",
+      "local": "public/venue/hackathon-screen.jpeg",
       "bytes": 293425,
-      "sha256": "5c226dfb7a6021155871387ffb9c9cf12a61b5c963b401507d4b01f4c9a2f873"
+      "sha256": "5c226dfb7a6021155871387ffb9c9cf12a61b5c963b401507d4b01f4c9a2f873",
+      "upstreamBlob": "8433e840e321da429751f765a27413065309697f"
     },
     {
-      "upstream": "dist/insta360-5bfe/README.md",
-      "local": "public/insta360-5bfe/README.md",
-      "bytes": 3167,
-      "sha256": "bea5a513991b15de1e5d7ee021d98e2bb370e8975c96d216fc9856eacd054eaa"
+      "local": "public/venue/README.md",
+      "bytes": 1319,
+      "sha256": "aef7bea80792ba2161c5d96655f9c390b7cc69a43df647f7a1c97498e324ef96",
+      "upstreamBlob": "707a09f20a58a052fb8e6dadb826d69a30294068",
+      "upstreamSha256": "bea5a513991b15de1e5d7ee021d98e2bb370e8975c96d216fc9856eacd054eaa",
+      "upstreamBytes": 3167,
+      "adaptation": "Local naming and documentation only; model and collision bytes unchanged."
     },
     {
       "upstream": "src/solid-physics.js",

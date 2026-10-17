@@ -101520,14 +101520,14 @@ async function loadSceneSupplements(viewer, models, base2) {
 
 // realtrip/src/explorer-ui.js
 var explorerScenes = [
-  ["insta360-5bfe", "\u9636\u68AF\u62A5\u544A\u5385"],
+  ["hackathon", "Hackathon\u4E3B\u4F1A\u573A"],
   ["two-floor", "\u53CC\u5C42\u4F11\u606F\u7A7A\u95F4"],
   ["building2", "2\u53F7\u697C"],
   ["terrace", "\u9732\u53F0"],
   ["cafeteria", "\u98DF\u5802"]
 ];
 var sceneDetails = {
-  "insta360-5bfe": { icon: "gallery", description: "Hackathon \u4F1A\u573A\u4E0E\u9636\u68AF\u5EA7\u5E2D" },
+  "hackathon": { icon: "gallery", description: "Hackathon \u4F1A\u573A\u4E0E\u9636\u68AF\u5EA7\u5E2D" },
   "two-floor": { icon: "gallery", description: "\u4E00\u5C42\u4F11\u606F\u533A\u3001\u697C\u68AF\u4E0E\u4E8C\u5C42\u7A7A\u95F4" },
   building2: { icon: "building", description: "\u4F1A\u8BAE\u5BA4\u4E0E\u7A97\u8FB9\u8FDE\u5ECA" },
   terrace: { icon: "terrace", description: "\u6237\u5916\u9732\u53F0\u4E0E\u56ED\u533A\u98CE\u666F" },
@@ -101544,7 +101544,7 @@ var paths = {
 var svg = (icon) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[icon] ?? paths.building}</svg>`;
 function explorerScenePath(id15, base2 = "/") {
   const root = base2.endsWith("/") ? base2 : base2 + "/";
-  id15 = { hackathon: "insta360-5bfe", "honor-corridor": "two-floor" }[id15] ?? id15;
+  id15 = { "honor-corridor": "two-floor" }[id15] ?? id15;
   if (id15 === "sky-soho") return `${root.replace(/[^/]+\/$/, "")}sky-soho/?view=planet`;
   if (!explorerScenes.some(([key2]) => key2 === id15)) throw new Error("Unknown scene");
   return `${root}?scene=${id15}`;
@@ -101658,8 +101658,8 @@ function initExplorerUi() {
   document.getElementById("pad").append(label);
 }
 
-// realtrip/src/insta360.json
-var insta360_default = {
+// realtrip/src/building2.json
+var building2_default = {
   settings: {
     version: 2,
     tonemapping: "none",
@@ -101711,7 +101711,7 @@ var insta360_default = {
     ],
     startMode: "default"
   },
-  contentUrl: "insta360/scene.sog?v=building2-doorway-20261017",
+  contentUrl: "building2/scene.sog?v=building2-doorway-20261017",
   waypoints: {
     room: {
       position: [
@@ -103507,9 +103507,9 @@ var two_floor_default = {
   }
 };
 
-// realtrip/src/insta360-5bfe.json
-var insta360_5bfe_default = {
-  title: "\u9636\u68AF\u62A5\u544A\u5385 \xB7 Insta360",
+// realtrip/src/venue.json
+var venue_default = {
+  title: "Hackathon\u4E3B\u4F1A\u573A",
   settings: {
     version: 2,
     tonemapping: "none",
@@ -103569,7 +103569,7 @@ var insta360_5bfe_default = {
       jumpSpeed: 2.4
     }
   },
-  contentUrl: "insta360-5bfe/scene.sog",
+  contentUrl: "venue/scene.sog",
   waypoints: {
     start: {
       position: [
@@ -103614,10 +103614,10 @@ var insta360_5bfe_default = {
       fov: 90
     }
   },
-  screensUrl: "insta360-5bfe/screens.json",
+  screensUrl: "venue/screens.json",
   navigation: {
     kind: "voxel-body",
-    url: "insta360-5bfe/scene.voxel.json",
+    url: "venue/scene.voxel.json",
     speed: 1.65
   }
 };
@@ -103712,25 +103712,25 @@ async function loadSceneScreens(viewer, screens, base2) {
 
 // realtrip/src/walker.js
 var base = new URL(".", location.href).pathname;
-var instaBase = { data: insta360_default, destination: "building2", label: "2\u53F7\u697C \xB7 \u4F1A\u8BAE\u5BA4\u4E0E\u8FDE\u5ECA", source: "https://app.insta360.com/3dspace/detail/GS3DCedd7c150d451455497575a8852bf7285", credit: "2\u53F7\u697C\u5B9E\u62CD \xB7 Remy \u91CD\u5EFA", scope: "\u4ECE\u4F1A\u8BAE\u5BA4\u7A7F\u8FC7\u95E8\u53E3\uFF0C\u53EF\u4EE5\u76F4\u63A5\u8D70\u5230\u8FDE\u5ECA\uFF0C\u4E5F\u80FD\u539F\u8DEF\u8D70\u56DE\u6765\u3002\u89C6\u70B9\u5BF9\u9F50\u539F\u62CD\u6444\u773C\u9AD8\u3002\u5730\u9762\u3001\u5899\u9762\u3001\u62A4\u680F\u548C\u4F1A\u8BAE\u684C\u91C7\u7528\u6309\u626B\u63CF\u8F6E\u5ED3\u6821\u51C6\u7684\u7B80\u5316\u78B0\u649E\uFF1B\u6905\u5B50\u3001\u95E8\u6247\u548C\u7EC6\u5C0F\u7269\u4F53\u5C1A\u672A\u9010\u4E00\u5EFA\u6A21\u3002\u5DF2\u7ED3\u5408\u8865\u62CD\u753B\u9762\u6821\u6B63\u4F1A\u8BAE\u5BA4\u7EC6\u8282\uFF0C\u6A2A\u5C4F\u89C6\u91CE\u66F4\u5F00\u9614\uFF1B\u73BB\u7483\u53CD\u5C04\u3001\u7EC6\u6905\u811A\u53CA\u672A\u5145\u5206\u62CD\u6444\u7684\u89D2\u843D\u4ECD\u53EF\u80FD\u6709\u91CD\u5EFA\u7455\u75B5\u3002" };
-var terraceBase = { data: terrace_default, destination: "terrace", label: "\u9732\u53F0 \xB7 \u5B9E\u666F\u63A2\u7D22", source: "https://app.insta360.com/3dspace/detail/GS3DC10601a25a50d455d8a18e2773e368879", credit: "\u9732\u53F0\u5B9E\u62CD \xB7 Remy \u91CD\u5EFA", scope: "\u5728\u9732\u53F0\u5165\u53E3\u3001\u4E2D\u592E\u7A7A\u5730\u548C\u89C2\u666F\u7AEF\u4E4B\u95F4\u8FDE\u7EED\u81EA\u7531\u8D70\u52A8\u3002\u6309\u62CD\u6444\u8F68\u8FF9\u548C\u5730\u677F\u70B9\u4E91\u6821\u6B63\u6A21\u578B\u503E\u659C\u3001\u5730\u9762\u53CA\u89C6\u70B9\u9AD8\u5EA6\uFF1B\u73BB\u7483\u5E55\u5899\u3001\u82B1\u7BB1\u3001\u62A4\u680F\u4E0E\u684C\u6905\u91C7\u7528\u7B80\u5316\u963B\u6321\u3002\u8FDC\u5904\u697C\u5B87\u4E3A\u80CC\u666F\u626B\u63CF\uFF0C\u672A\u5F00\u653E\u884C\u8D70\u3002" };
-var cafeteriaBase = { data: cafeteria_default, destination: "cafeteria", label: "\u98DF\u5802", source: "https://app.insta360.com/3dspace/detail/GS3DC9401fd20afb548cd8bfa6f5b31b8458a", credit: "\u98DF\u5802\u5B9E\u62CD", scope: "\u4FDD\u7559\u4EBA\u7269\uFF0C\u7ED3\u5408\u539F\u59CB\u53D6\u9910\u533A\u4E0E\u8865\u62CD\u7528\u9910\u533A\u3002\u5165\u53E3\u3001\u53D6\u9910\u901A\u9053\u548C\u9910\u684C\u65C1\u7684\u8FC7\u9053\u53EF\u4EE5\u8FDE\u7EED\u5F80\u8FD4\uFF0C\u5730\u9762\u3001\u67DC\u53F0\u3001\u7ACB\u67F1\u548C\u684C\u6905\u91C7\u7528\u6821\u51C6\u540E\u7684\u7B80\u5316\u78B0\u649E\u3002\u73BB\u7483\u53CD\u5C04\u3001\u4EBA\u7269\u8FD0\u52A8\u6B8B\u5F71\u4E0E\u8FDC\u5904\u672A\u5145\u5206\u62CD\u6444\u7684\u533A\u57DF\u4ECD\u6709\u91CD\u5EFA\u7455\u75B5\u3002" };
+var buildingBase = { data: building2_default, destination: "building2", label: "2\u53F7\u697C \xB7 \u4F1A\u8BAE\u5BA4\u4E0E\u8FDE\u5ECA", source: null, credit: "2\u53F7\u697C\u5B9E\u62CD \xB7 Remy \u91CD\u5EFA", scope: "\u4ECE\u4F1A\u8BAE\u5BA4\u7A7F\u8FC7\u95E8\u53E3\uFF0C\u53EF\u4EE5\u76F4\u63A5\u8D70\u5230\u8FDE\u5ECA\uFF0C\u4E5F\u80FD\u539F\u8DEF\u8D70\u56DE\u6765\u3002\u89C6\u70B9\u5BF9\u9F50\u539F\u62CD\u6444\u773C\u9AD8\u3002\u5730\u9762\u3001\u5899\u9762\u3001\u62A4\u680F\u548C\u4F1A\u8BAE\u684C\u91C7\u7528\u6309\u626B\u63CF\u8F6E\u5ED3\u6821\u51C6\u7684\u7B80\u5316\u78B0\u649E\uFF1B\u6905\u5B50\u3001\u95E8\u6247\u548C\u7EC6\u5C0F\u7269\u4F53\u5C1A\u672A\u9010\u4E00\u5EFA\u6A21\u3002\u5DF2\u7ED3\u5408\u8865\u62CD\u753B\u9762\u6821\u6B63\u4F1A\u8BAE\u5BA4\u7EC6\u8282\uFF0C\u6A2A\u5C4F\u89C6\u91CE\u66F4\u5F00\u9614\uFF1B\u73BB\u7483\u53CD\u5C04\u3001\u7EC6\u6905\u811A\u53CA\u672A\u5145\u5206\u62CD\u6444\u7684\u89D2\u843D\u4ECD\u53EF\u80FD\u6709\u91CD\u5EFA\u7455\u75B5\u3002" };
+var terraceBase = { data: terrace_default, destination: "terrace", label: "\u9732\u53F0 \xB7 \u5B9E\u666F\u63A2\u7D22", source: null, credit: "\u9732\u53F0\u5B9E\u62CD \xB7 Remy \u91CD\u5EFA", scope: "\u5728\u9732\u53F0\u5165\u53E3\u3001\u4E2D\u592E\u7A7A\u5730\u548C\u89C2\u666F\u7AEF\u4E4B\u95F4\u8FDE\u7EED\u81EA\u7531\u8D70\u52A8\u3002\u6309\u62CD\u6444\u8F68\u8FF9\u548C\u5730\u677F\u70B9\u4E91\u6821\u6B63\u6A21\u578B\u503E\u659C\u3001\u5730\u9762\u53CA\u89C6\u70B9\u9AD8\u5EA6\uFF1B\u73BB\u7483\u5E55\u5899\u3001\u82B1\u7BB1\u3001\u62A4\u680F\u4E0E\u684C\u6905\u91C7\u7528\u7B80\u5316\u963B\u6321\u3002\u8FDC\u5904\u697C\u5B87\u4E3A\u80CC\u666F\u626B\u63CF\uFF0C\u672A\u5F00\u653E\u884C\u8D70\u3002" };
+var cafeteriaBase = { data: cafeteria_default, destination: "cafeteria", label: "\u98DF\u5802", source: null, credit: "\u98DF\u5802\u5B9E\u62CD", scope: "\u4FDD\u7559\u4EBA\u7269\uFF0C\u7ED3\u5408\u539F\u59CB\u53D6\u9910\u533A\u4E0E\u8865\u62CD\u7528\u9910\u533A\u3002\u5165\u53E3\u3001\u53D6\u9910\u901A\u9053\u548C\u9910\u684C\u65C1\u7684\u8FC7\u9053\u53EF\u4EE5\u8FDE\u7EED\u5F80\u8FD4\uFF0C\u5730\u9762\u3001\u67DC\u53F0\u3001\u7ACB\u67F1\u548C\u684C\u6905\u91C7\u7528\u6821\u51C6\u540E\u7684\u7B80\u5316\u78B0\u649E\u3002\u73BB\u7483\u53CD\u5C04\u3001\u4EBA\u7269\u8FD0\u52A8\u6B8B\u5F71\u4E0E\u8FDC\u5904\u672A\u5145\u5206\u62CD\u6444\u7684\u533A\u57DF\u4ECD\u6709\u91CD\u5EFA\u7455\u75B5\u3002" };
 var scenes = {
-  "insta360-5bfe": { data: insta360_5bfe_default, destination: "insta360-5bfe", label: "\u9636\u68AF\u62A5\u544A\u5385", title: "\u8D70\u8FDB\u9636\u68AF\u62A5\u544A\u5385\u3002", area: "\u62A5\u544A\u5385\u8D77\u70B9", credit: "Insta360 X6 / Remy \xB7 junhaoqin \u56E2\u961F", source: "https://app.insta360.com/3dspace/detail/GS3DC5bfe2359b4f24163a38f5d9314f2e94e", scope: "\u6765\u81EA realtrip-walk-hackathon26 \u7684\u9636\u68AF\u62A5\u544A\u5385\uFF0C\u4FDD\u7559\u539F\u59CB\u6A21\u578B\u3001\u4F53\u7D20\u78B0\u649E\u3001\u884C\u4EBA\u773C\u9AD8\u53CA\u4E09\u5757 Hackathon \u5C4F\u5E55\u3002\u4F7F\u7528\u672C\u7AD9\u7EDF\u4E00\u7684\u79FB\u52A8\u3001\u8F6C\u5934\u4E0E\u91CD\u7F6E\u64CD\u4F5C\u3002\u5C3A\u5EA6\u672A\u7ECF\u73B0\u573A\u6D4B\u91CF\uFF0C\u8584\u7269\u4F53\u548C\u7F3A\u5931\u626B\u63CF\u5904\u7684\u78B0\u649E\u53EF\u80FD\u4E0D\u5B8C\u6574\u3002" },
+  "hackathon": { data: venue_default, destination: "hackathon", label: "Hackathon\u4E3B\u4F1A\u573A", title: "\u8D70\u8FDBHackathon\u4E3B\u4F1A\u573A\u3002", area: "\u4E3B\u4F1A\u573A\u8D77\u70B9", credit: "Remy \xB7 junhaoqin \u56E2\u961F", source: null, scope: "\u6765\u81EA realtrip-walk-hackathon26 \u7684Hackathon\u4E3B\u4F1A\u573A\uFF0C\u4FDD\u7559\u539F\u59CB\u6A21\u578B\u3001\u4F53\u7D20\u78B0\u649E\u3001\u884C\u4EBA\u773C\u9AD8\u53CA\u4E09\u5757 Hackathon \u5C4F\u5E55\u3002\u4F7F\u7528\u672C\u7AD9\u7EDF\u4E00\u7684\u79FB\u52A8\u3001\u8F6C\u5934\u4E0E\u91CD\u7F6E\u64CD\u4F5C\u3002\u5C3A\u5EA6\u672A\u7ECF\u73B0\u573A\u6D4B\u91CF\uFF0C\u8584\u7269\u4F53\u548C\u7F3A\u5931\u626B\u63CF\u5904\u7684\u78B0\u649E\u53EF\u80FD\u4E0D\u5B8C\u6574\u3002" },
   "two-floor": { data: two_floor_default, destination: "two-floor", label: "\u53CC\u5C42\u4F11\u606F\u7A7A\u95F4", title: "\u4ECE\u4E00\u5C42\uFF0C\u6162\u6162\u901B\u8D77\u3002", area: "\u4E00\u5C42\u4F11\u606F\u533A", credit: "\u516D\u6BB5\u5B9E\u62CD\u89C6\u9891 \xB7 junhaoqin \u56E2\u961F", source: "https://git.dev.sh.ctripcorp.com/junhaoqin/realtrip-walk-hackathon26", scope: "\u6765\u81EA realtrip-walk-hackathon26 \u7684\u53CC\u5C42\u5B9E\u62CD\u6A21\u578B\u3002\u4E00\u5C42\u3001\u6298\u8FD4\u697C\u68AF\u548C\u4E8C\u5C42\u53EF\u4EE5\u8FDE\u7EED\u884C\u8D70\uFF1B\u4FDD\u7559\u697C\u5C42\u3001\u53F0\u9636\u3001\u62A4\u680F\u53CA\u5BB6\u5177\u78B0\u649E\u3002\u4F7F\u7528\u672C\u7AD9\u7EDF\u4E00\u64CD\u4F5C\uFF0C\u6A21\u578B\u4E2D\u672A\u5145\u5206\u62CD\u6444\u7684\u533A\u57DF\u4ECD\u53EF\u80FD\u6A21\u7CCA\u3002" },
-  "hackathon-original": { data: hackathon_default, destination: "hackathon-original", hidden: true, label: "Hackathon \u4E3B\u4F1A\u573A\uFF08\u539F\u7248\uFF09", title: "Hackathon \u4E3B\u4F1A\u573A", area: "\u4E3B\u4F1A\u573A", credit: "\u4E3B\u4F1A\u573A\u5B9E\u62CD", source: "https://app.insta360.com/3dspace/detail/GS3DC5bfe2359b4f24163a38f5d9314f2e94e", scope: "\u539F\u7248\u4F1A\u573A\u6A21\u578B\u4E0E\u6821\u51C6\u540E\u7684\u5730\u5F62\u78B0\u649E\u3002" },
+  "hackathon-original": { data: hackathon_default, destination: "hackathon-original", hidden: true, label: "Hackathon \u4E3B\u4F1A\u573A\uFF08\u539F\u7248\uFF09", title: "Hackathon \u4E3B\u4F1A\u573A", area: "\u4E3B\u4F1A\u573A", credit: "\u4E3B\u4F1A\u573A\u5B9E\u62CD", source: null, scope: "\u539F\u7248\u4F1A\u573A\u6A21\u578B\u4E0E\u6821\u51C6\u540E\u7684\u5730\u5F62\u78B0\u649E\u3002" },
   "alpine-lake": { data: alpine_lake_default, destination: "alpine-lake", label: "\u5C71\u6E56\u6F2B\u6E38", title: "\u6CBF\u7740\u6E56\u5CB8\uFF0C\u8D70\u8D70\u770B\u770B\u3002", area: "\u6E56\u5CB8\u8349\u5730", hidden: true, credit: "\u7528\u6237\u63D0\u4F9B\u7684\u5C71\u6E56\u6A21\u578B", scope: "\u4F7F\u7528\u63D0\u4F9B\u7684 SPZ \u573A\u666F\u548C PLY \u78B0\u649E\u7F51\u683C\u3002\u53EF\u4EE5\u6CBF\u6E56\u5CB8\u8349\u5730\u81EA\u7531\u884C\u8D70\uFF0C\u968F\u5730\u5F62\u8D77\u4F0F\uFF1B\u6C34\u9762\u3001\u9661\u5761\u548C\u6A21\u578B\u8FB9\u7F18\u9650\u5236\u901A\u884C\u3002\u8FDC\u666F\u548C\u5C40\u90E8\u6C34\u9762\u5B58\u5728\u6E90\u6A21\u578B\u7684\u91CD\u5EFA\u7455\u75B5\u3002", source: null },
   cafeteria: { ...cafeteriaBase, title: "\u98DF\u5802", area: "\u98DF\u5802\u5165\u53E3", waypoint: "entrance" },
   terrace: { ...terraceBase, title: "\u5230\u9732\u53F0\uFF0C\u8D70\u8D70\u770B\u770B\u3002", area: "\u9732\u53F0\u5165\u53E3", waypoint: "entrance" },
   "terrace-open": { ...terraceBase, title: "\u5728\u9732\u53F0\u4E0A\uFF0C\u81EA\u7531\u8D70\u8D70\u3002", area: "\u4E2D\u592E\u7A7A\u5730", waypoint: "open" },
   "terrace-view": { ...terraceBase, title: "\u6362\u4E2A\u89D2\u5EA6\uFF0C\u770B\u770B\u56ED\u533A\u3002", area: "\u89C2\u666F\u7AEF", waypoint: "view" },
-  building2: { ...instaBase, title: "\u56DE\u5230\u4F1A\u8BAE\u5BA4\uFF0C\u7EE7\u7EED\u63A2\u7D22\u3002", area: "\u4F1A\u8BAE\u5BA4\u5185", waypoint: "room" },
-  "building2-door": { ...instaBase, title: "\u95E8\u5185\u95E8\u5916\uFF0C\u90FD\u80FD\u8D70\u3002", area: "\u4F1A\u8BAE\u5BA4\u95E8\u53E3", waypoint: "door" },
-  "building2-aisle": { ...instaBase, title: "\u6CBF\u7740\u8FDE\u5ECA\uFF0C\u81EA\u7531\u8D70\u8D70\u3002", area: "\u8FDE\u5ECA\u5165\u53E3", waypoint: "aisle" },
-  "building2-far": { ...instaBase, title: "\u6362\u4E2A\u65B9\u5411\uFF0C\u770B\u770B\u3002", area: "\u8FDE\u5ECA\u53E6\u4E00\u4FA7", waypoint: "far" }
+  building2: { ...buildingBase, title: "\u56DE\u5230\u4F1A\u8BAE\u5BA4\uFF0C\u7EE7\u7EED\u63A2\u7D22\u3002", area: "\u4F1A\u8BAE\u5BA4\u5185", waypoint: "room" },
+  "building2-door": { ...buildingBase, title: "\u95E8\u5185\u95E8\u5916\uFF0C\u90FD\u80FD\u8D70\u3002", area: "\u4F1A\u8BAE\u5BA4\u95E8\u53E3", waypoint: "door" },
+  "building2-aisle": { ...buildingBase, title: "\u6CBF\u7740\u8FDE\u5ECA\uFF0C\u81EA\u7531\u8D70\u8D70\u3002", area: "\u8FDE\u5ECA\u5165\u53E3", waypoint: "aisle" },
+  "building2-far": { ...buildingBase, title: "\u6362\u4E2A\u65B9\u5411\uFF0C\u770B\u770B\u3002", area: "\u8FDE\u5ECA\u53E6\u4E00\u4FA7", waypoint: "far" }
 };
 var requestedScene = new URLSearchParams(location.search).get("scene");
-var legacyScenes = { hackathon: "insta360-5bfe", "honor-corridor": "two-floor", insta360: "building2", "insta360-room": "building2", "insta360-door": "building2-door", "insta360-aisle": "building2-aisle", "insta360-far": "building2-far", "cafeteria-original": "cafeteria" };
+var legacyScenes = { "honor-corridor": "two-floor", "building2-room": "building2", "cafeteria-original": "cafeteria" };
 var requested = legacyScenes[requestedScene] ?? requestedScene;
 var standaloneScenes = { "sky-soho": "\u51CC\u7A7A\u4E00\u65E5" };
 if (Object.hasOwn(standaloneScenes, requested)) {
@@ -103773,7 +103773,7 @@ if (Object.hasOwn(standaloneScenes, requested)) {
     $("knob").style.transform = `translate(calc(-50% + ${x2}px),calc(-50% + ${y2}px))`;
     officeNav?.setMoveInput(x2 / radius, -y2 / radius);
   };
-  const key2 = Object.hasOwn(scenes, requested) ? requested : "insta360-5bfe";
+  const key2 = Object.hasOwn(scenes, requested) ? requested : "hackathon";
   const current = scenes[key2];
   let scene = structuredClone(current.data);
   const $ = (id15) => document.getElementById(id15);
@@ -103801,16 +103801,14 @@ if (Object.hasOwn(standaloneScenes, requested)) {
   document.querySelector("#loading h2").textContent = "\u6B63\u5728\u8D70\u8FDB" + current.area;
   $("credit").textContent = "\u5B9E\u666F\uFF1A" + current.credit;
   $("source").href = current.source ?? "#";
-  if (!current.source) {
-    $("source").hidden = true;
-    $("about-source").hidden = true;
-  }
+  $("source").hidden = !current.source;
+  $("about-source").hidden = !current.source;
   $("scene-scope").textContent = current.scope;
   if (current.destination === "alpine-lake") {
     $("attribution").textContent = "\u7D20\u6750\u7531\u7528\u6237\u63D0\u4F9B\u3002\u539F SPZ \u4FDD\u7559\u5168\u90E8 1,189,993 \u4E2A\u70B9\u5E76\u8F6C\u6362\u4E3A\u7F51\u9875 SOG\uFF1B\u78B0\u649E\u6765\u81EA\u914D\u5957 PLY \u7684 278,025 \u4E2A\u4E09\u89D2\u9762\uFF0C\u91C7\u6837\u4E3A\u5730\u5F62\u9AD8\u5EA6\u5E76\u9650\u5236\u6E56\u9762\u3001\u9661\u5761\u53CA\u7F3A\u5931\u533A\u57DF\u3002\u5C3A\u5BF8\u6CBF\u7528\u6A21\u578B\u5355\u4F4D\u3002\u6E32\u67D3\u5668\uFF1ASuperSplat Viewer / PlayCanvas\uFF08MIT\uFF09\u3002";
     $("area-help").hidden = true;
   }
-  if (["two-floor", "insta360-5bfe"].includes(current.destination)) $("attribution").textContent = current.scope + " \u6E32\u67D3\u5668\uFF1ASuperSplat Viewer / PlayCanvas\uFF08MIT\uFF09\u3002";
+  if (["two-floor", "hackathon"].includes(current.destination)) $("attribution").textContent = current.scope + " \u6E32\u67D3\u5668\uFF1ASuperSplat Viewer / PlayCanvas\uFF08MIT\uFF09\u3002";
   if (current.destination === "building2") $("attribution").textContent = "\u7D20\u6750\u6765\u81EA\u7528\u6237\u63D0\u4F9B\u76842\u53F7\u697C\u5B9E\u666F\u5206\u4EAB\u9875\u3002\u4F7F\u7528\u5176 100 \u4E07\u70B9 SOG \u6A21\u578B\uFF0C\u7ED3\u5408\u62CD\u6444\u8F68\u8FF9\u4E0E\u6A21\u578B\u8F6E\u5ED3\u6821\u51C6\u7AD9\u7ACB\u773C\u9AD8\u3001\u5730\u9762\u548C\u7B80\u5316\u969C\u788D\u3002\u539F\u59CB\u4F53\u7D20\u5728\u95E8\u53E3\u548C\u684C\u6905\u5904\u5B58\u5728\u788E\u5757\uFF0C\u672C\u573A\u666F\u4F7F\u7528\u6821\u51C6\u540E\u7684\u5E73\u9762\u78B0\u649E\uFF0C\u4E0D\u4EE3\u8868\u5B9E\u6D4B\u5EFA\u7B51\u5C3A\u5BF8\u3002\u6E32\u67D3\u5668\uFF1ASuperSplat Viewer / PlayCanvas\uFF08MIT\uFF09\u3002";
   $("about-source").href = $("source").href;
   if (current.destination === "terrace") $("attribution").textContent = "\u7D20\u6750\u6765\u81EA\u7528\u6237\u63D0\u4F9B\u7684\u9732\u53F0\u5B9E\u666F\u5206\u4EAB\u9875\uFF0C\u4F7F\u7528\u5176 100 \u4E07\u70B9 SOG \u6A21\u578B\u3002\u672C\u7AD9\u6821\u6B63\u6A21\u578B\u503E\u659C\u5E76\u589E\u52A0\u81EA\u7531\u6B65\u884C\u3001\u5730\u9762\u548C\u7B80\u5316\u969C\u788D\u3002\u5C3A\u5EA6\u6309\u539F\u62CD\u6444\u89C6\u70B9\u4F30\u7B97\uFF0C\u672A\u505A\u73B0\u573A\u6D4B\u91CF\uFF1B\u684C\u6905\u3001\u82B1\u7BB1\u91C7\u7528\u6574\u4F53\u8F6E\u5ED3\u963B\u6321\uFF0C\u672A\u5EFA\u7ACB\u6BCF\u6839\u6905\u817F\u7684\u7CBE\u7EC6\u7269\u7406\u3002\u6E32\u67D3\u5668\uFF1ASuperSplat Viewer / PlayCanvas\uFF08MIT\uFF09\u3002";

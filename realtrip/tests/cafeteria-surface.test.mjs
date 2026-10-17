@@ -8,7 +8,7 @@ const scene=JSON.parse(readFileSync(new URL('../src/cafeteria.json',import.meta.
 const surface=createWalkSurface(scene.navigation);
 const assetRoot='../public/cafeteria/';
 test('cafeteria preserves the three existing scenes and has a shareable entrance',()=>{
- assert.deepEqual(explorerScenes.map(x=>x[0]),['insta360-5bfe','two-floor','building2','terrace','cafeteria']);
+ assert.deepEqual(explorerScenes.map(x=>x[0]),['hackathon','two-floor','building2','terrace','cafeteria']);
  assert.equal(explorerScenePath('cafeteria','/walk/'),'/walk/?scene=cafeteria');
  assert(!explorerScenes.some(([,label])=>label.includes('去人')));
 });

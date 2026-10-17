@@ -7,9 +7,9 @@ const scene=JSON.parse(readFileSync(new URL('../src/hackathon.json',import.meta.
 const terrain=JSON.parse(readFileSync(new URL('../public/hackathon/terrain.json',import.meta.url)));
 const surface=createTerrainSurface({...terrain,...scene.navigation});
 test('original Hackathon terrain remains available while the shared scenes lead the menu',()=>{
- assert.deepEqual(explorerScenes.map(([id])=>id),['insta360-5bfe','two-floor','building2','terrace','cafeteria']);
+ assert.deepEqual(explorerScenes.map(([id])=>id),['hackathon','two-floor','building2','terrace','cafeteria']);
  const [x,,z]=scene.settings.cameras[0].initial.position;assert(surface.contains(x,z));
- assert.match(readFileSync(new URL('../src/walker.js',import.meta.url),'utf8'), /\?requested:'insta360-5bfe'/);
+ assert.match(readFileSync(new URL('../src/walker.js',import.meta.url),'utf8'), /\?requested:'hackathon'/);
 });
 test('front passage and both stair aisles are continuously walkable in both directions',()=>{
  for(const x of [-2.22,-1.12,2.08,3.19,-5.38,6.18]){

@@ -6,7 +6,7 @@ import { dirname, join } from 'node:path';
 import { viewerPhysicsPlugin } from './viewer-physics-plugin.mjs';
 
 // Model preparation verifies the original SHA-256 before assembling the site.
-for (const scene of ['honor', 'insta360', 'terrace', 'cafeteria', 'alpine', 'hackathon', 'imported-scenes']) {
+for (const scene of ['honor', 'building2', 'terrace', 'cafeteria', 'alpine', 'hackathon', 'imported-scenes']) {
   execFileSync(process.execPath, [`realtrip/scripts/prepare-${scene}.mjs`], { stdio: 'inherit' });
 }
 

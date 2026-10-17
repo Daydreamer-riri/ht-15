@@ -1,9 +1,5 @@
 {
   "name": "食堂",
-  "sources": [
-    "https://app.insta360.com/3dspace/detail/GS3DC1ec046bfbacc4d3c9e43a26763aa410e",
-    "https://app.insta360.com/3dspace/detail/GS3DC9401fd20afb548cd8bfa6f5b31b8458a"
-  ],
   "peopleRetained": true,
   "hiddenHumanSplats": 0,
   "modelSHA256": "38159cfd020b74ccf88fb7b501bf79f5a5c4d2180f458928f37fa68324d95a1a",
@@ -113,5 +109,9 @@
     "generatedDetails": false,
     "attributeRecompression": false,
     "limitations": "Source motion/extrapolation blur remains at some side/back views; no invented face detail."
-  }
+  },
+  "captureIds": [
+    "GS3DC1ec046bfbacc4d3c9e43a26763aa410e",
+    "GS3DC9401fd20afb548cd8bfa6f5b31b8458a"
+  ]
 }

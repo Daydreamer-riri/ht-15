@@ -47,7 +47,7 @@ test('planet navigation connects both planets and the shared walking entrance', 
 });
 
 test('every scene model, supplement, terrain and screen texture is packaged locally', () => {
-  for (const name of ['insta360', 'terrace', 'cafeteria', 'hackathon', 'alpine-lake', 'two-floor', 'insta360-5bfe']) {
+  for (const name of ['building2', 'terrace', 'cafeteria', 'hackathon', 'alpine-lake', 'two-floor', 'venue']) {
     const scene = JSON.parse(readFileSync(new URL(`realtrip/src/${name}.json`, root)));
     const resources = [scene.contentUrl, scene.navigation?.url, scene.screens?.textureUrl, scene.screensUrl,
       ...(scene.supplements ?? []).map(item => item.contentUrl)].filter(Boolean);

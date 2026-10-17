@@ -1,8 +1,6 @@
 {
   "name": "露台",
-  "source": "https://app.insta360.com/3dspace/detail/GS3DC10601a25a50d455d8a18e2773e368879",
   "retrieved": "2026-10-17",
-  "camera": "Insta360 X6",
   "generator": "Remy",
   "splats": 1000000,
   "model": {
@@ -51,5 +49,6 @@
     "kind": "reviewed-level-floor",
     "limitations": "Approximate terrace outline, grouped table/chair and planter obstacles. No surveyed metric scale. Remote buildings and interiors are visual background only."
   },
-  "inputNote": "Downloaded MP4 files are platform effect videos, not original panoramic footage."
+  "inputNote": "Downloaded MP4 files are platform effect videos, not original panoramic footage.",
+  "captureId": "GS3DC10601a25a50d455d8a18e2773e368879"
 }

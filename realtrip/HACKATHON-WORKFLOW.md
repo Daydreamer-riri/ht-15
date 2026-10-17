@@ -29,7 +29,7 @@
 - 验证：`tests/hackathon-scene.test.mjs`
 - 本次分析、点云、对照图和处理脚本：`target/hackathon-review/`
 - 发布暂存：`target/hackathon-release/site/`
-- 原始文件：`/Users/rex/Downloads/insta360-hackathon-{1,2,3,4}-20261017-*/`
+- 原始文件：用户于 2026-10-17 提供的四份会场素材。
 
 处理顺序：fetch_sources.py → download.py → analyze.py → register.py / register1.py → 原始与配准视角检查 → compact.py（只输出主体）→ bake_screen.py → package_scene.py → stage.py。最终场景与发布内容以配置和 provenance 中的 SHA256 为准；重复编码会改变 ZIP 时间戳，哈希需要随之更新。
 

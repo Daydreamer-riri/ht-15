@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import {createWalkSurface} from '../src/walk-surface.js';
 import {createOfficeNavigation} from '../src/office-navigation.js';
 
-const scene=JSON.parse(readFileSync(new URL('../src/insta360.json',import.meta.url)));
+const scene=JSON.parse(readFileSync(new URL('../src/building2.json',import.meta.url)));
 const surface=createWalkSurface(scene.navigation);
 
 test('all starts share the captured eye level and fit the reviewed floor',()=>{

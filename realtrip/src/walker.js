@@ -7,37 +7,37 @@ import {initExplorerUi,populateSceneMenu,explorerScenePath} from './explorer-ui.
 import './explorer-ui.css';
 import {createViewer} from '@playcanvas/supersplat-viewer/viewer';
 import '@playcanvas/supersplat-viewer/viewer.css';
-import insta360 from './insta360.json';
+import building2 from './building2.json';
 import terrace from './terrace.json';
 import cafeteria from './cafeteria.json';
 import alpineLake from './alpine-lake.json';
 import hackathon from './hackathon.json';
 import twoFloor from './two-floor.json';
-import auditorium from './insta360-5bfe.json';
+import auditorium from './venue.json';
 import {loadSceneScreens,loadCapturedSurfaces} from './scene-screens.js';
 // The site runs both at a domain root and under a sub-path (such as GitLab Pages), so
 // asset URLs are resolved against the directory of the current document.
 const base=new URL('.',location.href).pathname;
-const instaBase={data:insta360,destination:'building2',label:'2号楼 · 会议室与连廊',source:'https://app.insta360.com/3dspace/detail/GS3DCedd7c150d451455497575a8852bf7285',credit:'2号楼实拍 · Remy 重建',scope:'从会议室穿过门口，可以直接走到连廊，也能原路走回来。视点对齐原拍摄眼高。地面、墙面、护栏和会议桌采用按扫描轮廓校准的简化碰撞；椅子、门扇和细小物体尚未逐一建模。已结合补拍画面校正会议室细节，横屏视野更开阔；玻璃反射、细椅脚及未充分拍摄的角落仍可能有重建瑕疵。'};
-const terraceBase={data:terrace,destination:'terrace',label:'露台 · 实景探索',source:'https://app.insta360.com/3dspace/detail/GS3DC10601a25a50d455d8a18e2773e368879',credit:'露台实拍 · Remy 重建',scope:'在露台入口、中央空地和观景端之间连续自由走动。按拍摄轨迹和地板点云校正模型倾斜、地面及视点高度；玻璃幕墙、花箱、护栏与桌椅采用简化阻挡。远处楼宇为背景扫描，未开放行走。'};
-const cafeteriaBase={data:cafeteria,destination:'cafeteria',label:'食堂',source:'https://app.insta360.com/3dspace/detail/GS3DC9401fd20afb548cd8bfa6f5b31b8458a',credit:'食堂实拍',scope:'保留人物，结合原始取餐区与补拍用餐区。入口、取餐通道和餐桌旁的过道可以连续往返，地面、柜台、立柱和桌椅采用校准后的简化碰撞。玻璃反射、人物运动残影与远处未充分拍摄的区域仍有重建瑕疵。'};
+const buildingBase={data:building2,destination:'building2',label:'2号楼 · 会议室与连廊',source:null,credit:'2号楼实拍 · Remy 重建',scope:'从会议室穿过门口，可以直接走到连廊，也能原路走回来。视点对齐原拍摄眼高。地面、墙面、护栏和会议桌采用按扫描轮廓校准的简化碰撞；椅子、门扇和细小物体尚未逐一建模。已结合补拍画面校正会议室细节，横屏视野更开阔；玻璃反射、细椅脚及未充分拍摄的角落仍可能有重建瑕疵。'};
+const terraceBase={data:terrace,destination:'terrace',label:'露台 · 实景探索',source:null,credit:'露台实拍 · Remy 重建',scope:'在露台入口、中央空地和观景端之间连续自由走动。按拍摄轨迹和地板点云校正模型倾斜、地面及视点高度；玻璃幕墙、花箱、护栏与桌椅采用简化阻挡。远处楼宇为背景扫描，未开放行走。'};
+const cafeteriaBase={data:cafeteria,destination:'cafeteria',label:'食堂',source:null,credit:'食堂实拍',scope:'保留人物，结合原始取餐区与补拍用餐区。入口、取餐通道和餐桌旁的过道可以连续往返，地面、柜台、立柱和桌椅采用校准后的简化碰撞。玻璃反射、人物运动残影与远处未充分拍摄的区域仍有重建瑕疵。'};
 const scenes={
- 'insta360-5bfe':{data:auditorium,destination:'insta360-5bfe',label:'阶梯报告厅',title:'走进阶梯报告厅。',area:'报告厅起点',credit:'Insta360 X6 / Remy · junhaoqin 团队',source:'https://app.insta360.com/3dspace/detail/GS3DC5bfe2359b4f24163a38f5d9314f2e94e',scope:'来自 realtrip-walk-hackathon26 的阶梯报告厅，保留原始模型、体素碰撞、行人眼高及三块 Hackathon 屏幕。使用本站统一的移动、转头与重置操作。尺度未经现场测量，薄物体和缺失扫描处的碰撞可能不完整。'},
+ 'hackathon':{data:auditorium,destination:'hackathon',label:'Hackathon主会场',title:'走进Hackathon主会场。',area:'主会场起点',credit:'Remy · junhaoqin 团队',source:null,scope:'来自 realtrip-walk-hackathon26 的Hackathon主会场，保留原始模型、体素碰撞、行人眼高及三块 Hackathon 屏幕。使用本站统一的移动、转头与重置操作。尺度未经现场测量，薄物体和缺失扫描处的碰撞可能不完整。'},
  'two-floor':{data:twoFloor,destination:'two-floor',label:'双层休息空间',title:'从一层，慢慢逛起。',area:'一层休息区',credit:'六段实拍视频 · junhaoqin 团队',source:'https://git.dev.sh.ctripcorp.com/junhaoqin/realtrip-walk-hackathon26',scope:'来自 realtrip-walk-hackathon26 的双层实拍模型。一层、折返楼梯和二层可以连续行走；保留楼层、台阶、护栏及家具碰撞。使用本站统一操作，模型中未充分拍摄的区域仍可能模糊。'},
- 'hackathon-original':{data:hackathon,destination:'hackathon-original',hidden:true,label:'Hackathon 主会场（原版）',title:'Hackathon 主会场',area:'主会场',credit:'主会场实拍',source:'https://app.insta360.com/3dspace/detail/GS3DC5bfe2359b4f24163a38f5d9314f2e94e',scope:'原版会场模型与校准后的地形碰撞。'},
+ 'hackathon-original':{data:hackathon,destination:'hackathon-original',hidden:true,label:'Hackathon 主会场（原版）',title:'Hackathon 主会场',area:'主会场',credit:'主会场实拍',source:null,scope:'原版会场模型与校准后的地形碰撞。'},
  'alpine-lake':{data:alpineLake,destination:'alpine-lake',label:'山湖漫游',title:'沿着湖岸，走走看看。',area:'湖岸草地',hidden:true,credit:'用户提供的山湖模型',scope:'使用提供的 SPZ 场景和 PLY 碰撞网格。可以沿湖岸草地自由行走，随地形起伏；水面、陡坡和模型边缘限制通行。远景和局部水面存在源模型的重建瑕疵。',source:null},
  cafeteria:{...cafeteriaBase,title:'食堂',area:'食堂入口',waypoint:'entrance'},
  terrace:{...terraceBase,title:'到露台，走走看看。',area:'露台入口',waypoint:'entrance'},
  'terrace-open':{...terraceBase,title:'在露台上，自由走走。',area:'中央空地',waypoint:'open'},
  'terrace-view':{...terraceBase,title:'换个角度，看看园区。',area:'观景端',waypoint:'view'},
- building2:{...instaBase,title:'回到会议室，继续探索。',area:'会议室内',waypoint:'room'},
- 'building2-door':{...instaBase,title:'门内门外，都能走。',area:'会议室门口',waypoint:'door'},
- 'building2-aisle':{...instaBase,title:'沿着连廊，自由走走。',area:'连廊入口',waypoint:'aisle'},
- 'building2-far':{...instaBase,title:'换个方向，看看。',area:'连廊另一侧',waypoint:'far'},
+ building2:{...buildingBase,title:'回到会议室，继续探索。',area:'会议室内',waypoint:'room'},
+ 'building2-door':{...buildingBase,title:'门内门外，都能走。',area:'会议室门口',waypoint:'door'},
+ 'building2-aisle':{...buildingBase,title:'沿着连廊，自由走走。',area:'连廊入口',waypoint:'aisle'},
+ 'building2-far':{...buildingBase,title:'换个方向，看看。',area:'连廊另一侧',waypoint:'far'},
 };
 const requestedScene=new URLSearchParams(location.search).get('scene');
 // Keep existing shared links working while new links use the building name.
-const legacyScenes={hackathon:'insta360-5bfe','honor-corridor':'two-floor',insta360:'building2','insta360-room':'building2','insta360-door':'building2-door','insta360-aisle':'building2-aisle','insta360-far':'building2-far','cafeteria-original':'cafeteria'};
+const legacyScenes={'honor-corridor':'two-floor','building2-room':'building2','cafeteria-original':'cafeteria'};
 const requested=legacyScenes[requestedScene]??requestedScene;
 const standaloneScenes={'sky-soho':'凌空一日'};
 if(Object.hasOwn(standaloneScenes,requested)){
@@ -45,7 +45,7 @@ if(Object.hasOwn(standaloneScenes,requested)){
  for(const [name,value] of new URLSearchParams(location.search))if(name!=='scene')target.searchParams.set(name,value);
  location.replace(target.href);
 }else{
-const key=Object.hasOwn(scenes,requested)?requested:'insta360-5bfe';
+const key=Object.hasOwn(scenes,requested)?requested:'hackathon';
 const current=scenes[key];let scene=structuredClone(current.data);
 const $=id=>document.getElementById(id);
 const sceneUrl=id=>{
@@ -70,10 +70,10 @@ $('world').setAttribute('aria-label',current.label+' · '+current.area+'，可�
 document.querySelector('#loading h2').textContent='正在走进'+current.area;
 $('credit').textContent='实景：'+current.credit;
 $('source').href=current.source??'#';
-if(!current.source){$('source').hidden=true;$('about-source').hidden=true;}
+$('source').hidden=!current.source;$('about-source').hidden=!current.source;
 $('scene-scope').textContent=current.scope;
 if(current.destination==='alpine-lake'){$('attribution').textContent='素材由用户提供。原 SPZ 保留全部 1,189,993 个点并转换为网页 SOG；碰撞来自配套 PLY 的 278,025 个三角面，采样为地形高度并限制湖面、陡坡及缺失区域。尺寸沿用模型单位。渲染器：SuperSplat Viewer / PlayCanvas（MIT）。';$('area-help').hidden=true;}
-if(['two-floor','insta360-5bfe'].includes(current.destination))$('attribution').textContent=current.scope+' 渲染器：SuperSplat Viewer / PlayCanvas（MIT）。';
+if(['two-floor','hackathon'].includes(current.destination))$('attribution').textContent=current.scope+' 渲染器：SuperSplat Viewer / PlayCanvas（MIT）。';
 if(current.destination==='building2')$('attribution').textContent='素材来自用户提供的2号楼实景分享页。使用其 100 万点 SOG 模型，结合拍摄轨迹与模型轮廓校准站立眼高、地面和简化障碍。原始体素在门口和桌椅处存在碎块，本场景使用校准后的平面碰撞，不代表实测建筑尺寸。渲染器：SuperSplat Viewer / PlayCanvas（MIT）。';
 $('about-source').href=$('source').href;
 if(current.destination==='terrace')$('attribution').textContent='素材来自用户提供的露台实景分享页，使用其 100 万点 SOG 模型。本站校正模型倾斜并增加自由步行、地面和简化障碍。尺度按原拍摄视点估算，未做现场测量；桌椅、花箱采用整体轮廓阻挡，未建立每根椅腿的精细物理。渲染器：SuperSplat Viewer / PlayCanvas（MIT）。';

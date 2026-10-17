@@ -1,7 +1,5 @@
 {
-  "source": "https://app.insta360.com/3dspace/detail/GS3DCedd7c150d451455497575a8852bf7285",
   "retrieved": "2026-10-17",
-  "camera": "Insta360 X6",
   "generator": "Remy base; local Brush texture refinement",
   "splats": 1000000,
   "coordinateConversion": "Camera: negate X/Y to match SuperSplat SOG rendering. Voxel v1.1 is already in PlayCanvas coordinates.",
@@ -14,7 +12,7 @@
   "calibration": "2026-10-17 core capture GS3DCedd7c150. Floor peak Y=-1.49; standing eye Y=0.06, 1.55 scan units above floor. New room/table/doorway and railing fitted to splat density and capture paths. Furniture simplified to central table; chairs and door leaves are not individual colliders.",
   "activeCollision": {
     "type": "reviewed level floor plan",
-    "config": "src/insta360.json#navigation",
+    "config": "src/building2.json#navigation",
     "basis": "SOG point density, capture camera trajectory, visible doorway and browser round trip",
     "rawVoxelUsed": false,
     "limitations": "Approximate walls, railing and central table; chairs and door leaves are not individual colliders."
@@ -51,5 +49,6 @@
     "method": "Only losslessly reencode SOG sh0 alpha for verified empty central doorway; preserve all RGB indices, geometry, SH, and all opacity outside the volume.",
     "geometryAndColorPreservedExactly": true,
     "limitation": "Reduces reconstructed haze inside the open doorway; does not create unobserved leaf, glass or doorframe details."
-  }
+  },
+  "captureId": "GS3DCedd7c150d451455497575a8852bf7285"
 }

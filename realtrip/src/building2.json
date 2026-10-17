@@ -50,7 +50,7 @@
     ],
     "startMode": "default"
   },
-  "contentUrl": "insta360/scene.sog?v=building2-doorway-20261017",
+  "contentUrl": "building2/scene.sog?v=building2-doorway-20261017",
   "waypoints": {
     "room": {
       "position": [
