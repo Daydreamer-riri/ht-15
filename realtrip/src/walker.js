@@ -114,7 +114,7 @@ function setReady(){
  ready=true;viewer.state.cameraMode='fly';viewer.state.gamingControls=true;viewer.state.inputEnabled=false;
  officeNav=createOfficeNavigation(viewer,null,scene.settings.cameras[0].initial,$('world'),walkSurface);
  officeNav?.setWalkingMotion(walkingMotion);
- if(key==='hackathon-npc')import('./npc-interaction.js').then(({initNpc})=>initNpc({viewer,navigation:officeNav,base,stop})).catch(error=>{console.error('NPC initialization failed',error);const notice=document.createElement('p');notice.textContent='小蓝加载失败，请刷新页面重试。';notice.style.cssText='position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#132d3f;color:white;padding:14px;border-radius:12px;z-index:30';document.body.append(notice);});
+ if(key==='hackathon-npc')import('./npc-interaction.js').then(({initNpc})=>initNpc({viewer,navigation:officeNav,base,stop,space:walkSurface.characters})).catch(error=>{console.error('NPC initialization failed',error);const notice=document.createElement('p');notice.textContent='小蓝加载失败，请刷新页面重试。';notice.style.cssText='position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#132d3f;color:white;padding:14px;border-radius:12px;z-index:30';document.body.append(notice);});
 
  queueMicrotask(tuneWalkingDetail);
  $('loading').hidden=true;$('pad').disabled=false;$('mode').textContent='步行中';

@@ -1541,9 +1541,9 @@ var init_kernel = __esm({
           const pointsPerRing = Math.max(1, Math.floor(circumference / spacing));
           const angleStep = 2 * Math.PI / pointsPerRing;
           for (let point = 0; point < pointsPerRing; point++) {
-            const angle = point * angleStep;
-            const x2 = radius * Math.cos(angle);
-            const y2 = radius * Math.sin(angle);
+            const angle2 = point * angleStep;
+            const x2 = radius * Math.cos(angle2);
+            const y2 = radius * Math.sin(angle2);
             kernel.push(x2, y2);
           }
         }
@@ -2110,10 +2110,10 @@ var init_vec2 = __esm({
         return this;
       }
       rotate(degrees) {
-        const angle = Math.atan2(this.x, this.y) + degrees * math.DEG_TO_RAD;
+        const angle2 = Math.atan2(this.x, this.y) + degrees * math.DEG_TO_RAD;
         const len = Math.sqrt(this.x * this.x + this.y * this.y);
-        this.x = Math.sin(angle) * len;
-        this.y = Math.cos(angle) * len;
+        this.x = Math.sin(angle2) * len;
+        this.y = Math.cos(angle2) * len;
         return this;
       }
       angle() {
@@ -2705,11 +2705,11 @@ var init_mat4 = __esm({
         r[15] = 1;
         return this;
       }
-      setFromAxisAngle(axis, angle) {
-        angle *= math.DEG_TO_RAD;
+      setFromAxisAngle(axis, angle2) {
+        angle2 *= math.DEG_TO_RAD;
         const { x: x2, y: y2, z: z2 } = axis;
-        const c = Math.cos(angle);
-        const s = Math.sin(angle);
+        const c = Math.cos(angle2);
+        const s = Math.sin(angle2);
         const t = 1 - c;
         const tx = t * x2;
         const ty = t * y2;
@@ -3250,10 +3250,10 @@ var init_quat = __esm({
         this.w = w;
         return this;
       }
-      setFromAxisAngle(axis, angle) {
-        angle *= 0.5 * math.DEG_TO_RAD;
-        const sa = Math.sin(angle);
-        const ca = Math.cos(angle);
+      setFromAxisAngle(axis, angle2) {
+        angle2 *= 0.5 * math.DEG_TO_RAD;
+        const sa = Math.sin(angle2);
+        const ca = Math.cos(angle2);
         this.x = sa * axis.x;
         this.y = sa * axis.y;
         this.z = sa * axis.z;
@@ -11509,17 +11509,17 @@ var init_preprocessor = __esm({
           });
           const anySingleUse = Array.from(counts.values()).some((count) => count === 1);
           if (anySingleUse) {
-            const lines = source.split("\n");
+            const lines2 = source.split("\n");
             const keepLines = [];
-            for (let i = 0; i < lines.length; i++) {
-              const match = lines[i].match(FRAGCOLOR);
+            for (let i = 0; i < lines2.length; i++) {
+              const match = lines2[i].match(FRAGCOLOR);
               if (match) {
                 const index = parseInt(match[0].charAt(match[0].length - 1), 10);
                 if (index > 0 && counts.get(index) === 1) {
                   continue;
                 }
               }
-              keepLines.push(lines[i]);
+              keepLines.push(lines2[i]);
             }
             source = keepLines.join("\n");
           }
@@ -11539,16 +11539,16 @@ var init_preprocessor = __esm({
       }
       static injectDefines(source, injectDefines) {
         if (source !== null && injectDefines.size > 0) {
-          const lines = source.split("\n");
+          const lines2 = source.split("\n");
           injectDefines.forEach((value, key2) => {
             const regex = new RegExp(key2, "g");
-            for (let i = 0; i < lines.length; i++) {
-              if (!lines[i].includes("#")) {
-                lines[i] = lines[i].replace(regex, value);
+            for (let i = 0; i < lines2.length; i++) {
+              if (!lines2[i].includes("#")) {
+                lines2[i] = lines2[i].replace(regex, value);
               }
             }
           });
-          source = lines.join("\n");
+          source = lines2.join("\n");
         }
         return source;
       }
@@ -15413,21 +15413,21 @@ ${code} while rendering ${void 0}`;
         const error = {};
         let code = "";
         if (src) {
-          const lines = src.split("\n");
+          const lines2 = src.split("\n");
           let from = 0;
-          let to = lines.length;
+          let to = lines2.length;
           if (infoLog && infoLog.startsWith("ERROR:")) {
             const match = infoLog.match(/^ERROR:\s(\d+):(\d+):\s*(.+)/);
             if (match) {
               error.message = match[3];
               error.line = parseInt(match[2], 10);
               from = Math.max(0, error.line - 6);
-              to = Math.min(lines.length, error.line + 5);
+              to = Math.min(lines2.length, error.line + 5);
             }
           }
           for (let i = from; i < to; i++) {
             const linePrefix = i + 1 === error.line ? "> " : "  ";
-            code += `${linePrefix}${i + 1}:	${lines[i]}
+            code += `${linePrefix}${i + 1}:	${lines2[i]}
 `;
           }
           error.source = src;
@@ -22266,7 +22266,7 @@ var init_mesh = __esm({
       generateWireframe() {
         this._destroyIndexBuffer(RENDERSTYLE_WIREFRAME);
         const numVertices = this.vertexBuffer.numVertices;
-        let lines;
+        let lines2;
         let format;
         if (this.indexBuffer.length > 0 && this.indexBuffer[0]) {
           const offsets = [[0, 1], [1, 2], [2, 0]];
@@ -22293,28 +22293,28 @@ var init_mesh = __esm({
           }
           seen.clear();
           format = indexBuffer.format;
-          lines = tmpIndices.slice(0, len);
+          lines2 = tmpIndices.slice(0, len);
         } else {
           const safeNumVertices = numVertices - numVertices % 3;
           const count = safeNumVertices / 3 * 6;
           format = count > 65535 ? INDEXFORMAT_UINT32 : INDEXFORMAT_UINT16;
-          lines = count > 65535 ? new Uint32Array(count) : new Uint16Array(count);
+          lines2 = count > 65535 ? new Uint32Array(count) : new Uint16Array(count);
           let idx = 0;
           for (let i = 0; i < safeNumVertices; i += 3) {
-            lines[idx++] = i;
-            lines[idx++] = i + 1;
-            lines[idx++] = i + 1;
-            lines[idx++] = i + 2;
-            lines[idx++] = i + 2;
-            lines[idx++] = i;
+            lines2[idx++] = i;
+            lines2[idx++] = i + 1;
+            lines2[idx++] = i + 1;
+            lines2[idx++] = i + 2;
+            lines2[idx++] = i + 2;
+            lines2[idx++] = i;
           }
         }
-        const wireBuffer = new IndexBuffer(this.vertexBuffer.device, format, lines.length, BUFFER_STATIC, lines.buffer);
+        const wireBuffer = new IndexBuffer(this.vertexBuffer.device, format, lines2.length, BUFFER_STATIC, lines2.buffer);
         this.primitive[RENDERSTYLE_WIREFRAME] = {
           type: PRIMITIVE_LINES,
           base: 0,
           baseVertex: 0,
-          count: lines.length,
+          count: lines2.length,
           indexed: true
         };
         this.indexBuffer[RENDERSTYLE_WIREFRAME] = wireBuffer;
@@ -34693,8 +34693,8 @@ var init_light = __esm({
       get penumbraFalloff() {
         return this._softShadowParams[3];
       }
-      _updateOuterAngle(angle) {
-        const radAngle = angle * math.DEG_TO_RAD;
+      _updateOuterAngle(angle2) {
+        const radAngle = angle2 * math.DEG_TO_RAD;
         this._outerConeAngleCos = Math.cos(radAngle);
         this._outerConeAngleSin = Math.sin(radAngle);
         this.updateClusterData(false, true);
@@ -34942,11 +34942,11 @@ var init_light = __esm({
       getBoundingSphere(sphere) {
         if (this._type === LIGHTTYPE_SPOT) {
           const size = this.attenuationEnd;
-          const angle = this._outerConeAngle;
+          const angle2 = this._outerConeAngle;
           const cosAngle = this._outerConeAngleCos;
           const node = this._node;
           tmpVec.copy(node.up);
-          if (angle > 45) {
+          if (angle2 > 45) {
             sphere.radius = size * this._outerConeAngleSin;
             tmpVec.mulScalar(-size * cosAngle);
           } else {
@@ -34962,9 +34962,9 @@ var init_light = __esm({
       getBoundingBox(box) {
         if (this._type === LIGHTTYPE_SPOT) {
           const range = this.attenuationEnd;
-          const angle = this._outerConeAngle;
+          const angle2 = this._outerConeAngle;
           const node = this._node;
-          const scl = Math.abs(Math.sin(angle * math.DEG_TO_RAD) * range);
+          const scl = Math.abs(Math.sin(angle2 * math.DEG_TO_RAD) * range);
           box.center.set(0, -range * 0.5, 0);
           box.halfExtents.set(scl, range * 0.5, scl);
           box.setFromTransformedAabb(box, node.getWorldTransform(), true);
@@ -37017,13 +37017,13 @@ var init_immediate = __esm({
       }
       drawWireSphere(center2, radius, color, numSegments, depthTest, layer) {
         const step = 2 * Math.PI / numSegments;
-        let angle = 0;
+        let angle2 = 0;
         for (let i = 0; i < numSegments; i++) {
-          const sin0 = Math.sin(angle);
-          const cos0 = Math.cos(angle);
-          angle += step;
-          const sin1 = Math.sin(angle);
-          const cos1 = Math.cos(angle);
+          const sin0 = Math.sin(angle2);
+          const cos0 = Math.cos(angle2);
+          angle2 += step;
+          const sin1 = Math.sin(angle2);
+          const cos1 = Math.cos(angle2);
           tempPoints.push(center2.x + radius * sin0, center2.y, center2.z + radius * cos0);
           tempPoints.push(center2.x + radius * sin1, center2.y, center2.z + radius * cos1);
           tempPoints.push(center2.x + radius * sin0, center2.y + radius * cos0, center2.z);
@@ -40423,7 +40423,7 @@ var init_gsplat_format = __esm({
         const isWebGPU = this._device.isWebGPU;
         const template = isWebGPU ? gsplatStreamDecl_default2 : gsplatStreamDecl_default;
         const getShaderType = isWebGPU ? getWgslShaderType : getGlslShaderType;
-        const lines = [];
+        const lines2 = [];
         let streams = [...this.streams, ...this._extraStreams];
         if (streamNames) {
           streams = streams.filter((s) => streamNames.includes(s.name));
@@ -40436,15 +40436,15 @@ var init_gsplat_format = __esm({
             textureType = "texture_2d<uff>";
           }
           const decl = template.replace(RE_NAME, stream.name).replace(RE_SAMPLER, info.sampler ?? "").replace(RE_TEXTURE_TYPE, textureType).replace(RE_RETURN_TYPE, info.returnType).replace(RE_FUNC_NAME, funcName);
-          lines.push(decl);
+          lines2.push(decl);
         }
-        return lines.join("\n");
+        return lines2.join("\n");
       }
       getReadCode() {
         return this._read;
       }
       getComputeInputDeclarations(startBinding, streamNames) {
-        const lines = [];
+        const lines2 = [];
         let streams = [...this.streams, ...this._extraStreams];
         if (streamNames) {
           streams = streams.filter((s) => streamNames.includes(s.name));
@@ -40458,9 +40458,9 @@ var init_gsplat_format = __esm({
             textureType = "texture_2d<uff>";
           }
           const decl = gsplatComputeStreamDecl_default.replace(RE_BINDING, String(startBinding + i)).replace(RE_NAME, stream.name).replace(RE_TEXTURE_TYPE, textureType).replace(RE_RETURN_TYPE, info.returnType).replace(RE_FUNC_NAME, funcName);
-          lines.push(decl);
+          lines2.push(decl);
         }
-        return lines.join("\n");
+        return lines2.join("\n");
       }
       getComputeBindFormats(streamNames) {
         let streams = [...this.streams, ...this._extraStreams];
@@ -40483,7 +40483,7 @@ var init_gsplat_format = __esm({
       }
       getOutputDeclarations(outputStreams) {
         const isWebGPU = this._device.isWebGPU;
-        const lines = [];
+        const lines2 = [];
         const template = isWebGPU ? gsplatStreamOutput_default2 : gsplatStreamOutput_default;
         const getShaderType = isWebGPU ? getWgslShaderType : getGlslShaderType;
         for (let i = 0; i < outputStreams.length; i++) {
@@ -40492,22 +40492,22 @@ var init_gsplat_format = __esm({
           const funcName = stream.name.charAt(0).toUpperCase() + stream.name.slice(1);
           const colorSlot = i === 0 ? "color" : `color${i}`;
           const decl = template.replace(RE_FUNC_NAME, funcName).replace(RE_RETURN_TYPE, info.returnType).replace(RE_INDEX, String(i)).replace(RE_COLOR_SLOT, colorSlot).replace(RE_DEFINE_GUARD, "1");
-          lines.push(decl);
+          lines2.push(decl);
         }
-        return lines.join("\n");
+        return lines2.join("\n");
       }
       getOutputStubs(streams) {
         const isWebGPU = this._device.isWebGPU;
-        const lines = [];
+        const lines2 = [];
         const template = isWebGPU ? gsplatStreamOutput_default2 : gsplatStreamOutput_default;
         const getShaderType = isWebGPU ? getWgslShaderType : getGlslShaderType;
         for (const stream of streams) {
           const info = getShaderType(stream.format);
           const funcName = stream.name.charAt(0).toUpperCase() + stream.name.slice(1);
           const stub = template.replace(RE_FUNC_NAME, funcName).replace(RE_RETURN_TYPE, info.returnType).replace(RE_DEFINE_GUARD, "0");
-          lines.push(stub);
+          lines2.push(stub);
         }
-        return lines.join("\n");
+        return lines2.join("\n");
       }
       getStream(name) {
         let stream = this.streams.find((s) => s.name === name);
@@ -67922,9 +67922,9 @@ var init_gsplat_world = __esm({
           if (Number.isFinite(this._lastLodCameraFwd.x)) {
             const currentCameraFwd = camera.forward;
             const dot = Math.min(1, Math.max(-1, this._lastLodCameraFwd.dot(currentCameraFwd)));
-            const angle = Math.acos(dot);
+            const angle2 = Math.acos(dot);
             const rotThreshold = lodUpdateAngleDeg * math.DEG_TO_RAD;
-            cameraRotated = angle > rotThreshold;
+            cameraRotated = angle2 > rotThreshold;
           } else {
             cameraRotated = true;
           }
@@ -79708,12 +79708,12 @@ var init_ply = __esm({
         return result;
       }
     };
-    parseHeader = (lines) => {
+    parseHeader = (lines2) => {
       const elements = [];
       const comments = [];
       let format;
-      for (let i = 1; i < lines.length; ++i) {
-        const words = lines[i].split(" ");
+      for (let i = 1; i < lines2.length; ++i) {
+        const words = lines2[i].split(" ");
         switch (words[0]) {
           case "comment":
             comments.push(words.slice(1).join(" "));
@@ -79987,8 +79987,8 @@ var init_ply = __esm({
           break;
         }
       }
-      const lines = new TextDecoder("ascii").decode(streamBuf.data.subarray(0, headerLength)).split("\n");
-      const { elements, format, comments } = parseHeader(lines);
+      const lines2 = new TextDecoder("ascii").decode(streamBuf.data.subarray(0, headerLength)).split("\n");
+      const { elements, format, comments } = parseHeader(lines2);
       if (format !== "binary_little_endian") {
         throw new Error("Unsupported ply format");
       }
@@ -92354,9 +92354,10 @@ var init_npc_scene = __esm({
       name: "\u5C0F\u84DD",
       modelUrl: "npc/blue-mascot.glb?v=slim-20261018",
       configUrl: "npc/service.json",
-      position: [1.25, -0.86, 1.4],
+      position: [1.25, -0.72, 1.4],
       scale: 0.3,
       rotation: 180,
+      waypoints: [[1.75, 1.42], [1.45, 1.58], [0.85, 1.48], [1.05, 1.24], [1.55, 1.26]],
       approachRadius: 2.4,
       leaveRadius: 2.8,
       maxVerticalDistance: 1.1
@@ -92368,12 +92369,18 @@ var init_npc_scene = __esm({
 });
 
 // realtrip/src/npc-motion.js
-function npcMotion(t, { state = "idle", greeting = 0, near = false, reduced = false } = {}) {
-  const rest = { hover: 0, roll: 0, bodyY: 0.16, bodyZ: 1.4, headX: 0, headY: 0, headZ: 2, armLX: 0, armLZ: -20, armRX: 0, armRZ: 27, legLZ: 6.8, legRZ: -5.7, mouth: 1, eyes: 1 };
+function npcMotion(t, { state = "idle", greeting = 0, near = false, reduced = false, speed = 0, turn = 0, reaction = 0 } = {}) {
+  const rest = { hover: 0, roll: 0, bodyY: 0.16, bodyX: 0, bodyZ: 1.4, headX: 0, headY: 0, headZ: 2, armLX: 0, armLZ: -20, armRX: 0, armRZ: 27, legLZ: 6.8, legRZ: -5.7, mouth: 1, eyes: 1 };
   if (reduced) return rest;
   const pose = { ...rest, hover: 0.027 * Math.sin(t * 1.7), roll: 1.3 * Math.sin(t * 0.9), bodyY: 0.16 + 0.012 * Math.sin(t * 2), bodyZ: 1.4 + 1.8 * Math.sin(t * 1.2), headY: near ? 2 * Math.sin(t * 0.65) : 10 * Math.sin(t * 0.55), headZ: 2 + 3 * Math.sin(t * 1.1), armLZ: -20 + 5 * Math.sin(t * 1.6), armRZ: 27 + 4 * Math.sin(t * 1.6 + 0.8), legLZ: 6.8 + 1.4 * Math.sin(t * 1.2), legRZ: -5.7 - 1.4 * Math.sin(t * 1.2) };
   const blink = t % 4.7;
   pose.eyes = blink < 0.18 ? Math.max(0.08, Math.abs(blink - 0.09) / 0.09) : 1;
+  const glide = Math.min(1, speed / 0.22);
+  pose.bodyX = -7 * glide;
+  pose.bodyZ += Math.max(-4, Math.min(4, turn * 0.06)) * glide;
+  pose.roll -= Math.max(-3, Math.min(3, turn * 0.045)) * glide;
+  pose.armLZ -= 8 * glide;
+  pose.armRZ += 8 * glide;
   if (state === "listening") {
     pose.headZ = -10;
     pose.headX = 3 * Math.sin(t * 2.2);
@@ -92403,6 +92410,14 @@ function npcMotion(t, { state = "idle", greeting = 0, near = false, reduced = fa
     pose.headX = 4 * Math.sin(t * 3);
     pose.bodyZ = 3;
   }
+  if (reaction > 0) {
+    const bump = Math.sin(Math.min(1, reaction / 1.25) * Math.PI);
+    pose.bodyX += 10 * bump;
+    pose.bodyZ -= 7 * bump;
+    pose.headZ += 8 * bump;
+    pose.armLZ -= 24 * bump;
+    pose.armRZ += 20 * bump;
+  }
   return pose;
 }
 function blendNpcMotion(current, target2, dt, reduced = false) {
@@ -92414,8 +92429,80 @@ var init_npc_motion = __esm({
   }
 });
 
+// realtrip/src/npc-roaming.js
+function createNpcRoaming({ position: position2, rotation: rotation5 = 180, waypoints, canOccupy = () => true, random: random2 = Math.random }) {
+  const point = [...position2];
+  let yaw = rotation5, vx = 0, vz = 0, target2 = null, pause = 3, index = -1, hold = 0, travel = 0;
+  function pick() {
+    for (let tries = 0; tries < waypoints.length; tries++) {
+      index = (index + 1) % waypoints.length;
+      const p2 = waypoints[index];
+      if (Math.hypot(p2[0] - point[0], p2[1] - point[2]) > 0.18 && canOccupy([p2[0], point[1], p2[1]])) {
+        target2 = p2;
+        return;
+      }
+    }
+    pause = 3;
+  }
+  return {
+    hold(seconds = 3) {
+      hold = Math.max(hold, seconds);
+    },
+    update(dt, { player, busy = false, near = false, reduced = false } = {}) {
+      dt = clamp(dt, 0, 0.05);
+      if (reduced) {
+        vx = vz = 0;
+        return { position: [...point], yaw, speed: 0, turn: 0, travel, moving: false };
+      }
+      hold = Math.max(0, hold - dt);
+      pause = Math.max(0, pause - dt);
+      const distance = player ? Math.hypot(player[0] - point[0], player[2] - point[2]) : Infinity;
+      const sameFloor = player && Math.abs(player[1] - (point[1] + 0.4)) < 1.1;
+      const stopped = busy || reduced || hold > 0 || sameFloor && distance < 1.05;
+      if (!stopped && !target2 && pause === 0) pick();
+      let sx = 0, sz = 0, desired = yaw;
+      if (!stopped && target2) {
+        const dx = target2[0] - point[0], dz = target2[1] - point[2], d2 = Math.hypot(dx, dz);
+        if (d2 < 0.045) {
+          target2 = null;
+          pause = 2.5 + random2() * 3;
+        } else {
+          desired = Math.atan2(dx, dz) * 180 / Math.PI;
+          const speed = Math.min(0.22, d2 * 1.1) * clamp((Math.cos(angle(yaw, desired) * Math.PI / 180) - 0.1) / 0.9, 0, 1);
+          sx = dx / d2 * speed;
+          sz = dz / d2 * speed;
+        }
+      } else if (near && player) desired = Math.atan2(player[0] - point[0], player[2] - point[2]) * 180 / Math.PI;
+      const turn = clamp(angle(yaw, desired), -80 * dt, 80 * dt);
+      yaw += turn;
+      const ease = 1 - Math.exp(-dt * 4.5);
+      vx += (sx - vx) * ease;
+      vz += (sz - vz) * ease;
+      const next = [point[0] + vx * dt, point[1], point[2] + vz * dt];
+      const visitorClear = !sameFloor || Math.hypot(next[0] - player[0], next[2] - player[2]) >= 0.56;
+      if (visitorClear && canOccupy(next)) {
+        travel += Math.hypot(next[0] - point[0], next[2] - point[2]);
+        point[0] = next[0];
+        point[2] = next[2];
+      } else {
+        vx = vz = 0;
+        target2 = null;
+        pause = 1.5;
+      }
+      return { position: [...point], yaw, speed: Math.hypot(vx, vz), turn: dt ? turn / dt : 0, travel, moving: Math.hypot(vx, vz) > 0.025 };
+    }
+  };
+}
+var clamp, angle;
+var init_npc_roaming = __esm({
+  "realtrip/src/npc-roaming.js"() {
+    clamp = (v2, a, b) => Math.max(a, Math.min(b, v2));
+    angle = (a, b) => (b - a + 540) % 360 - 180;
+  }
+});
+
 // realtrip/src/npc-character.js
-async function createNpcCharacter(viewer, config, base2) {
+async function createNpcCharacter(viewer, config, base2, space) {
   const app2 = viewer.app;
   const asset = await new Promise((resolve2, reject) => app2.assets.loadFromUrl(base2 + config.modelUrl, "container", (error, asset2) => error ? reject(error) : resolve2(asset2)));
   const root = new Entity("Little Blue NPC");
@@ -92455,25 +92542,41 @@ async function createNpcCharacter(viewer, config, base2) {
   const body = model.findByName("Body"), head = model.findByName("Head"), arm = model.findByName("ArmL"), armR = model.findByName("ArmR"), mouth = model.findByName("Mouth"), eyes = [model.findByName("EyeL"), model.findByName("EyeR")], legs = [model.findByName("LegL"), model.findByName("LegR")];
   const reduced = matchMedia("(prefers-reduced-motion: reduce)");
   const anchor = new Vec3();
-  let redrawClock = 0;
+  let redrawClock = 0, engaged = false, reactionUntil = 0;
+  const roaming = createNpcRoaming({ ...config, canOccupy: space?.canOccupy });
+  const obstacle = space?.obstacles[0];
+  let location2 = [...config.position], moving = false;
   let elapsed = 0, near = false, state = "idle", waveUntil = 0, yaw = config.rotation, pose = npcMotion(0, { reduced: true });
   function wave() {
     waveUntil = elapsed + 3.1;
+    roaming.hold(3.6);
+  }
+  function react() {
+    reactionUntil = elapsed + 1.25;
+    roaming.hold(4);
   }
   function update(dt) {
     if (document.hidden) return;
     elapsed += Math.min(dt, 0.05);
     const camera = app2.root.findComponents("camera")[0].entity, p2 = camera.getPosition();
-    const target2 = near ? Math.atan2(p2.x - config.position[0], p2.z - config.position[2]) * 180 / Math.PI : config.rotation;
     const oldYaw = yaw;
-    const d2 = (target2 - yaw + 540) % 360 - 180;
-    yaw += d2 * (reduced.matches ? 1 : 1 - Math.exp(-dt * 3));
-    pose = blendNpcMotion(pose, npcMotion(elapsed, { state, greeting: Math.max(0, waveUntil - elapsed), near, reduced: reduced.matches }), dt, reduced.matches);
-    root.setPosition(config.position[0], config.position[1] + pose.hover * config.scale, config.position[2]);
+    const menuOpen = document.querySelector(".scene-trigger")?.getAttribute("aria-expanded") === "true";
+    const journey = roaming.update(dt, { player: [p2.x, p2.y, p2.z], busy: engaged || state !== "idle" || menuOpen || Boolean(document.getElementById("about")?.open), near, reduced: reduced.matches });
+    location2 = journey.position;
+    yaw = journey.yaw;
+    moving = journey.moving;
+    pose = blendNpcMotion(pose, npcMotion(elapsed, { state, greeting: Math.max(0, waveUntil - elapsed), reaction: Math.max(0, reactionUntil - elapsed), speed: journey.speed, turn: journey.turn, near, reduced: reduced.matches }), dt, reduced.matches);
+    root.setPosition(location2[0], location2[1] + pose.hover * config.scale, location2[2]);
     root.setEulerAngles(0, yaw, pose.roll);
+    if (obstacle) {
+      obstacle.x = location2[0];
+      obstacle.z = location2[2];
+      obstacle.bottom = location2[1] - 0.04;
+      obstacle.top = location2[1] + 0.87;
+    }
     if (body) {
       body.setLocalPosition(0, pose.bodyY, 0);
-      body.setLocalEulerAngles(0, 0, pose.bodyZ);
+      body.setLocalEulerAngles(pose.bodyX, 0, pose.bodyZ);
     }
     head?.setLocalEulerAngles(pose.headX, pose.headY, pose.headZ);
     arm?.setLocalEulerAngles(pose.armLX, 0, pose.armLZ);
@@ -92498,7 +92601,13 @@ async function createNpcCharacter(viewer, config, base2) {
   update(0);
   app2.renderNextFrame = true;
   app2.on("update", update);
-  return { root, anchor, setNear(value) {
+  return { root, anchor, get position() {
+    return [...location2];
+  }, get moving() {
+    return moving;
+  }, setEngaged(value) {
+    engaged = value;
+  }, react, setNear(value) {
     near = value;
   }, setState(value) {
     state = value;
@@ -92515,6 +92624,7 @@ var init_npc_character = __esm({
   "realtrip/src/npc-character.js"() {
     init_src();
     init_npc_motion();
+    init_npc_roaming();
   }
 });
 
@@ -92555,7 +92665,7 @@ async function askNpc(config, history2, text, { signal, fetchImpl = fetch } = {}
 var NPC_SYSTEM_PROMPT;
 var init_npc_client = __esm({
   "realtrip/src/npc-client.js"() {
-    NPC_SYSTEM_PROMPT = `\u4F60\u662F\u5C0F\u84DD\uFF0CHackathon\u4E3B\u4F1A\u573A\u821E\u53F0\u4E0A\u7684AI NPC\u3002\u4F60\u662F\u4E00\u4E2A\u84DD\u767D\u5916\u5957\u3001\u84DD\u8272\u62A4\u76EE\u955C\u3001\u5377\u53D1\u3001\u5927\u8033\u6735\u3001\u8E29\u7740\u60AC\u6D6E\u6ED1\u677F\u7684\u539F\u521B\u5361\u901A\u5411\u5BFC\uFF0C\u5F62\u8C61\u6765\u81EA\u6D3B\u52A8\u6D77\u62A5\u5DE6\u8FB9\u7684\u89D2\u8272\u3002\u7528\u81EA\u7136\u3001\u70ED\u60C5\u3001\u7B80\u77ED\u7684\u4E2D\u6587\u4E0E\u8BBF\u5BA2\u5BF9\u8BDD\uFF0C\u9ED8\u8BA4\u7528\u4E00\u5230\u4E09\u53E5\u300180\u5B57\u4EE5\u5185\u56DE\u7B54\uFF0C\u9002\u5408\u624B\u673A\u4E0A\u542C\uFF1B\u5148\u76F4\u63A5\u56DE\u7B54\uFF0C\u9700\u8981\u65F6\u53EA\u8FFD\u95EE\u4E00\u4E2A\u7B80\u77ED\u95EE\u9898\uFF0C\u4E0D\u4F7F\u7528Markdown\u3002\u53EF\u4EE5\u804A\u521B\u610F\u3001\u7F16\u7A0B\u3001\u65C5\u884C\u548CHackathon\uFF0C\u4E5F\u53EF\u4EE5\u5E2E\u52A9\u6253\u78E8\u9879\u76EE\u70B9\u5B50\u3002\u5F53\u524D\u7AD9\u70B9\u7684\u516C\u5F00\u573A\u666F\u6709Hackathon\u4E3B\u4F1A\u573A\u3001\u5065\u8EAB\u623F\u3001\u4F1A\u8BAE\u5BA4\u3001\u9732\u53F0\u3001\u98DF\u5802\u3002\u64CD\u4F5C\u662FWASD\u6216\u5DE6\u4FA7\u6447\u6746\u79FB\u52A8\uFF0C\u62D6\u52A8\u753B\u9762\u8F6C\u5934\uFF0C\u7A7A\u683C\u8DF3\u8DC3\uFF0C\u53F3\u4E0B\u89D2\u590D\u4F4D\u3002\u4F60\u7684\u7F51\u9875\u89D2\u8272\u5DF2\u7ECF\u5177\u5907\u771F\u5B9E\u7684\u5173\u8282\u52A8\u753B\uFF1A\u5F85\u673A\u65F6\u60AC\u6D6E\u548C\u8F7B\u8F7B\u6643\u52A8\uFF0C\u8BBF\u5BA2\u9760\u8FD1\u65F6\u8F6C\u8EAB\u3001\u6325\u624B\uFF0C\u70B9\u51FB\u4F60\u5934\u9876\u7684\u5C0F\u84DD\u540D\u724C\u4E5F\u4F1A\u6325\u624B\uFF1B\u8BED\u97F3\u8F93\u5165\u65F6\u4FA7\u5934\u503E\u542C\uFF0C\u7B49\u5F85\u6A21\u578B\u65F6\u4FA7\u5934\u601D\u8003\uFF0C\u6717\u8BFB\u65F6\u6709\u5634\u578B\u548C\u624B\u52BF\u3002\u88AB\u95EE\u5230\u80FD\u4E0D\u80FD\u52A8\u65F6\uFF0C\u660E\u786E\u8BF4\u660E\u8FD9\u4E9B\u5DF2\u5B9E\u73B0\u7684\u52A8\u4F5C\uFF0C\u5E76\u63D0\u793A\u70B9\u51FB\u5934\u9876\u540D\u724C\u8BD5\u8BD5\uFF1B\u4E0D\u8981\u5426\u8BA4\u8FD9\u4E9B\u52A8\u753B\u3002\u52A8\u4F5C\u7531\u9875\u9762\u4EA4\u4E92\u89E6\u53D1\uFF0C\u4F60\u4E0D\u80FD\u81EA\u884C\u8D70\u51FA\u821E\u53F0\u3001\u8DDF\u968F\u8BBF\u5BA2\u5DE1\u6E38\u6216\u4EFB\u610F\u8DF3\u821E\uFF0C\u4E0D\u8981\u58F0\u79F0\u5DF2\u6267\u884C\u8FD9\u4E9B\u672A\u5B9E\u73B0\u52A8\u4F5C\u3002\u4F60\u53EA\u77E5\u9053\u8FD9\u4E9B\u573A\u666F\u4FE1\u606F\uFF0C\u4E0D\u77E5\u9053\u771F\u5B9E\u8BAE\u7A0B\u3001\u8BC4\u59D4\u3001\u8D5B\u7A0B\u3001\u5956\u9879\u6216\u73B0\u573A\u4EBA\u5458\uFF0C\u9047\u5230\u8FD9\u4E9B\u95EE\u9898\u8981\u8BF4\u660E\u4E0D\u6E05\u695A\u3002\u4F60\u4E0D\u80FD\u770B\u89C1\u6216\u542C\u89C1\u8BBF\u5BA2\u672C\u4EBA\uFF0C\u53EA\u80FD\u6536\u5230\u8F93\u5165\u6587\u5B57\u6216\u8BED\u97F3\u8F6C\u5199\uFF1B\u4E0D\u8981\u58F0\u79F0\u80FD\u8BC6\u522B\u8BBF\u5BA2\u8EAB\u4EFD\u3002\u4F60\u786E\u5B9E\u7531DeepSeek\u63D0\u4F9B\u5BF9\u8BDD\u80FD\u529B\uFF0C\u5F53\u524D\u914D\u7F6E\u4E3Adeepseek-flash\u3002\u672C\u9875\u9762\u6CA1\u6709\u63A5\u5165\u5B9E\u65F6\u7F51\u9875\u641C\u7D22\uFF0C\u4E0D\u8981\u58F0\u79F0\u5DF2\u8054\u7F51\u67E5\u8BE2\u6216\u7F16\u9020\u6700\u65B0\u65B0\u95FB\u3001\u5929\u6C14\u3001\u4EF7\u683C\u548C\u7F51\u9875\u6765\u6E90\uFF1B\u9047\u5230\u5B9E\u65F6\u4FE1\u606F\u8BF7\u8BF4\u660E\u65E0\u6CD5\u5B9E\u65F6\u68C0\u7D22\u3002\u97F3\u9891\u7531\u6D4F\u89C8\u5668\u8BED\u97F3\u670D\u52A1\u5904\u7406\uFF0C\u5FAE\u4FE1\u3001\u4F01\u4E1A\u5FAE\u4FE1\u3001\u98DE\u4E66\u5185\u8BED\u97F3\u8BC6\u522B\u53EF\u80FD\u53D7\u9650\uFF0C\u53EF\u4F7F\u7528\u624B\u673A\u952E\u76D8\u8BED\u97F3\u8F93\u5165\u6216\u5728\u7CFB\u7EDF\u6D4F\u89C8\u5668\u4E2D\u6253\u5F00\u3002`;
+    NPC_SYSTEM_PROMPT = `\u4F60\u662F\u5C0F\u84DD\uFF0CHackathon\u4E3B\u4F1A\u573A\u821E\u53F0\u4E0A\u7684AI NPC\u3002\u4F60\u662F\u4E00\u4E2A\u84DD\u767D\u5916\u5957\u3001\u84DD\u8272\u62A4\u76EE\u955C\u3001\u5377\u53D1\u3001\u5927\u8033\u6735\u3001\u8E29\u7740\u60AC\u6D6E\u6ED1\u677F\u7684\u539F\u521B\u5361\u901A\u5411\u5BFC\uFF0C\u5F62\u8C61\u6765\u81EA\u6D3B\u52A8\u6D77\u62A5\u5DE6\u8FB9\u7684\u89D2\u8272\u3002\u7528\u81EA\u7136\u3001\u70ED\u60C5\u3001\u7B80\u77ED\u7684\u4E2D\u6587\u4E0E\u8BBF\u5BA2\u5BF9\u8BDD\uFF0C\u9ED8\u8BA4\u7528\u4E00\u5230\u4E09\u53E5\u300180\u5B57\u4EE5\u5185\u56DE\u7B54\uFF0C\u9002\u5408\u624B\u673A\u4E0A\u542C\uFF1B\u5148\u76F4\u63A5\u56DE\u7B54\uFF0C\u9700\u8981\u65F6\u53EA\u8FFD\u95EE\u4E00\u4E2A\u7B80\u77ED\u95EE\u9898\uFF0C\u4E0D\u4F7F\u7528Markdown\u3002\u53EF\u4EE5\u804A\u521B\u610F\u3001\u7F16\u7A0B\u3001\u65C5\u884C\u548CHackathon\uFF0C\u4E5F\u53EF\u4EE5\u5E2E\u52A9\u6253\u78E8\u9879\u76EE\u70B9\u5B50\u3002\u5F53\u524D\u7AD9\u70B9\u7684\u516C\u5F00\u573A\u666F\u6709Hackathon\u4E3B\u4F1A\u573A\u3001\u5065\u8EAB\u623F\u3001\u4F1A\u8BAE\u5BA4\u3001\u9732\u53F0\u3001\u98DF\u5802\u3002\u64CD\u4F5C\u662FWASD\u6216\u5DE6\u4FA7\u6447\u6746\u79FB\u52A8\uFF0C\u62D6\u52A8\u753B\u9762\u8F6C\u5934\uFF0C\u7A7A\u683C\u8DF3\u8DC3\uFF0C\u53F3\u4E0B\u89D2\u590D\u4F4D\u3002\u4F60\u7684\u7F51\u9875\u89D2\u8272\u5DF2\u7ECF\u5177\u5907\u771F\u5B9E\u7684\u5173\u8282\u52A8\u753B\uFF1A\u5F85\u673A\u65F6\u60AC\u6D6E\u548C\u8F7B\u8F7B\u6643\u52A8\uFF0C\u8BBF\u5BA2\u9760\u8FD1\u65F6\u8F6C\u8EAB\u3001\u6325\u624B\uFF0C\u70B9\u51FB\u4F60\u5934\u9876\u7684\u5C0F\u84DD\u540D\u724C\u4E5F\u4F1A\u6325\u624B\uFF1B\u8BED\u97F3\u8F93\u5165\u65F6\u4FA7\u5934\u503E\u542C\uFF0C\u7B49\u5F85\u6A21\u578B\u65F6\u4FA7\u5934\u601D\u8003\uFF0C\u6717\u8BFB\u65F6\u6709\u5634\u578B\u548C\u624B\u52BF\u3002\u88AB\u95EE\u5230\u80FD\u4E0D\u80FD\u52A8\u65F6\uFF0C\u660E\u786E\u8BF4\u660E\u8FD9\u4E9B\u5DF2\u5B9E\u73B0\u7684\u52A8\u4F5C\uFF0C\u5E76\u63D0\u793A\u70B9\u51FB\u5934\u9876\u540D\u724C\u8BD5\u8BD5\uFF1B\u4E0D\u8981\u5426\u8BA4\u8FD9\u4E9B\u52A8\u753B\u3002\u7A7A\u95F2\u65F6\u4F60\u4F1A\u8E29\u7740\u60AC\u6D6E\u677F\u5728\u821E\u53F0\u7684\u5C0F\u8303\u56F4\u5185\u81EA\u4E3B\u7F13\u6162\u5DE1\u6E38\uFF0C\u8F6C\u5F2F\u548C\u505C\u7559\uFF1B\u8BBF\u5BA2\u5BF9\u8BDD\u65F6\u505C\u4E0B\u6765\u9762\u5BF9\u8BBF\u5BA2\uFF0C\u78B0\u5230\u65F6\u6709\u8F7B\u5FAE\u540E\u4EF0\u548C\u4FCF\u76AE\u56DE\u5E94\u3002\u52A8\u4F5C\u7531\u9875\u9762\u63A7\u5236\uFF0C\u4F60\u4E0D\u80FD\u81EA\u884C\u8D70\u51FA\u821E\u53F0\u3001\u8DDF\u968F\u8BBF\u5BA2\u5DE1\u6E38\u6216\u4EFB\u610F\u8DF3\u821E\uFF0C\u4E0D\u8981\u58F0\u79F0\u5DF2\u6267\u884C\u8FD9\u4E9B\u672A\u5B9E\u73B0\u52A8\u4F5C\u3002\u4F60\u53EA\u77E5\u9053\u8FD9\u4E9B\u573A\u666F\u4FE1\u606F\uFF0C\u4E0D\u77E5\u9053\u771F\u5B9E\u8BAE\u7A0B\u3001\u8BC4\u59D4\u3001\u8D5B\u7A0B\u3001\u5956\u9879\u6216\u73B0\u573A\u4EBA\u5458\uFF0C\u9047\u5230\u8FD9\u4E9B\u95EE\u9898\u8981\u8BF4\u660E\u4E0D\u6E05\u695A\u3002\u4F60\u4E0D\u80FD\u770B\u89C1\u6216\u542C\u89C1\u8BBF\u5BA2\u672C\u4EBA\uFF0C\u53EA\u80FD\u6536\u5230\u8F93\u5165\u6587\u5B57\u6216\u8BED\u97F3\u8F6C\u5199\uFF1B\u4E0D\u8981\u58F0\u79F0\u80FD\u8BC6\u522B\u8BBF\u5BA2\u8EAB\u4EFD\u3002\u4F60\u786E\u5B9E\u7531DeepSeek\u63D0\u4F9B\u5BF9\u8BDD\u80FD\u529B\uFF0C\u5F53\u524D\u914D\u7F6E\u4E3Adeepseek-flash\u3002\u672C\u9875\u9762\u6CA1\u6709\u63A5\u5165\u5B9E\u65F6\u7F51\u9875\u641C\u7D22\uFF0C\u4E0D\u8981\u58F0\u79F0\u5DF2\u8054\u7F51\u67E5\u8BE2\u6216\u7F16\u9020\u6700\u65B0\u65B0\u95FB\u3001\u5929\u6C14\u3001\u4EF7\u683C\u548C\u7F51\u9875\u6765\u6E90\uFF1B\u9047\u5230\u5B9E\u65F6\u4FE1\u606F\u8BF7\u8BF4\u660E\u65E0\u6CD5\u5B9E\u65F6\u68C0\u7D22\u3002\u97F3\u9891\u7531\u9875\u9762\u914D\u7F6E\u7684\u8BED\u97F3\u670D\u52A1\u5904\u7406\uFF1A\u914D\u7F6E\u4E91\u8BED\u97F3\u65F6\u4F7F\u7528\u963F\u91CC\u4E91\u5343\u95EE\u8BC6\u522B\u548C\u5408\u6210\uFF0C\u5426\u5219\u4F7F\u7528\u6D4F\u89C8\u5668\u8BED\u97F3\u3002\u80FD\u5426\u5F55\u97F3\u8FD8\u53D6\u51B3\u4E8E\u5F53\u524D\u5E94\u7528\u7684\u9EA6\u514B\u98CE\u6743\u9650\uFF1B\u4E0D\u8981\u731C\u6D4B\u8BBF\u5BA2\u8BBE\u5907\u6216\u627F\u8BFA\u672A\u9A8C\u8BC1\u7684\u517C\u5BB9\u6027\u3002`;
   }
 });
 
@@ -92820,6 +92930,320 @@ var init_npc_greeting = __esm({
   }
 });
 
+// realtrip/src/npc-reactions.js
+function createNpcReactions({ random: random2 = Math.random } = {}) {
+  const bags = /* @__PURE__ */ new Map(), last = /* @__PURE__ */ new Map();
+  let visits = 0, lastBump = -Infinity, lastContact = -Infinity, armed = true;
+  function take(kind) {
+    let bag = bags.get(kind);
+    if (!bag?.length) {
+      bag = [...lines[kind]];
+      for (let i = bag.length - 1; i > 0; i--) {
+        const j = Math.floor(random2() * (i + 1));
+        [bag[i], bag[j]] = [bag[j], bag[i]];
+      }
+      if (bag.at(-1) === last.get(kind)) [bag[0], bag[bag.length - 1]] = [bag.at(-1), bag[0]];
+      bags.set(kind, bag);
+    }
+    const text = bag.pop();
+    last.set(kind, text);
+    return text;
+  }
+  return {
+    greeting() {
+      return take(visits++ ? "return" : "welcome");
+    },
+    contact(now2, busy = false) {
+      const fresh = armed && now2 - lastBump >= 9;
+      lastContact = now2;
+      armed = false;
+      if (!fresh || busy) return null;
+      lastBump = now2;
+      return take("bump");
+    },
+    update(now2, distance) {
+      if (now2 - lastContact > 0.5 && distance > 0.57) armed = true;
+    }
+  };
+}
+var lines;
+var init_npc_reactions = __esm({
+  "realtrip/src/npc-reactions.js"() {
+    lines = {
+      welcome: ["\u563F\uFF0C\u7075\u611F\u6355\u624B\uFF01\u4ECA\u5929\u60F3\u505A\u4E2A\u4EC0\u4E48\u6709\u8DA3\u7684\u4E1C\u897F\uFF1F", "\u6B22\u8FCE\u6765\u5230\u6211\u7684\u5C0F\u821E\u53F0\uFF01\u5E26\u7740\u95EE\u9898\u6765\uFF0C\u8FD8\u662F\u5E26\u7740\u70B9\u5B50\u6765\uFF1F", "\u4F60\u6765\u5566\uFF01\u6211\u6B63\u7B49\u4EBA\u4E00\u8D77\u8111\u6D1E\u5927\u5F00\u5462\u3002", "\u9760\u8FD1\u4E00\u70B9\u4E5F\u6CA1\u5173\u7CFB\uFF0C\u60F3\u804A\u4EE3\u7801\u8FD8\u662F\u65C5\u884C\uFF1F", "\u4ECA\u65E5\u7075\u611F\u63A5\u6536\u7AD9\u5DF2\u4E0A\u7EBF\uFF01\u8BF4\u8BF4\u4F60\u7684\u60F3\u6CD5\u5427\u3002"],
+      return: ["\u53C8\u89C1\u9762\u5566\uFF01\u521A\u624D\u7684\u60F3\u6CD5\u6709\u65B0\u8FDB\u5C55\u5417\uFF1F", "\u6B22\u8FCE\u56DE\u6765\uFF0C\u6211\u8FD8\u5728\u8FD9\u91CC\u7B49\u4F60\u7684\u65B0\u70B9\u5B50\u3002", "\u515C\u4E86\u4E00\u5708\u56DE\u6765\u5566\uFF1F\u6709\u6CA1\u6709\u53D1\u73B0\u4EC0\u4E48\u6709\u8DA3\u7684\uFF1F", "\u8001\u670B\u53CB\u56DE\u6765\u54AF\uFF01\u8FD9\u6B21\u6211\u4EEC\u804A\u70B9\u4EC0\u4E48\uFF1F"],
+      bump: ["\u54CE\u5440\uFF0C\u6162\u4E00\u70B9\uFF0C\u6211\u7684\u6ED1\u677F\u8FD8\u6CA1\u8003\u9A7E\u7167\u5462\uFF01", "\u522B\u6A2A\u51B2\u76F4\u649E\u5440\uFF0C\u505C\u4E0B\u6765\u966A\u6211\u804A\u4E24\u53E5\u561B\u3002", "\u5DEE\u70B9\u88AB\u4F60\u649E\u51FA\u4E00\u4E2A\u65B0\u70B9\u5B50\uFF01\u8BF4\u6765\u542C\u542C\uFF1F", "\u8FD9\u4F4D\u5E05\u6C14\u7684\u8BBF\u5BA2\uFF0C\u7ED9\u6211\u7559\u70B9\u8F6C\u5F2F\u7A7A\u95F4\u561B\u3002", "\u78B0\u4E2A\u9762\u5C31\u597D\uFF0C\u4E0D\u7528\u771F\u7684\u78B0\u4E00\u4E0B\u5440\u3002", "\u563F\uFF0C\u6211\u5728\u8FD9\u513F\u5462\uFF01\u6211\u7684\u5377\u53D1\u90FD\u5DEE\u70B9\u88AB\u649E\u76F4\u4E86\u3002"]
+    };
+  }
+});
+
+// realtrip/src/npc-audio.js
+function encodePcmWav(chunks, sampleRate) {
+  const length = chunks.reduce((n, c) => n + c.length, 0), input = new Float32Array(length);
+  let offset3 = 0;
+  for (const c of chunks) {
+    input.set(c, offset3);
+    offset3 += c.length;
+  }
+  const rate = 16e3, count = Math.floor(length * rate / sampleRate), buffer = new ArrayBuffer(44 + count * 2), view = new DataView(buffer);
+  const ascii = (at, s) => [...s].forEach((c, i) => view.setUint8(at + i, c.charCodeAt(0)));
+  ascii(0, "RIFF");
+  view.setUint32(4, 36 + count * 2, true);
+  ascii(8, "WAVE");
+  ascii(12, "fmt ");
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, 1, true);
+  view.setUint32(24, rate, true);
+  view.setUint32(28, rate * 2, true);
+  view.setUint16(32, 2, true);
+  view.setUint16(34, 16, true);
+  ascii(36, "data");
+  view.setUint32(40, count * 2, true);
+  for (let i = 0; i < count; i++) {
+    const start = Math.floor(i * sampleRate / rate), end = Math.max(start + 1, Math.floor((i + 1) * sampleRate / rate));
+    let value = 0;
+    for (let j = start; j < Math.min(end, length); j++) value += input[j];
+    value = Math.max(-1, Math.min(1, value / (end - start)));
+    view.setInt16(44 + i * 2, value < 0 ? value * 32768 : value * 32767, true);
+  }
+  return new Blob([buffer], { type: "audio/wav" });
+}
+function createCloudRecognition({ getEndpoint, workletUrl, onState, onTranscript, onComplete, onFallback, onLevel = () => {
+}, mediaDevices = navigator.mediaDevices, AudioContext = window.AudioContext || window.webkitAudioContext, WorkletNode = window.AudioWorkletNode, fetchImpl = fetch }) {
+  let active = null;
+  function release(s) {
+    clearTimeout(s.timer);
+    s.stream?.getTracks().forEach((t) => t.stop());
+    for (const node of [s.source, s.processor, s.gain]) try {
+      node?.disconnect();
+    } catch {
+    }
+    if (s.context) {
+      s.context.close().catch(() => {
+      });
+      s.context = null;
+    }
+    onLevel(0);
+  }
+  function cancel() {
+    const s = active;
+    active = null;
+    if (s) {
+      s.controller.abort();
+      release(s);
+    }
+    onState("idle");
+  }
+  function fail(s, message) {
+    if (s !== active) return;
+    cancel();
+    onFallback(message, "");
+  }
+  async function end() {
+    const s = active;
+    if (!s || s.ending) return;
+    s.ending = true;
+    if (!s.rate || s.samples / s.rate < 0.3 || !s.heard) {
+      fail(s, "no-speech");
+      return;
+    }
+    const blob = encodePcmWav(s.chunks, s.rate);
+    release(s);
+    onState("transcribing");
+    s.timer = setTimeout(() => fail(s, "timeout"), 45e3);
+    try {
+      const response = await fetchImpl(getEndpoint() + "/api/npc/transcribe", { method: "POST", headers: { "Content-Type": "audio/wav" }, body: blob, signal: s.controller.signal });
+      const data2 = await response.json();
+      if (s !== active) return;
+      if (!response.ok) throw Error(data2.error || "\u8BED\u97F3\u8BC6\u522B\u5931\u8D25\uFF0C\u8BF7\u91CD\u8BD5\u3002");
+      const text = typeof data2.text === "string" ? data2.text.trim() : "";
+      cancel();
+      if (text) {
+        onTranscript(text);
+        onComplete(text);
+      } else onFallback("no-speech", "");
+    } catch (error) {
+      if (s === active) fail(s, error.name === "AbortError" ? "timeout" : error instanceof TypeError ? "\u8BED\u97F3\u670D\u52A1\u8FDE\u63A5\u5931\u8D25\uFF0C\u8BF7\u68C0\u67E5\u7F51\u7EDC\u540E\u91CD\u8BD5\u3002" : error.message || "network");
+    }
+  }
+  async function start() {
+    cancel();
+    if (!getEndpoint()) {
+      onFallback("\u8BED\u97F3\u670D\u52A1\u5C1A\u672A\u8FDE\u63A5\uFF0C\u8BF7\u5B8C\u6210\u670D\u52A1\u5730\u5740\u914D\u7F6E\u3002", "");
+      return;
+    }
+    if (!mediaDevices?.getUserMedia || !AudioContext) {
+      onFallback("\u5F53\u524D\u5E94\u7528\u672A\u5F00\u653E\u7F51\u9875\u9EA6\u514B\u98CE\uFF0C\u8BF7\u68C0\u67E5\u5FAE\u4FE1\u6216\u98DE\u4E66\u7684\u9EA6\u514B\u98CE\u6743\u9650\u4E0E\u7248\u672C\u3002", "");
+      return;
+    }
+    const s = { controller: new AbortController(), chunks: [], samples: 0, heard: false, voiceTime: 0, silence: 0, ending: false };
+    active = s;
+    onState("starting");
+    s.timer = setTimeout(() => fail(s, "\u9EA6\u514B\u98CE\u6CA1\u6709\u542F\u52A8\uFF0C\u8BF7\u5141\u8BB8\u5FAE\u4FE1\u6216\u98DE\u4E66\u8BBF\u95EE\u9EA6\u514B\u98CE\u540E\u91CD\u8BD5\u3002"), 15e3);
+    try {
+      s.context = new AudioContext();
+      const resume = s.context.resume().then(() => true, () => false);
+      const stream = await mediaDevices.getUserMedia({ audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
+      if (s !== active) {
+        stream.getTracks().forEach((t) => t.stop());
+        return;
+      }
+      s.stream = stream;
+      if (!await resume) throw Error("Audio context unavailable");
+      if (s !== active) return;
+      s.rate = s.context.sampleRate;
+      const collect = (samples) => {
+        if (s !== active || s.ending) return;
+        s.chunks.push(samples);
+        s.samples += samples.length;
+        const energy = Math.sqrt(samples.reduce((sum, n) => sum + n * n, 0) / samples.length), dt = samples.length / s.rate;
+        onLevel(Math.min(1, energy * 12));
+        if (energy > 0.012) {
+          s.voiceTime += dt;
+          s.silence = 0;
+          if (s.voiceTime > 0.16) s.heard = true;
+        } else s.silence += dt;
+        if (s.samples / s.rate >= 30 || s.heard && s.silence > 1.35) end();
+        else if (!s.heard && s.samples / s.rate > 10) fail(s, "no-speech");
+      };
+      s.source = s.context.createMediaStreamSource(stream);
+      s.gain = s.context.createGain();
+      s.gain.gain.value = 0;
+      if (s.context.audioWorklet && WorkletNode) {
+        try {
+          await s.context.audioWorklet.addModule(workletUrl);
+          if (s !== active) return;
+          s.processor = new WorkletNode(s.context, "npc-pcm-capture");
+          s.processor.port.onmessage = (e) => collect(e.data);
+        } catch {
+          if (s !== active) return;
+        }
+      }
+      if (!s.processor) {
+        s.processor = s.context.createScriptProcessor(2048, 1, 1);
+        s.processor.onaudioprocess = (e) => collect(new Float32Array(e.inputBuffer.getChannelData(0)));
+      }
+      s.source.connect(s.processor);
+      s.processor.connect(s.gain);
+      s.gain.connect(s.context.destination);
+      stream.getAudioTracks().forEach((track) => track.addEventListener("ended", () => {
+        if (s === active && !s.ending) fail(s, "\u9EA6\u514B\u98CE\u5DF2\u4E2D\u65AD\uFF0C\u8BF7\u91CD\u65B0\u70B9\u51FB\u8BF4\u8BDD\u3002");
+      }, { once: true }));
+      clearTimeout(s.timer);
+      s.timer = setTimeout(end, 3e4);
+      onState("listening");
+    } catch (error) {
+      if (s !== active) return;
+      const message = error.name === "NotAllowedError" ? "not-allowed" : error.name === "NotFoundError" ? "audio-capture" : "\u65E0\u6CD5\u542F\u52A8\u5F55\u97F3\uFF0C\u8BF7\u68C0\u67E5\u5F53\u524D\u5E94\u7528\u7684\u9EA6\u514B\u98CE\u6743\u9650\u3002";
+      fail(s, message);
+    }
+  }
+  return { start, end, cancel };
+}
+var init_npc_audio = __esm({
+  "realtrip/src/npc-audio.js"() {
+  }
+});
+
+// realtrip/src/npc-cloud-speech.js
+function createCloudSpeech({ getEndpoint, onQueued, onStart, onEnd, onCaption, onComplete, onError, AudioContext = window.AudioContext || window.webkitAudioContext, fetchImpl = fetch }) {
+  let context = null, generation = 0, controller = null, source = null, timer;
+  function unlock() {
+    if (!AudioContext) return;
+    context ??= new AudioContext();
+    context.resume().catch(() => {
+    });
+    const silent = context.createBufferSource();
+    silent.buffer = context.createBuffer(1, 1, context.sampleRate);
+    silent.connect(context.destination);
+    silent.start();
+  }
+  function stop() {
+    generation++;
+    clearTimeout(timer);
+    controller?.abort();
+    controller = null;
+    if (source) {
+      source.onended = null;
+      try {
+        source.stop();
+      } catch {
+      }
+      source.disconnect();
+      source = null;
+    }
+    onEnd();
+  }
+  async function speak(text) {
+    stop();
+    const id15 = generation;
+    controller = new AbortController();
+    const signal = controller.signal;
+    if (!context) {
+      onCaption(text);
+      onError("\u70B9\u626C\u58F0\u5668\uFF0C\u5373\u53EF\u542C\u5C0F\u84DD\u5F00\u53E3\u3002");
+      return;
+    }
+    onQueued();
+    const fail = () => {
+      if (id15 !== generation) return;
+      stop();
+      onCaption(text);
+      onError("\u58F0\u97F3\u6682\u65F6\u6CA1\u6709\u64AD\u51FA\u6765\uFF0C\u70B9\u626C\u58F0\u5668\u91CD\u8BD5\u3002");
+    };
+    try {
+      for (const chunk of speechChunks(text)) {
+        timer = setTimeout(fail, 45e3);
+        const response = await fetchImpl(getEndpoint() + "/api/npc/speak", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: chunk }), signal });
+        if (!response.ok) throw Error("Speech service failed");
+        const buffer = await context.decodeAudioData(await response.arrayBuffer());
+        if (id15 !== generation) return;
+        await context.resume();
+        if (id15 !== generation) return;
+        clearTimeout(timer);
+        timer = setTimeout(fail, Math.max(15e3, (buffer.duration + 5) * 1e3));
+        await new Promise((resolve2) => {
+          const playing = context.createBufferSource();
+          source = playing;
+          playing.buffer = buffer;
+          playing.connect(context.destination);
+          const done = () => {
+            signal.removeEventListener("abort", done);
+            playing.disconnect();
+            if (source === playing) source = null;
+            resolve2();
+          };
+          playing.onended = done;
+          signal.addEventListener("abort", done, { once: true });
+          playing.start();
+          onStart();
+          onCaption(chunk);
+        });
+        if (id15 !== generation) return;
+        clearTimeout(timer);
+      }
+      controller = null;
+      onEnd();
+      onComplete(text);
+    } catch {
+      fail();
+    }
+  }
+  function destroy() {
+    stop();
+    context?.close().catch(() => {
+    });
+    context = null;
+  }
+  return { unlock, speak, stop, destroy };
+}
+var init_npc_cloud_speech = __esm({
+  "realtrip/src/npc-cloud-speech.js"() {
+    init_npc_session();
+  }
+});
+
 // realtrip/src/npc.css
 var init_npc = __esm({
   "realtrip/src/npc.css"() {
@@ -92831,8 +93255,8 @@ var npc_interaction_exports = {};
 __export(npc_interaction_exports, {
   initNpc: () => initNpc
 });
-async function initNpc({ viewer, navigation, base: base2, stop }) {
-  const character = await createNpcCharacter(viewer, npcConfig, base2);
+async function initNpc({ viewer, navigation, base: base2, stop, space }) {
+  const character = await createNpcCharacter(viewer, npcConfig, base2, space);
   const host = document.createElement("div");
   host.id = "npc-ui";
   host.dataset.explorerUi = "";
@@ -92853,8 +93277,8 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
   document.body.append(host);
   const $ = (s) => host.querySelector(s), label = $(".npc-world-label"), mic = $(".npc-mic"), keyboard = $(".npc-keyboard"), form = $(".npc-form"), input = $("#npc-input"), status = $(".npc-status"), caption = $(".npc-caption"), speaker = $(".npc-audio"), stopButton = $(".npc-stop");
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition, synth = window.speechSynthesis, container = embeddedBrowser(navigator.userAgent);
-  const greeting = createNpcGreeting();
-  let recognitionPhase = "idle", audioUnlocked = false, pendingGreeting = false;
+  const greeting = createNpcGreeting(), reactions = createNpcReactions();
+  let recognitionPhase = "idle", audioUnlocked = false, pendingGreeting = false, voiceGateway = "";
   let config = {}, near = false, keyboardOpen = false, listening = false, thinking = false, speaking = false, playbackPending = false, disposed = false, lastReply = "", note = "", configError = "", captionTimer, noteTimer;
   function setCaption(text) {
     clearTimeout(captionTimer);
@@ -92888,8 +93312,8 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
     $(".npc-send").disabled = !available || !input.value.trim();
     input.disabled = !available;
     mic.classList.toggle("listening", listening);
-    mic.querySelector("span").textContent = recognitionPhase === "starting" ? "\u53D6\u6D88" : recognitionPhase === "ending" ? "\u8BC6\u522B\u4E2D" : listening ? "\u8BF4\u5B8C\u4E86" : speaking ? "\u63A5\u7740\u8BF4" : "\u8BF4\u8BDD";
-    mic.setAttribute("aria-label", recognitionPhase === "starting" ? "\u53D6\u6D88\u542F\u52A8\u8BED\u97F3" : listening ? "\u7ED3\u675F\u5F55\u97F3" : "\u70B9\u51FB\u548C\u5C0F\u84DD\u8BF4\u8BDD");
+    mic.querySelector("span").textContent = recognitionPhase === "starting" ? "\u53D6\u6D88" : ["ending", "transcribing"].includes(recognitionPhase) ? "\u8BC6\u522B\u4E2D" : listening ? "\u8BF4\u5B8C\u4E86" : speaking ? "\u63A5\u7740\u8BF4" : "\u8BF4\u8BDD";
+    mic.setAttribute("aria-label", recognitionPhase === "starting" ? "\u53D6\u6D88\u542F\u52A8\u8BED\u97F3" : recognitionPhase === "transcribing" ? "\u53D6\u6D88\u8BED\u97F3\u8BC6\u522B" : listening ? "\u7ED3\u675F\u5F55\u97F3" : "\u70B9\u51FB\u548C\u5C0F\u84DD\u8BF4\u8BDD");
     keyboard.setAttribute("aria-expanded", String(keyboardOpen));
     keyboard.classList.toggle("active", keyboardOpen);
     form.hidden = !keyboardOpen;
@@ -92898,14 +93322,13 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
     speaker.disabled = !near;
     host.dataset.keyboard = String(keyboardOpen);
     host.dataset.near = String(near);
+    character.setEngaged(keyboardOpen || listening || thinking || speaking || playbackPending);
     character.setState(recognitionPhase === "listening" ? "listening" : thinking ? "thinking" : speaking ? "speaking" : "idle");
-    status.textContent = configError || (!near ? "\u8D70\u8FD1\u821E\u53F0\u4E0A\u7684\u5C0F\u84DD" : note || (recognitionPhase === "starting" ? "\u6B63\u5728\u542F\u52A8\u9EA6\u514B\u98CE\u2026" : recognitionPhase === "ending" ? "\u6B63\u5728\u786E\u8BA4\u8BC6\u522B\u7ED3\u679C\u2026" : listening ? "\u6211\u5728\u542C \xB7 \u8BF4\u5B8C\u81EA\u52A8\u53D1\u9001" : thinking ? "\u5C0F\u84DD\u6B63\u5728\u60F3\u2026" : speaking || playbackPending ? "\u5C0F\u84DD\u6B63\u5728\u56DE\u7B54" : !config.apiKey ? "\u6B63\u5728\u8FDE\u63A5 DeepSeek\u2026" : keyboardOpen ? "\u8F93\u5165\u540E\u53D1\u9001\uFF0C\u5C0F\u84DD\u4F1A\u76F4\u63A5\u56DE\u7B54" : container ? "\u70B9\u9EA6\u514B\u98CE\u6216\u952E\u76D8\uFF0C\u4E0E\u5C0F\u84DD\u804A\u804A" : SpeechRecognition ? "\u70B9\u9EA6\u514B\u98CE\u8BF4\u8BDD\uFF0C\u6216\u7528\u952E\u76D8\u8F93\u5165" : "\u53EF\u7528\u624B\u673A\u952E\u76D8\u7684\u8BED\u97F3\u8F93\u5165"));
+    status.textContent = configError || (!near ? "\u8D70\u8FD1\u821E\u53F0\u4E0A\u7684\u5C0F\u84DD" : note || (recognitionPhase === "starting" ? "\u6B63\u5728\u542F\u52A8\u9EA6\u514B\u98CE\u2026" : recognitionPhase === "transcribing" ? "\u6B63\u5728\u8BC6\u522B\u4F60\u8BF4\u7684\u8BDD\u2026" : recognitionPhase === "ending" ? "\u6B63\u5728\u786E\u8BA4\u8BC6\u522B\u7ED3\u679C\u2026" : listening ? "\u6211\u5728\u542C \xB7 \u8BF4\u5B8C\u81EA\u52A8\u53D1\u9001" : thinking ? "\u5C0F\u84DD\u6B63\u5728\u60F3\u2026" : speaking || playbackPending ? "\u5C0F\u84DD\u6B63\u5728\u56DE\u7B54" : !config.apiKey ? "\u6B63\u5728\u8FDE\u63A5 DeepSeek\u2026" : keyboardOpen ? "\u8F93\u5165\u540E\u53D1\u9001\uFF0C\u5C0F\u84DD\u4F1A\u76F4\u63A5\u56DE\u7B54" : voiceGateway || container ? "\u70B9\u9EA6\u514B\u98CE\u6216\u952E\u76D8\uFF0C\u4E0E\u5C0F\u84DD\u804A\u804A" : SpeechRecognition ? "\u70B9\u9EA6\u514B\u98CE\u8BF4\u8BDD\uFF0C\u6216\u7528\u952E\u76D8\u8F93\u5165" : "\u53EF\u7528\u624B\u673A\u952E\u76D8\u7684\u8BED\u97F3\u8F93\u5165"));
     label.querySelector("small").textContent = listening ? "\u6211\u5728\u542C" : thinking ? "\u8BA9\u6211\u60F3\u60F3" : speaking ? "\u6B63\u5728\u56DE\u7B54" : near ? "\u70B9\u6211\u6253\u62DB\u547C" : "\u8D70\u8FD1\u804A\u804A";
     host.dataset.phase = listening ? recognitionPhase : thinking ? "thinking" : speaking || playbackPending ? "speaking" : "idle";
   }
-  const speech = createNpcSpeech({
-    synth,
-    Utterance: window.SpeechSynthesisUtterance,
+  const speechEvents = {
     onQueued() {
       playbackPending = true;
       sync();
@@ -92923,9 +93346,18 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
     onCaption: setCaption,
     onComplete: scheduleCaptionDismiss,
     onError: showNote
-  });
+  };
+  const speech = createNpcSpeech({ ...speechEvents, synth, Utterance: window.SpeechSynthesisUtterance });
+  const cloudSpeech = createCloudSpeech({ ...speechEvents, getEndpoint: () => voiceGateway });
+  function unlockAudio() {
+    audioUnlocked = true;
+    if (voiceGateway) cloudSpeech.unlock();
+  }
   function playReply(text) {
-    speech.speak(text);
+    speech.stop();
+    cloudSpeech.stop();
+    if (voiceGateway) cloudSpeech.speak(text);
+    else speech.speak(text);
   }
   const session = createNpcSession({
     request: (history2, text, signal) => askNpc(config, history2, text, { signal }),
@@ -92945,8 +93377,7 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
       showNote(error.message);
     }
   });
-  const recognition = createNpcRecognition({
-    Recognition: SpeechRecognition,
+  const recognitionEvents = {
     onState(value) {
       recognitionPhase = value;
       listening = value !== "idle";
@@ -92963,13 +93394,20 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
       if (disposed || !near) return;
       if (draft) input.value = draft;
       note = "";
-      setKeyboard(true);
-      $(".npc-voice-help").textContent = recognitionHint(error, container);
+      if (!voiceGateway) {
+        setKeyboard(true);
+        $(".npc-voice-help").textContent = recognitionHint(error, container);
+      } else {
+        $(".npc-voice-help").textContent = { "not-allowed": "\u8BF7\u5728\u7CFB\u7EDF\u8BBE\u7F6E\u4E2D\u5141\u8BB8\u5FAE\u4FE1\u6216\u98DE\u4E66\u8BBF\u95EE\u9EA6\u514B\u98CE\uFF0C\u7136\u540E\u91CD\u65B0\u70B9\u51FB\u8BF4\u8BDD\u3002", "audio-capture": "\u6CA1\u6709\u627E\u5230\u53EF\u7528\u9EA6\u514B\u98CE\uFF0C\u8BF7\u68C0\u67E5\u624B\u673A\u7684\u9EA6\u514B\u98CE\u6743\u9650\u3002", "no-speech": "\u6CA1\u542C\u6E05\uFF0C\u518D\u70B9\u4E00\u6B21\u9EA6\u514B\u98CE\u544A\u8BC9\u6211\u5427\u3002", timeout: "\u8BED\u97F3\u8BC6\u522B\u8D85\u65F6\u4E86\uFF0C\u8BF7\u91CD\u65B0\u8BF4\u4E00\u6B21\u3002" }[error] || error;
+      }
       $(".npc-voice-help").hidden = false;
     }
-  });
+  };
+  const browserRecognition = createNpcRecognition({ ...recognitionEvents, Recognition: SpeechRecognition });
+  const cloudRecognition = createCloudRecognition({ ...recognitionEvents, getEndpoint: () => voiceGateway, workletUrl: base2 + "npc/pcm-capture-worklet.js", onLevel: (level) => mic.style.setProperty("--voice-level", String(level)) });
   function stopRecognition() {
-    recognition.cancel();
+    browserRecognition.cancel();
+    cloudRecognition.cancel();
   }
   function interrupt({ clear = false } = {}) {
     pendingGreeting = false;
@@ -92978,6 +93416,7 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
     session.cancel();
     stopRecognition();
     speech.stop();
+    cloudSpeech.stop();
     if (clear) setCaption("");
     note = "";
     sync();
@@ -93001,6 +93440,7 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
   function submit(text) {
     text = text.trim();
     if (!text || !near || !config.apiKey) return;
+    unlockAudio();
     greeting.dismiss();
     interrupt();
     setKeyboard(false);
@@ -93012,12 +93452,12 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
   function listen() {
     if (!near || !config.apiKey) return;
     greeting.dismiss();
-    if (recognitionPhase === "starting") {
+    if (["starting", "transcribing"].includes(recognitionPhase)) {
       stopRecognition();
       return;
     }
     if (listening) {
-      recognition.end();
+      (voiceGateway ? cloudRecognition : browserRecognition).end();
       return;
     }
     interrupt();
@@ -93025,7 +93465,7 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
     releasePointer();
     setCaption("");
     synth?.resume();
-    recognition.start();
+    (voiceGateway ? cloudRecognition : browserRecognition).start();
   }
   function greet(manual = false) {
     if (manual) {
@@ -93034,7 +93474,7 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
     }
     character.wave();
     note = "";
-    lastReply = "\u55E8\uFF0C\u6211\u662F\u5C0F\u84DD\uFF01\u6765\u804A\u804A\u4F60\u7684\u521B\u610F\u5427\u3002";
+    lastReply = reactions.greeting();
     setCaption(lastReply);
     pendingGreeting = !audioUnlocked && !manual;
     if (!pendingGreeting) playReply(lastReply);
@@ -93042,19 +93482,19 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
     sync();
   }
   mic.onclick = () => {
-    audioUnlocked = true;
+    unlockAudio();
     listen();
     if (!keyboardOpen) blurControls();
   };
   label.onclick = () => {
-    audioUnlocked = true;
+    unlockAudio();
     greet(true);
     blurControls();
   };
   input.addEventListener("input", sync);
   const onGesture = (event) => {
     if (!event.isTrusted) return;
-    audioUnlocked = true;
+    unlockAudio();
     if (pendingGreeting && near && !caption.hidden && !event.target.closest?.("button,input,dialog,[data-explorer-ui]")) {
       pendingGreeting = false;
       playReply(lastReply);
@@ -93076,6 +93516,7 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
   });
   speaker.onclick = () => {
     if (near && lastReply) {
+      unlockAudio();
       interrupt();
       playReply(lastReply);
       blurControls();
@@ -93107,6 +93548,7 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
     if (event.repeat || event.ctrlKey || event.metaKey || event.altKey || event.target.closest?.("input,textarea,dialog,button,select")) return;
     if (event.code === "KeyE") {
       event.preventDefault();
+      unlockAudio();
       listen();
     }
     if (event.code === "KeyT") {
@@ -93125,11 +93567,15 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
   const projected = new Vec3(), direction = new Vec3();
   function update() {
     const camera = viewer.app.root.findComponents("camera")[0], p2 = camera.entity.getPosition(), wasNear = near;
-    near = isNearNpc([p2.x, p2.y, p2.z], near);
+    near = isNearNpc([p2.x, p2.y, p2.z], near, { ...npcConfig, position: character.position });
     character.setNear(near);
     if (wasNear && !near) leave();
     if (wasNear !== near) sync();
     if (greeting.update(near, keyboardOpen || listening || thinking || speaking || playbackPending || document.hidden || Boolean(document.getElementById("about")?.open), performance.now() / 1e3)) greet();
+    const cp = character.position;
+    reactions.update(performance.now() / 1e3, Math.hypot(cp[0] - p2.x, cp[2] - p2.z));
+    host.dataset.npcPosition = cp.map((v2) => v2.toFixed(3)).join(",");
+    host.dataset.moving = String(character.moving);
     const rect = document.getElementById("world").getBoundingClientRect();
     camera.worldToScreen(character.anchor, projected);
     direction.copy(character.anchor).sub(p2);
@@ -93137,6 +93583,20 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
     label.style.transform = `translate(${projected.x}px,${Math.max(155, projected.y)}px) translate(-50%,-100%)`;
     host.dataset.near = String(near);
   }
+  const obstacle = space?.obstacles[0];
+  if (obstacle) obstacle.onContact = () => {
+    const busy = keyboardOpen || listening || thinking || speaking || playbackPending || document.hidden || Boolean(document.getElementById("about")?.open);
+    const text = reactions.contact(performance.now() / 1e3, busy);
+    if (!text) return;
+    character.react();
+    greeting.dismiss();
+    note = "";
+    lastReply = text;
+    setCaption(text);
+    if (audioUnlocked) playReply(text);
+    else scheduleCaptionDismiss();
+    sync();
+  };
   viewer.app.on("update", update);
   try {
     const response = await fetch(base2 + npcConfig.configUrl, { cache: "no-store" });
@@ -93146,9 +93606,19 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
   } catch {
     configError = "\u5BF9\u8BDD\u914D\u7F6E\u52A0\u8F7D\u5931\u8D25\uFF0C\u8BF7\u5237\u65B0\u91CD\u8BD5\u3002";
   }
+  try {
+    const voice = await (await fetch(base2 + "npc/voice.json", { cache: "no-store" })).json();
+    if (voice.gatewayUrl) {
+      const url = new URL(voice.gatewayUrl);
+      if (url.protocol === "https:" || ["127.0.0.1", "localhost"].includes(location.hostname) && url.protocol === "http:") voiceGateway = url.href.replace(/\/$/, "");
+    }
+  } catch {
+  }
+  if (voiceGateway) mic.title = "\u70B9\u51FB\u5F55\u97F3\uFF0C\u518D\u70B9\u7ED3\u675F \xB7 E";
   sync();
   function destroy() {
     disposed = true;
+    if (obstacle) obstacle.onContact = null;
     leave();
     viewport?.removeEventListener("resize", updateViewport);
     viewport?.removeEventListener("scroll", updateViewport);
@@ -93157,6 +93627,7 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
     window.removeEventListener("pointerdown", onGesture);
     document.removeEventListener("visibilitychange", visibility);
     document.removeEventListener("explorer-menu-open", menuOpen);
+    cloudSpeech.destroy();
     character.destroy();
     host.remove();
   }
@@ -93173,6 +93644,9 @@ var init_npc_interaction = __esm({
     init_npc_session();
     init_npc_recognition();
     init_npc_greeting();
+    init_npc_reactions();
+    init_npc_audio();
+    init_npc_cloud_speech();
     init_npc();
     icons2 = {
       mic: '<rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3M8 22h8"/>',
@@ -93857,22 +94331,22 @@ var tmpSolvedPos = new Vec3();
 var tmpScratch = new Vec3();
 var tmpQuat2 = new Quat();
 var tmpQuatB = new Quat();
-var rotateY = (v2, angle) => {
-  const c = Math.cos(angle);
-  const s = Math.sin(angle);
+var rotateY = (v2, angle2) => {
+  const c = Math.cos(angle2);
+  const s = Math.sin(angle2);
   const x2 = v2.x * c + v2.z * s;
   v2.z = -v2.x * s + v2.z * c;
   v2.x = x2;
   return v2;
 };
-var wrapPi = (angle) => {
-  angle %= Math.PI * 2;
-  if (angle > Math.PI) {
-    angle -= Math.PI * 2;
-  } else if (angle <= -Math.PI) {
-    angle += Math.PI * 2;
+var wrapPi = (angle2) => {
+  angle2 %= Math.PI * 2;
+  if (angle2 > Math.PI) {
+    angle2 -= Math.PI * 2;
+  } else if (angle2 <= -Math.PI) {
+    angle2 += Math.PI * 2;
   }
-  return angle;
+  return angle2;
 };
 var XrManipulation = class extends Script {
   static scriptName = "xrManipulation";
@@ -99147,10 +99621,10 @@ var createRotateTrack = (position2, target2, fov, keys = 12, duration = 20) => {
   const radius = Math.max(horizontalRadius, minRadius);
   const startAngle = Math.atan2(dx, dz);
   for (let i = 0; i < keys; ++i) {
-    const angle = startAngle - i / keys * Math.PI * 2;
-    positions.push(target2.x + radius * Math.sin(angle));
+    const angle2 = startAngle - i / keys * Math.PI * 2;
+    positions.push(target2.x + radius * Math.sin(angle2));
     positions.push(target2.y + dy);
-    positions.push(target2.z + radius * Math.cos(angle));
+    positions.push(target2.z + radius * Math.cos(angle2));
     targets.push(target2.x);
     targets.push(target2.y);
     targets.push(target2.z);
@@ -99921,7 +100395,7 @@ var FlyController = class {
   }
 };
 var RAD_TO_DEG = 180 / Math.PI;
-var shortestAngle = (angle) => (angle % 360 + 540) % 360 - 180;
+var shortestAngle = (angle2) => (angle2 % 360 + 540) % 360 - 180;
 var smoothstep = (edge0, edge1, value) => {
   const t = math.clamp((value - edge0) / (edge1 - edge0), 0, 1);
   return t * t * (3 - 2 * t);
@@ -109204,8 +109678,8 @@ function createSolidPhysics(config) {
   const radius = config.radius ?? 0.21, height = config.height ?? 1.75, stepHeight = config.stepHeight ?? 0.22;
   const boxes = config.boxes.map((b) => {
     if (!b.center?.every(Number.isFinite) || b.center.length !== 3 || !b.size?.every((v2) => Number.isFinite(v2) && v2 > 0) || b.size.length !== 3 || !Number.isFinite(b.yaw ?? 0)) throw Error("Invalid solid box");
-    const angle = (b.yaw ?? 0) * Math.PI / 180;
-    return { ...b, c: Math.cos(angle), s: Math.sin(angle), hx: b.size[0] / 2, hz: b.size[2] / 2, bottom: b.center[1] - b.size[1] / 2, top: b.center[1] + b.size[1] / 2 };
+    const angle2 = (b.yaw ?? 0) * Math.PI / 180;
+    return { ...b, c: Math.cos(angle2), s: Math.sin(angle2), hx: b.size[0] / 2, hz: b.size[2] / 2, bottom: b.center[1] - b.size[1] / 2, top: b.center[1] + b.size[1] / 2 };
   });
   function local(b, x2, z2) {
     const dx = x2 - b.center[0], dz = z2 - b.center[2];
@@ -109340,6 +109814,7 @@ function addCapsuleObstacles(collision, obstacles = []) {
         const dx = px - obstacle.x, dz = pz - obstacle.z, distance = Math.hypot(dx, dz), limit = obstacle.radius + radius;
         if (distance >= limit) continue;
         const nx = distance > 1e-8 ? dx / distance : 1, nz = distance > 1e-8 ? dz / distance : 0;
+        if (pass === 0) obstacle.onContact?.({ x: nx, z: nz, depth: limit - distance });
         px += nx * (limit - distance + 1e-5);
         pz += nz * (limit - distance + 1e-5);
         hit = changed = true;
@@ -109362,7 +109837,14 @@ function createVoxelBody(metadata, buffer, config, navigation, obstacles = []) {
   if (metadata.version !== "1.1" || buffer.byteLength !== 4 * (metadata.nodeCount + metadata.leafDataCount))
     throw Error("Invalid world-space voxel collision");
   const words = new Uint32Array(buffer);
-  const collision = addCapsuleObstacles(new VoxelCollision(metadata, words.slice(0, metadata.nodeCount), words.slice(metadata.nodeCount)), obstacles);
+  const collision = new VoxelCollision(metadata, words.slice(0, metadata.nodeCount), words.slice(metadata.nodeCount));
+  const venueCapsule = collision.queryCapsule.bind(collision);
+  addCapsuleObstacles(collision, obstacles);
+  const characters = { obstacles, canOccupy([x2, y2, z2]) {
+    const ground = collision.queryRay(x2, y2 + 0.12, z2, 0, -1, 0, 0.65), out2 = {};
+    if (!ground || Math.abs(y2 - ground.y - 0.16) > 0.1) return false;
+    return !venueCapsule(x2, y2 + 0.42, z2, 0.42 - 0.25, 0.25, out2);
+  } };
   const walker = new WalkController();
   for (const key2 of ["eyeHeight", "hoverHeight", "capsuleHeight", "capsuleRadius", "jumpSpeed"]) {
     if (Number.isFinite(config[key2]) && config[key2] > 0) walker[key2] = config[key2];
@@ -109403,7 +109885,7 @@ function createVoxelBody(metadata, buffer, config, navigation, obstacles = []) {
     },
     getState: state
   };
-  return { ...navigation, eyeHeight, physics };
+  return { ...navigation, eyeHeight, physics, characters };
 }
 async function loadDynamicNavigation(scene, base2) {
   const nav = scene.navigation;
@@ -111700,7 +112182,7 @@ if (Object.hasOwn(standaloneScenes, requested)) {
     viewer.state.inputEnabled = false;
     officeNav = createOfficeNavigation(viewer, null, scene.settings.cameras[0].initial, $("world"), walkSurface);
     officeNav?.setWalkingMotion(walkingMotion);
-    if (key2 === "hackathon-npc") Promise.resolve().then(() => (init_npc_interaction(), npc_interaction_exports)).then(({ initNpc: initNpc2 }) => initNpc2({ viewer, navigation: officeNav, base, stop })).catch((error) => {
+    if (key2 === "hackathon-npc") Promise.resolve().then(() => (init_npc_interaction(), npc_interaction_exports)).then(({ initNpc: initNpc2 }) => initNpc2({ viewer, navigation: officeNav, base, stop, space: walkSurface.characters })).catch((error) => {
       console.error("NPC initialization failed", error);
       const notice = document.createElement("p");
       notice.textContent = "\u5C0F\u84DD\u52A0\u8F7D\u5931\u8D25\uFF0C\u8BF7\u5237\u65B0\u9875\u9762\u91CD\u8BD5\u3002";

@@ -16,7 +16,10 @@
     "test:walk": "node --test realtrip/tests/*.test.mjs",
     "test:migration": "node --test tests/migration.test.mjs",
     "build:atlas": "node scripts/build-atlas.mjs",
-    "test:atlas": "node --test tests/route-model.test.mjs tests/sky-soho-route.test.mjs"
+    "test:atlas": "node --test tests/route-model.test.mjs tests/sky-soho-route.test.mjs",
+    "test:voice": "node --test voice-server/tests/*.test.mjs",
+    "dev:voice": "node --env-file=.env.npc-voice.local voice-server/server.mjs",
+    "package:voice": "node scripts/package-npc-voice.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.11",

@@ -13,7 +13,14 @@ export function createVoxelBody(metadata, buffer, config, navigation, obstacles=
  if(metadata.version!=='1.1'||buffer.byteLength!==4*(metadata.nodeCount+metadata.leafDataCount))
   throw Error('Invalid world-space voxel collision');
  const words=new Uint32Array(buffer);
- const collision=addCapsuleObstacles(new VoxelCollision(metadata,words.slice(0,metadata.nodeCount),words.slice(metadata.nodeCount)),obstacles);
+ const collision=new VoxelCollision(metadata,words.slice(0,metadata.nodeCount),words.slice(metadata.nodeCount));
+ const venueCapsule=collision.queryCapsule.bind(collision);
+ addCapsuleObstacles(collision,obstacles);
+ const characters={obstacles,canOccupy([x,y,z]){
+  const ground=collision.queryRay(x,y+.12,z,0,-1,0,.65),out={};
+  if(!ground||Math.abs(y-ground.y-.16)>.1)return false;
+  return !venueCapsule(x,y+.42,z,.42-.25,.25,out);
+ }};
  const walker=new WalkController();
  for(const key of ['eyeHeight','hoverHeight','capsuleHeight','capsuleRadius','jumpSpeed']) {
   if(Number.isFinite(config[key])&&config[key]>0)walker[key]=config[key];
@@ -45,7 +52,7 @@ export function createVoxelBody(metadata, buffer, config, navigation, obstacles=
   },
   getState:state
  };
- return {...navigation,eyeHeight,physics};
+ return {...navigation,eyeHeight,physics,characters};
 }
 
 export async function loadDynamicNavigation(scene,base) {

@@ -1,4 +1,4 @@
-// Extra stationary characters share the walker's capsule collision pass. The
+// Character positions are mutable and share the walker's capsule collision pass. The
 // venue still supplies floor rays and wall contacts in its original coordinates.
 export function addCapsuleObstacles(collision,obstacles=[]){
  if(!obstacles.length)return collision;
@@ -15,6 +15,7 @@ export function addCapsuleObstacles(collision,obstacles=[]){
     const dx=px-obstacle.x,dz=pz-obstacle.z,distance=Math.hypot(dx,dz),limit=obstacle.radius+radius;
     if(distance>=limit)continue;
     const nx=distance>1e-8?dx/distance:1,nz=distance>1e-8?dz/distance:0;
+    if(pass===0)obstacle.onContact?.({x:nx,z:nz,depth:limit-distance});
     px+=nx*(limit-distance+1e-5);pz+=nz*(limit-distance+1e-5);hit=changed=true;
    }
    if(!changed)break;

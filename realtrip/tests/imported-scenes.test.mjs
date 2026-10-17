@@ -1,3 +1,4 @@
+import {createNpcRoaming} from '../src/npc-roaming.js';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -130,4 +131,15 @@ test('both imported scenes share keyboard/joystick speed, touch look, menu-stop 
    assert.equal(f.nav.restorePose(paused),false,'Do not flatten multi-level physics when restoring a static-floor pose');
   }finally{f.nav.destroy();}
  }
+});
+
+
+test('autonomous NPC patrol remains clear of the original venue voxels',()=>{
+ const body=createVoxelBody(metadata,binary,hall.settings.realtripWalk,hall.navigation,structuredClone(npcScene.characterObstacles));
+ const roaming=createNpcRoaming({...npcConfig,canOccupy:body.characters.canOccupy,random:()=>.5});
+ assert(body.characters.canOccupy(npcConfig.position),'initial board position is clear');
+ for(const [x,z] of npcConfig.waypoints)assert(body.characters.canOccupy([x,npcConfig.position[1],z]),`waypoint ${x},${z} clear`);
+ let journey;
+ for(let i=0;i<3600;i++){journey=roaming.update(1/30);assert(body.characters.canOccupy(journey.position));}
+ assert(journey.travel>2,'patrol actually traverses the venue, rather than getting stuck');
 });

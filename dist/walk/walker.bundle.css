@@ -1857,6 +1857,8 @@ body:has(#npc-ui[data-phase=listening]) #pad,
 body:has(#npc-ui[data-phase=listening]) .walk-actions,
 body:has(#npc-ui[data-phase=starting]) #pad,
 body:has(#npc-ui[data-phase=starting]) .walk-actions,
+body:has(#npc-ui[data-phase=transcribing]) #pad,
+body:has(#npc-ui[data-phase=transcribing]) .walk-actions,
 body:has(#npc-ui[data-phase=ending]) #pad,
 body:has(#npc-ui[data-phase=ending]) .walk-actions {
   visibility: hidden;
@@ -1989,4 +1991,7 @@ body:has(#npc-ui[data-phase=ending]) .walk-actions {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+#npc-ui[data-phase=listening] .npc-mic svg {
+  transform: scale(calc(1 + var(--voice-level,0)*.25));
 }
