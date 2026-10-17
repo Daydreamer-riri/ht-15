@@ -26,12 +26,8 @@ test('scene switches and the presentation QR stay on the migrated site', () => {
   for (const [scene] of explorerScenes) {
     const target = new URL(explorerScenePath(scene, walkBase.pathname), pages);
     assert.ok(target.href.startsWith(pages));
-    if (scene === 'sky-soho') {
-      assert.equal(target.href, new URL('sky-soho/?view=planet', pages).href);
-    } else {
-      assert.ok(target.href.startsWith(walkBase.href));
-      assert.equal(target.searchParams.get('scene'), scene);
-    }
+    assert.ok(target.href.startsWith(walkBase.href));
+    assert.equal(target.searchParams.get('scene'), scene);
   }
   assert.equal(EXPERIENCE_URL, new URL('?scene=cafeteria', walkBase).href);
   const scene = JSON.parse(readFileSync(new URL('dist/walk/honor-corridor/scene.json', root)));

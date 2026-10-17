@@ -85652,8 +85652,7 @@ var explorerScenes = [
   ["honor-corridor", "\u8363\u8A89\u8FDE\u5ECA"],
   ["building2", "2\u53F7\u697C"],
   ["terrace", "\u9732\u53F0"],
-  ["cafeteria", "\u98DF\u5802"],
-  ["sky-soho", "\u51CC\u7A7A\u4E00\u65E5"]
+  ["cafeteria", "\u98DF\u5802"]
 ];
 var standalone = /* @__PURE__ */ new Set(["honor-corridor"]);
 var sceneDetails = {
@@ -85661,8 +85660,7 @@ var sceneDetails = {
   "honor-corridor": { icon: "gallery", description: "\u8363\u8A89\u5C55\u533A\u4E0E\u4F11\u95F2\u8FDE\u5ECA" },
   building2: { icon: "building", description: "\u4F1A\u8BAE\u5BA4\u4E0E\u7A97\u8FB9\u8FDE\u5ECA" },
   terrace: { icon: "terrace", description: "\u6237\u5916\u9732\u53F0\u4E0E\u56ED\u533A\u98CE\u666F" },
-  cafeteria: { icon: "building", description: "\u53D6\u9910\u901A\u9053\u4E0E\u7528\u9910\u7A7A\u95F4" },
-  "sky-soho": { icon: "gallery", description: "\u51CC\u7A7A SOHO \xB7 \u661F\u7403\u6C99\u76D8" }
+  cafeteria: { icon: "building", description: "\u53D6\u9910\u901A\u9053\u4E0E\u7528\u9910\u7A7A\u95F4" }
 };
 var paths = {
   reset: '<path d="M4 10a8 8 0 1 1 1 8M4 4v6h6"/>',
@@ -85674,9 +85672,9 @@ var paths = {
 };
 var svg = (icon) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[icon] ?? paths.building}</svg>`;
 function explorerScenePath(id15, base2 = "/") {
-  if (!explorerScenes.some(([key2]) => key2 === id15)) throw new Error("Unknown scene");
   const root = base2.endsWith("/") ? base2 : base2 + "/";
   if (id15 === "sky-soho") return `${root.replace(/[^/]+\/$/, "")}sky-soho/?view=planet`;
+  if (!explorerScenes.some(([key2]) => key2 === id15)) throw new Error("Unknown scene");
   return standalone.has(id15) ? `${root}${id15}/?scene=${id15}` : `${root}?scene=${id15}`;
 }
 function populateSceneMenu(select, current, base2 = "/", entries = explorerScenes) {
