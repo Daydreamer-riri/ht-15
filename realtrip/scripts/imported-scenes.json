@@ -1,0 +1,90 @@
+{
+  "repository": "https://git.dev.sh.ctripcorp.com/junhaoqin/realtrip-walk-hackathon26",
+  "commit": "16c3cd93c766bcd890c71ad395cc59b883e1e684",
+  "files": [
+    {
+      "upstream": "dist/two-floor/scene.sog",
+      "local": "models/two-floor.sog",
+      "bytes": 39431738,
+      "sha256": "d8695775cdace8a84e05b1c9f9154bd104e449c33e7f23e050ef4a94ee15d7c8"
+    },
+    {
+      "upstream": "dist/two-floor/scene.json",
+      "local": "public/two-floor/scene.json",
+      "bytes": 2778,
+      "sha256": "167204ee9d1209dded815b7e6f5e98ad29f4b01a369b3004a12f304e82b3558c"
+    },
+    {
+      "upstream": "dist/two-floor/solids.json",
+      "local": "public/two-floor/solids.json",
+      "bytes": 63318,
+      "sha256": "068a40fc0f69e16904ce190802f27c39a1a572a994dcf0087e57b1d11e9b0960"
+    },
+    {
+      "upstream": "dist/two-floor/navigation-checks.json",
+      "local": "public/two-floor/navigation-checks.json",
+      "bytes": 2894,
+      "sha256": "61a9fb62215213d3e696cb017548dbd812b388e3667e31145bbad3af18b16bcb"
+    },
+    {
+      "upstream": "dist/two-floor/README.md",
+      "local": "public/two-floor/README.md",
+      "bytes": 3760,
+      "sha256": "d6bd635e8d9418ec869c3dc2a5dd5a818393e51126d7a15e3c3e878c7ea73e2a"
+    },
+    {
+      "upstream": "dist/two-floor/release.json",
+      "local": "public/two-floor/release.json",
+      "bytes": 1815,
+      "sha256": "53d57ac279f4950b75b80ce0a5a0a495f2042fd2b0f4ecc032a49c7a627f6a53"
+    },
+    {
+      "upstream": "dist/insta360-5bfe/scene.sog",
+      "local": "models/insta360-5bfe.sog",
+      "bytes": 16328425,
+      "sha256": "e4dfc6b5cf56f90546e7cab08dc6f1982c4c0a7360eef52530c3defcf137e106"
+    },
+    {
+      "upstream": "dist/insta360-5bfe/scene.json",
+      "local": "public/insta360-5bfe/scene.json",
+      "bytes": 2060,
+      "sha256": "64b101914dc455f838260a1ad419ee175c0438138263763d9307fd2919010ecb"
+    },
+    {
+      "upstream": "dist/insta360-5bfe/scene.voxel.json",
+      "local": "public/insta360-5bfe/scene.voxel.json",
+      "bytes": 640,
+      "sha256": "8c71104aa96211f597e2ad3b17250b61a499cfd8b8dd68ece9a440a14483a092"
+    },
+    {
+      "upstream": "dist/insta360-5bfe/scene.voxel.bin",
+      "local": "public/insta360-5bfe/scene.voxel.bin",
+      "bytes": 606740,
+      "sha256": "03a6739d0aab7f90c2ae02d857981751f32e8d6f44bd269e8ede0f59445233b7"
+    },
+    {
+      "upstream": "dist/insta360-5bfe/screens.json",
+      "local": "public/insta360-5bfe/screens.json",
+      "bytes": 3369,
+      "sha256": "2787d5bc8107f19e1ce44a8733486cfb1e5a2357cf05260381a7f622d07bda54"
+    },
+    {
+      "upstream": "dist/insta360-5bfe/hackathon-screen.jpeg",
+      "local": "public/insta360-5bfe/hackathon-screen.jpeg",
+      "bytes": 293425,
+      "sha256": "5c226dfb7a6021155871387ffb9c9cf12a61b5c963b401507d4b01f4c9a2f873"
+    },
+    {
+      "upstream": "dist/insta360-5bfe/README.md",
+      "local": "public/insta360-5bfe/README.md",
+      "bytes": 3167,
+      "sha256": "bea5a513991b15de1e5d7ee021d98e2bb370e8975c96d216fc9856eacd054eaa"
+    },
+    {
+      "upstream": "src/solid-physics.js",
+      "local": "src/solid-physics.js",
+      "bytes": 3922,
+      "sha256": "21dcf63a8aa8d37fcbfa0712f698944da95598025be3f8165dd67b570d0ad829"
+    }
+  ]
+}

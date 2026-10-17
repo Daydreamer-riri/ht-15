@@ -1,0 +1,54 @@
+{
+  "files": {
+    "provenance.json": "79542550ab7d6fdddfa4c7104b4a10911465dfa906febbcc32d2393b4ddc42de",
+    "scene.sog": "d8695775cdace8a84e05b1c9f9154bd104e449c33e7f23e050ef4a94ee15d7c8",
+    "scene.json": "167204ee9d1209dded815b7e6f5e98ad29f4b01a369b3004a12f304e82b3558c",
+    "README.md": "d6bd635e8d9418ec869c3dc2a5dd5a818393e51126d7a15e3c3e878c7ea73e2a",
+    "route.json": "0a085adf821cff99604366928f503774062d2916a7a276f7679eeb5d4c1c09e2",
+    "navigation-checks.json": "61a9fb62215213d3e696cb017548dbd812b388e3667e31145bbad3af18b16bcb",
+    "completion.json": "2d1fff4782f23147bbaaa52e0160424d9d172a503da4d1f4faafc168e5a1b78c",
+    "solids.json": "068a40fc0f69e16904ce190802f27c39a1a572a994dcf0087e57b1d11e9b0960"
+  },
+  "modelType": "Gaussian Splatting",
+  "trainingSteps": 20000,
+  "refinementSteps": 4000,
+  "additionalOptimizationSteps": 2000,
+  "focusedRefinementSteps": 3000,
+  "modelLineageSteps": 52190,
+  "actualSplats": 2749156,
+  "supersedesPreviousSupplement": true,
+  "sourceIncluded": false,
+  "browserInteractionVerified": true,
+  "detailRefinementSteps": 3000,
+  "stairRefinementSteps": 3000,
+  "groundFloorDetailSteps": 3998,
+  "evaluationStepsThisRun": 6,
+  "totalStepsThisRun": 4206,
+  "upperTurnDetailSteps": 3996,
+  "landingDetailSteps": 4996,
+  "stairRecoverySteps": 4200,
+  "qualityStatus": "partial-improvement-reflective-railing-unresolved",
+  "browserVerification": {
+    "scenes": [
+      "two-floor-stairs",
+      "two-floor-upstairs"
+    ],
+    "engine": "in-app browser WebGL",
+    "stairsStart": [
+      -3.133,
+      1.6,
+      2.379
+    ],
+    "stairsAfterForward": [
+      -2.058,
+      2.282,
+      2.609
+    ],
+    "stairsAfterBack": [
+      -3.088,
+      1.6,
+      2.388
+    ],
+    "quality": "Partial improvement only; upper reflective railing ghosting remains"
+  }
+}

@@ -1,4 +1,35 @@
-import {Asset,Entity,Mesh,MeshInstance,StandardMaterial,Color,CULLFACE_NONE,ADDRESS_CLAMP_TO_EDGE} from 'playcanvas';
+import {Asset,Entity,Mesh,MeshInstance,StandardMaterial,Color,CULLFACE_NONE,ADDRESS_CLAMP_TO_EDGE,calculateNormals} from 'playcanvas';
+
+// Imported screens already have measured, slightly skewed world-space corners.
+// Keep those coordinates and UVs rather than replacing them with flat rectangles.
+export async function loadCapturedSurfaces(viewer,url){
+ const response=await fetch(url);
+ if(!response.ok)throw Error('Captured screens unavailable');
+ const {surfaces}=await response.json(),textures=new Map(),entities=[];
+ for(const surface of surfaces){
+  const material=new StandardMaterial();material.useLighting=false;material.useTonemap=false;
+  material.diffuse=new Color(0,0,0);material.emissive=new Color(...surface.color);material.cull=CULLFACE_NONE;
+  if(surface.texture){
+   const source=new URL(surface.texture,new URL(url,location.href)).href;
+   if(!textures.has(source))textures.set(source,new Promise((resolve,reject)=>{
+    viewer.app.assets.loadFromUrl(source,'texture',(error,asset)=>{
+     if(error)return reject(error);
+     asset.resource.addressU=asset.resource.addressV=ADDRESS_CLAMP_TO_EDGE;
+     asset.resource.anisotropy=Math.min(8,viewer.app.graphicsDevice.maxAnisotropy);resolve(asset.resource);
+    });
+   }));
+   material.emissiveMap=await textures.get(source);
+  }
+  material.update();
+  const mesh=new Mesh(viewer.app.graphicsDevice);
+  mesh.setPositions(surface.positions);mesh.setIndices(surface.indices);
+  mesh.setNormals(calculateNormals(surface.positions,surface.indices));mesh.setUvs(0,surface.uvs);mesh.update();
+  const entity=new Entity(surface.name);
+  entity.addComponent('render',{meshInstances:[new MeshInstance(mesh,material)],castShadows:false,receiveShadows:false});
+  viewer.app.root.addChild(entity);entities.push(entity);
+ }
+ viewer.app.renderNextFrame=true;return entities;
+}
 
 // A captured slide is planar. Keep it in world space so walking preserves perspective
 // and foreground splats occlude it, without carrying view-dependent scan ghosts.

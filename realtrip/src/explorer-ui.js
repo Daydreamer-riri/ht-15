@@ -1,11 +1,10 @@
 export const explorerScenes = [
- ['hackathon','Hackathon 主会场'],
- ['honor-corridor','荣誉连廊'], ['building2','2号楼'], ['terrace','露台'], ['cafeteria','食堂']
+ ['insta360-5bfe','阶梯报告厅'],
+ ['two-floor','双层休息空间'], ['building2','2号楼'], ['terrace','露台'], ['cafeteria','食堂']
 ];
-const standalone = new Set(['honor-corridor']);
 const sceneDetails = {
- hackathon: {icon:'gallery', description:'Hackathon 主会场与阶梯座席'},
- 'honor-corridor': {icon:'gallery', description:'荣誉展区与休闲连廊'},
+ 'insta360-5bfe': {icon:'gallery', description:'Hackathon 会场与阶梯座席'},
+ 'two-floor': {icon:'gallery', description:'一层休息区、楼梯与二层空间'},
  building2: {icon:'building', description:'会议室与窗边连廊'},
  terrace: {icon:'terrace', description:'户外露台与园区风景'},
  cafeteria: {icon:'building', description:'取餐通道与用餐空间'}
@@ -22,10 +21,11 @@ const svg = icon => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
 
 export function explorerScenePath(id, base='/') {
  const root=base.endsWith('/')?base:base+'/';
+ id=({hackathon:'insta360-5bfe','honor-corridor':'two-floor'})[id]??id;
  // Keep previously shared planet links working without listing them as walking scenes.
  if(id==='sky-soho')return `${root.replace(/[^/]+\/$/,'')}sky-soho/?view=planet`;
  if(!explorerScenes.some(([key])=>key===id))throw new Error('Unknown scene');
- return standalone.has(id)?`${root}${id}/?scene=${id}`:`${root}?scene=${id}`;
+ return `${root}?scene=${id}`;
 }
 
 export function populateSceneMenu(select, current, base='/', entries=explorerScenes) {

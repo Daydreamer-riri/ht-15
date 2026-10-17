@@ -47,10 +47,15 @@ test('planet navigation connects both planets and the shared walking entrance', 
 });
 
 test('every scene model, supplement, terrain and screen texture is packaged locally', () => {
-  for (const name of ['insta360', 'terrace', 'cafeteria', 'hackathon', 'alpine-lake']) {
+  for (const name of ['insta360', 'terrace', 'cafeteria', 'hackathon', 'alpine-lake', 'two-floor', 'insta360-5bfe']) {
     const scene = JSON.parse(readFileSync(new URL(`realtrip/src/${name}.json`, root)));
-    const resources = [scene.contentUrl, scene.navigation?.url, scene.screens?.textureUrl,
+    const resources = [scene.contentUrl, scene.navigation?.url, scene.screens?.textureUrl, scene.screensUrl,
       ...(scene.supplements ?? []).map(item => item.contentUrl)].filter(Boolean);
+    if(scene.navigation?.kind==='voxel-body')resources.push(scene.navigation.url.replace(/\.json$/,'.bin'));
+    if(scene.screensUrl){
+      const screens=JSON.parse(readFileSync(new URL(`dist/walk/${scene.screensUrl}`,root)));
+      for(const screen of screens.surfaces)if(screen.texture)resources.push(new URL(screen.texture,new URL(scene.screensUrl,walkBase)).href.slice(walkBase.href.length));
+    }
     for (const resource of resources) {
       const resolved = new URL(resource, walkBase);
       assert.ok(resolved.href.startsWith(walkBase.href));

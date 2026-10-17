@@ -24,6 +24,7 @@ try{
  const current=new URLSearchParams(location.search).get('scene')||location.pathname.split('/').filter(Boolean).at(-1);
  const known=explorerScenes.some(([id])=>id===current);
  populateSceneMenu($('destination'),known?current:'capture',new URL(scene.homeUrl||'./',location.href).pathname,scene.homeUrl?explorerScenes:[['capture',scene.title]]);
+ if(!known&&scene.homeUrl){document.querySelector('.scene-title').textContent=scene.title;document.querySelector('.scene-trigger').setAttribute('aria-label',`切换场景，当前${scene.title}`);}
  document.title=`${scene.title} · 行前漫游`;$('title').textContent=scene.title;
  Object.keys(scene.starts).forEach((id,i)=>$('starts').add(new Option(scene.starts[id].label||`起点 ${i+1} · ${id}`,id)));
  const initial=new URLSearchParams(location.search).get('start');

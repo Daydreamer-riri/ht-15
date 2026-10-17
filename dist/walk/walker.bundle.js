@@ -26,6 +26,7 @@ function routeProject(route, x2, z2, progress = null) {
 }
 function createOfficeNavigation(viewer, route, initial, world, surface = null) {
   const cam = viewer.app.root.findComponents("camera")[0].entity;
+  const physics = surface?.physics;
   let x2, z2, y2, yaw, pitch = 0, capturePitch = 0, progress, jumpY = 0, jumpV = 0, moveX = 0, moveZ = 0, enabled = true, look = null;
   const eye = surface?.eyeHeight ?? route?.eyeHeight ?? 1.6;
   let velocityX = 0, velocityZ = 0, stride = 0, bob = 0, walkingMotion = true;
@@ -40,6 +41,14 @@ function createOfficeNavigation(viewer, route, initial, world, surface = null) {
     jumpY = jumpV = bob = stride = 0;
     keys.clear();
     moveX = moveZ = velocityX = velocityZ = 0;
+    if (physics) {
+      const foot = physics.reset([x2, y2 - eye, z2]);
+      x2 = foot.x;
+      y2 = foot.y + eye;
+      z2 = foot.z;
+      render();
+      return;
+    }
     if (surface) {
       if (!surface.contains(x2, z2)) throw new Error("\u8D77\u70B9\u4E0D\u5728\u53EF\u884C\u8D70\u5730\u9762\u5185");
       y2 = (surface.heightAt?.(x2, z2) ?? surface.floorY) + eye;
@@ -66,12 +75,13 @@ function createOfficeNavigation(viewer, route, initial, world, surface = null) {
     moveX = moveZ = velocityX = velocityZ = 0;
     bob = 0;
     look = null;
+    physics?.stop?.();
   }
   function getPose() {
     return { position: [x2, y2, z2], yaw, pitch };
   }
   function restorePose(pose) {
-    if (!surface || !Array.isArray(pose?.position) || pose.position.length !== 3 || !pose.position.every(Number.isFinite) || !Number.isFinite(pose.yaw) || !Number.isFinite(pose.pitch) || !surface.contains(pose.position[0], pose.position[2])) return false;
+    if (physics || !surface || !Array.isArray(pose?.position) || pose.position.length !== 3 || !pose.position.every(Number.isFinite) || !Number.isFinite(pose.yaw) || !Number.isFinite(pose.pitch) || !surface.contains(pose.position[0], pose.position[2])) return false;
     stop();
     [x2, , z2] = pose.position;
     y2 = (surface.heightAt?.(x2, z2) ?? surface.floorY) + eye;
@@ -82,7 +92,9 @@ function createOfficeNavigation(viewer, route, initial, world, surface = null) {
     return true;
   }
   function jump() {
-    if (enabled && jumpY === 0) jumpV = surface?.jumpSpeed ?? 3.6;
+    if (!enabled) return;
+    if (physics) physics.jump();
+    else if (jumpY === 0) jumpV = surface?.jumpSpeed ?? 3.6;
   }
   function keydown(e) {
     if (!enabled || e.target.closest?.("input,select,textarea,dialog,button,a,[data-explorer-ui]")) return;
@@ -169,9 +181,21 @@ function createOfficeNavigation(viewer, route, initial, world, surface = null) {
       velocityX += (sx - velocityX) * easing;
       velocityZ += (sz - velocityZ) * easing;
       const oldX = x2, oldZ = z2;
-      const nx = x2 + (Math.cos(rad) * velocityX - Math.sin(rad) * velocityZ) * speed * dt;
-      const nz = z2 + (-Math.sin(rad) * velocityX - Math.cos(rad) * velocityZ) * speed * dt;
-      if (surface) {
+      const vx = (Math.cos(rad) * velocityX - Math.sin(rad) * velocityZ) * speed;
+      const vz = (-Math.sin(rad) * velocityX - Math.cos(rad) * velocityZ) * speed;
+      const nx = x2 + vx * dt, nz = z2 + vz * dt;
+      let grounded = jumpY === 0;
+      if (physics) {
+        const foot = physics.update(dt, vx, vz);
+        x2 = foot.x;
+        z2 = foot.z;
+        y2 = foot.y + eye;
+        grounded = foot.grounded;
+        if (![x2, y2, z2].every(Number.isFinite) || y2 < (surface.resetBelow ?? -8)) {
+          reset();
+          return;
+        }
+      } else if (surface) {
         const foot = surface.move(x2, z2, nx, nz);
         x2 = foot.x;
         z2 = foot.z;
@@ -191,7 +215,7 @@ function createOfficeNavigation(viewer, route, initial, world, surface = null) {
       }
       const distance = Math.hypot(x2 - oldX, z2 - oldZ);
       stride += distance * 2 * Math.PI / 0.72;
-      const targetBob = walkingMotion && !reducedMotion?.matches && jumpY === 0 ? Math.sin(stride) * 9e-3 * Math.min(1, distance / (Math.max(dt, 1e-3) * 0.6)) : 0;
+      const targetBob = walkingMotion && !reducedMotion?.matches && grounded ? Math.sin(stride) * 9e-3 * Math.min(1, distance / (Math.max(dt, 1e-3) * 0.6)) : 0;
       bob += (targetBob - bob) * (1 - Math.exp(-dt * 18));
       if (jumpV !== 0 || jumpY > 0) {
         jumpV -= 9.8 * dt;
@@ -85618,174 +85642,6 @@ var OrbitController = class extends InputController {
   }
 };
 
-// realtrip/src/scene-models.js
-function applyModelTransform(entity, model) {
-  if (model.modelRotation) entity.setLocalRotation(...model.modelRotation);
-  if (model.modelScale !== void 0) entity.setLocalScale(model.modelScale, model.modelScale, model.modelScale);
-  if (model.modelPosition) entity.setLocalPosition(...model.modelPosition);
-}
-async function loadSceneSupplements(viewer, models, base2) {
-  return Promise.all(models.map((model) => new Promise((resolve2, reject) => {
-    const url = base2 + model.contentUrl;
-    const asset = new Asset(model.name ?? "scene supplement", "gsplat", { url, filename: new URL(url, location.href).pathname.split("/").pop() });
-    asset.once("load", () => {
-      try {
-        const entity = new Entity(model.name ?? "scene supplement", viewer.app);
-        applyModelTransform(entity, model);
-        entity.addComponent("gsplat", { unified: true, asset });
-        viewer.app.root.addChild(entity);
-        viewer.app.renderNextFrame = true;
-        resolve2(entity);
-      } catch (error) {
-        reject(error);
-      }
-    });
-    asset.once("error", reject);
-    viewer.app.assets.add(asset);
-    viewer.app.assets.load(asset);
-  })));
-}
-
-// realtrip/src/explorer-ui.js
-var explorerScenes = [
-  ["hackathon", "Hackathon \u4E3B\u4F1A\u573A"],
-  ["honor-corridor", "\u8363\u8A89\u8FDE\u5ECA"],
-  ["building2", "2\u53F7\u697C"],
-  ["terrace", "\u9732\u53F0"],
-  ["cafeteria", "\u98DF\u5802"]
-];
-var standalone = /* @__PURE__ */ new Set(["honor-corridor"]);
-var sceneDetails = {
-  hackathon: { icon: "gallery", description: "Hackathon \u4E3B\u4F1A\u573A\u4E0E\u9636\u68AF\u5EA7\u5E2D" },
-  "honor-corridor": { icon: "gallery", description: "\u8363\u8A89\u5C55\u533A\u4E0E\u4F11\u95F2\u8FDE\u5ECA" },
-  building2: { icon: "building", description: "\u4F1A\u8BAE\u5BA4\u4E0E\u7A97\u8FB9\u8FDE\u5ECA" },
-  terrace: { icon: "terrace", description: "\u6237\u5916\u9732\u53F0\u4E0E\u56ED\u533A\u98CE\u666F" },
-  cafeteria: { icon: "building", description: "\u53D6\u9910\u901A\u9053\u4E0E\u7528\u9910\u7A7A\u95F4" }
-};
-var paths = {
-  reset: '<path d="M4 10a8 8 0 1 1 1 8M4 4v6h6"/>',
-  building: '<path d="M6 21V5l12-2v18M3 21h18M10 8h1m3-1h1m-5 5h1m3-1h1m-5 5h1m3-1h1"/>',
-  gallery: '<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M8 4v16M8 15l5-5 5 5"/>',
-  terrace: '<path d="M3 14h18M5 14v6m7-6v6m7-6v6M3 20h18M7 9l5-6 5 6H7Zm5 0v5"/>',
-  chevron: '<path d="m8 10 4 4 4-4"/>',
-  check: '<path d="m5 12 4 4L19 6"/>'
-};
-var svg = (icon) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[icon] ?? paths.building}</svg>`;
-function explorerScenePath(id15, base2 = "/") {
-  const root = base2.endsWith("/") ? base2 : base2 + "/";
-  if (id15 === "sky-soho") return `${root.replace(/[^/]+\/$/, "")}sky-soho/?view=planet`;
-  if (!explorerScenes.some(([key2]) => key2 === id15)) throw new Error("Unknown scene");
-  return standalone.has(id15) ? `${root}${id15}/?scene=${id15}` : `${root}?scene=${id15}`;
-}
-function populateSceneMenu(select, current, base2 = "/", entries = explorerScenes) {
-  select.replaceChildren();
-  for (const [id15, label] of entries) select.add(new Option(label, id15));
-  select.value = current;
-  select.setAttribute("aria-label", "\u5207\u6362\u573A\u666F");
-  select.onchange = () => {
-    if (select.value !== current) location.href = explorerScenePath(select.value, base2);
-  };
-  select.hidden = true;
-  const picker = document.createElement("div");
-  picker.className = "scene-picker";
-  picker.dataset.explorerUi = "";
-  const detail = sceneDetails[current] ?? { icon: "building", description: "\u5B9E\u666F\u81EA\u7531\u63A2\u7D22" };
-  const trigger = document.createElement("button");
-  trigger.type = "button";
-  trigger.className = "scene-trigger";
-  trigger.setAttribute("aria-expanded", "false");
-  trigger.setAttribute("aria-controls", "scene-panel");
-  trigger.setAttribute("aria-label", `\u5207\u6362\u573A\u666F\uFF0C\u5F53\u524D${select.selectedOptions[0]?.textContent ?? "\u5B9E\u666F\u7A7A\u95F4"}`);
-  trigger.innerHTML = `<span class="scene-emblem">${svg(detail.icon)}</span><span class="scene-title"></span><span class="scene-chevron">${svg("chevron")}</span>`;
-  trigger.querySelector(".scene-title").textContent = select.selectedOptions[0]?.textContent ?? "\u5B9E\u666F\u7A7A\u95F4";
-  const panel = document.createElement("nav");
-  panel.id = "scene-panel";
-  panel.className = "scene-panel";
-  panel.hidden = true;
-  panel.setAttribute("aria-label", "\u9009\u62E9\u63A2\u7D22\u7A7A\u95F4");
-  const caption = document.createElement("div");
-  caption.className = "scene-panel-caption";
-  caption.textContent = "\u9009\u62E9\u63A2\u7D22\u7A7A\u95F4";
-  panel.append(caption);
-  for (const [id15, label] of entries) {
-    const item = document.createElement("a");
-    item.className = "scene-choice";
-    item.href = explorerScenes.some(([key2]) => key2 === id15) ? explorerScenePath(id15, base2) : location.href;
-    const info = sceneDetails[id15] ?? detail;
-    item.innerHTML = `<span class="scene-choice-icon">${svg(info.icon)}</span><span class="scene-choice-copy"><strong></strong><small></small></span><span class="scene-check">${svg("check")}</span>`;
-    item.querySelector("strong").textContent = label;
-    item.querySelector("small").textContent = info.description;
-    if (id15 === current) item.setAttribute("aria-current", "page");
-    item.addEventListener("click", (event) => {
-      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-      event.preventDefault();
-      close();
-      if (id15 !== current) {
-        select.value = id15;
-        select.dispatchEvent(new Event("change", { bubbles: true }));
-      }
-    });
-    panel.append(item);
-  }
-  function close() {
-    panel.hidden = true;
-    trigger.setAttribute("aria-expanded", "false");
-  }
-  function open() {
-    panel.hidden = false;
-    trigger.setAttribute("aria-expanded", "true");
-    document.exitPointerLock?.();
-    document.dispatchEvent(new Event("explorer-menu-open"));
-  }
-  trigger.addEventListener("click", () => panel.hidden ? open() : close());
-  picker.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") {
-      close();
-      trigger.focus();
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-      event.preventDefault();
-      open();
-      const items = [...panel.querySelectorAll("a")], index = items.indexOf(document.activeElement);
-      items[(index + (event.key === "ArrowDown" ? 1 : items.length - 1) + items.length) % items.length]?.focus();
-    }
-  });
-  document.addEventListener("pointerdown", (event) => {
-    if (!picker.contains(event.target)) close();
-  });
-  picker.addEventListener("focusout", (event) => {
-    if (!picker.contains(event.relatedTarget)) close();
-  });
-  picker.append(trigger, panel);
-  select.after(picker);
-}
-function setIconButton(button, icon, label, caption = "") {
-  button.innerHTML = svg(icon) + (caption ? `<span class="action-caption">${caption}</span>` : "");
-  button.setAttribute("aria-label", label);
-  button.setAttribute("title", label);
-  button.setAttribute("data-icon", icon);
-}
-function initExplorerUi() {
-  document.body.classList.add("minimal-ui");
-  const dock = document.createElement("div");
-  dock.className = "walk-actions";
-  dock.dataset.explorerUi = "";
-  dock.setAttribute("role", "group");
-  dock.setAttribute("aria-label", "\u6F2B\u6E38\u64CD\u4F5C");
-  const reset = document.getElementById("reset");
-  setIconButton(reset, "reset", "\u56DE\u5230\u8D77\u70B9", "\u590D\u4F4D");
-  dock.append(reset);
-  document.body.append(dock);
-  document.getElementById("fullscreen")?.remove();
-  document.getElementById("jump")?.remove();
-  const label = document.createElement("span");
-  label.className = "joystick-caption";
-  label.textContent = "\u79FB\u52A8";
-  document.getElementById("pad").append(label);
-}
-
 // node_modules/.pnpm/playcanvas@2.23.0/node_modules/playcanvas/scripts/esm/xr/xr-controllers.mjs
 var XrControllers = class extends Script {
   static scriptName = "xrControllers";
@@ -88505,10 +88361,10 @@ var VoxelCollision = class {
     const gMaxX = gMinX + this._numVoxelsX * res;
     const gMaxY = gMinY + this._numVoxelsY * res;
     const gMaxZ = gMinZ + this._numVoxelsZ * res;
-    const EPS = 1e-12;
+    const EPS2 = 1e-12;
     let tNear = 0;
     let tFar = maxDist;
-    if (Math.abs(dx) > EPS) {
+    if (Math.abs(dx) > EPS2) {
       let t1 = (gMinX - ox) / dx;
       let t2 = (gMaxX - ox) / dx;
       if (t1 > t2) {
@@ -88525,7 +88381,7 @@ var VoxelCollision = class {
     } else if (ox < gMinX || ox >= gMaxX) {
       return null;
     }
-    if (Math.abs(dy) > EPS) {
+    if (Math.abs(dy) > EPS2) {
       let t1 = (gMinY - oy) / dy;
       let t2 = (gMaxY - oy) / dy;
       if (t1 > t2) {
@@ -88542,7 +88398,7 @@ var VoxelCollision = class {
     } else if (oy < gMinY || oy >= gMaxY) {
       return null;
     }
-    if (Math.abs(dz) > EPS) {
+    if (Math.abs(dz) > EPS2) {
       let t1 = (gMinZ - oz) / dz;
       let t2 = (gMaxZ - oz) / dz;
       if (t1 > t2) {
@@ -88568,15 +88424,15 @@ var VoxelCollision = class {
     const stepX = dx > 0 ? 1 : dx < 0 ? -1 : 0;
     const stepY = dy > 0 ? 1 : dy < 0 ? -1 : 0;
     const stepZ = dz > 0 ? 1 : dz < 0 ? -1 : 0;
-    const invDx = Math.abs(dx) > EPS ? 1 / dx : 0;
-    const invDy = Math.abs(dy) > EPS ? 1 / dy : 0;
-    const invDz = Math.abs(dz) > EPS ? 1 / dz : 0;
-    let tMaxX = Math.abs(dx) > EPS ? (gMinX + (ix + (dx > 0 ? 1 : 0)) * res - ox) * invDx : Infinity;
-    let tMaxY = Math.abs(dy) > EPS ? (gMinY + (iy + (dy > 0 ? 1 : 0)) * res - oy) * invDy : Infinity;
-    let tMaxZ = Math.abs(dz) > EPS ? (gMinZ + (iz + (dz > 0 ? 1 : 0)) * res - oz) * invDz : Infinity;
-    const tDeltaX = Math.abs(dx) > EPS ? res * Math.abs(invDx) : Infinity;
-    const tDeltaY = Math.abs(dy) > EPS ? res * Math.abs(invDy) : Infinity;
-    const tDeltaZ = Math.abs(dz) > EPS ? res * Math.abs(invDz) : Infinity;
+    const invDx = Math.abs(dx) > EPS2 ? 1 / dx : 0;
+    const invDy = Math.abs(dy) > EPS2 ? 1 / dy : 0;
+    const invDz = Math.abs(dz) > EPS2 ? 1 / dz : 0;
+    let tMaxX = Math.abs(dx) > EPS2 ? (gMinX + (ix + (dx > 0 ? 1 : 0)) * res - ox) * invDx : Infinity;
+    let tMaxY = Math.abs(dy) > EPS2 ? (gMinY + (iy + (dy > 0 ? 1 : 0)) * res - oy) * invDy : Infinity;
+    let tMaxZ = Math.abs(dz) > EPS2 ? (gMinZ + (iz + (dz > 0 ? 1 : 0)) * res - oz) * invDz : Infinity;
+    const tDeltaX = Math.abs(dx) > EPS2 ? res * Math.abs(invDx) : Infinity;
+    const tDeltaY = Math.abs(dy) > EPS2 ? res * Math.abs(invDy) : Infinity;
+    const tDeltaZ = Math.abs(dz) > EPS2 ? res * Math.abs(invDz) : Infinity;
     let currentT = tNear;
     const maxSteps = this._numVoxelsX + this._numVoxelsY + this._numVoxelsZ;
     for (let step = 0; step < maxSteps; step++) {
@@ -101447,6 +101303,361 @@ var createViewer = async (options) => {
 };
 console.log(`SuperSplat Viewer v${version3} | Engine v${version2} (${revision2})`);
 
+// realtrip/src/solid-physics.js
+var EPS = 1e-5;
+function createSolidPhysics(config) {
+  const radius = config.radius ?? 0.21, height = config.height ?? 1.75, stepHeight = config.stepHeight ?? 0.22;
+  const boxes = config.boxes.map((b) => {
+    if (!b.center?.every(Number.isFinite) || b.center.length !== 3 || !b.size?.every((v2) => Number.isFinite(v2) && v2 > 0) || b.size.length !== 3 || !Number.isFinite(b.yaw ?? 0)) throw Error("Invalid solid box");
+    const angle = (b.yaw ?? 0) * Math.PI / 180;
+    return { ...b, c: Math.cos(angle), s: Math.sin(angle), hx: b.size[0] / 2, hz: b.size[2] / 2, bottom: b.center[1] - b.size[1] / 2, top: b.center[1] + b.size[1] / 2 };
+  });
+  function local(b, x2, z2) {
+    const dx = x2 - b.center[0], dz = z2 - b.center[2];
+    return [dx * b.c - dz * b.s, dx * b.s + dz * b.c];
+  }
+  function overlap(b, x2, z2) {
+    const [u, v2] = local(b, x2, z2);
+    return Math.hypot(Math.max(0, Math.abs(u) - b.hx), Math.max(0, Math.abs(v2) - b.hz)) < radius - EPS;
+  }
+  function clear(x2, y2, z2) {
+    return !boxes.some((b) => b.bottom < y2 + height - EPS && b.top > y2 + EPS && overlap(b, x2, z2));
+  }
+  function support(x2, z2, ceiling, bottom = -Infinity) {
+    let best = null;
+    for (const b of boxes) if (b.walkable !== false && b.top <= ceiling + EPS && b.top >= bottom - EPS && overlap(b, x2, z2) && (!best || b.top > best.top)) best = b;
+    return best;
+  }
+  function slide(x2, y2, z2) {
+    for (let iteration = 0; iteration < 6; iteration++) {
+      let changed = false;
+      for (const b of boxes) {
+        if (b.bottom >= y2 + height - EPS || b.top <= y2 + EPS) continue;
+        const [u, v2] = local(b, x2, z2), qu = Math.max(-b.hx, Math.min(b.hx, u)), qv = Math.max(-b.hz, Math.min(b.hz, v2));
+        const du = u - qu, dv = v2 - qv, dist = Math.hypot(du, dv);
+        if (dist >= radius - EPS) continue;
+        let pu, pv;
+        if (dist > EPS) {
+          pu = du / dist * (radius - dist + EPS);
+          pv = dv / dist * (radius - dist + EPS);
+        } else if (b.hx - Math.abs(u) < b.hz - Math.abs(v2)) {
+          pu = (u < 0 ? -1 : 1) * (b.hx - Math.abs(u) + radius + EPS);
+          pv = 0;
+        } else {
+          pu = 0;
+          pv = (v2 < 0 ? -1 : 1) * (b.hz - Math.abs(v2) + radius + EPS);
+        }
+        x2 += pu * b.c + pv * b.s;
+        z2 += -pu * b.s + pv * b.c;
+        changed = true;
+      }
+      if (!changed) break;
+    }
+    return { x: x2, z: z2 };
+  }
+  let state = { x: 0, y: 0, z: 0, vy: 0, grounded: false, support: null };
+  function reset(position2) {
+    state = { x: position2[0], y: position2[1], z: position2[2], vy: 0, grounded: false, support: null };
+    const floor = support(state.x, state.z, state.y + 0.05, state.y - 0.25);
+    if (floor && clear(state.x, floor.top, state.z)) {
+      state.y = floor.top;
+      state.grounded = true;
+      state.support = floor.id ?? null;
+    }
+    return { ...state };
+  }
+  function jump() {
+    if (state.grounded) {
+      state.vy = config.jumpSpeed ?? 4.2;
+      state.grounded = false;
+      state.support = null;
+    }
+  }
+  function update(dt, vx, vz) {
+    dt = Math.min(0.1, Math.max(0, dt));
+    const count = Math.max(1, Math.ceil(dt / Math.min(1 / 120, radius / (2 * Math.max(1, Math.hypot(vx, vz))))));
+    const h = dt / count;
+    for (let i = 0; i < count; i++) {
+      let nx = state.x + vx * h, nz = state.z + vz * h, foot = state.y;
+      if (state.grounded) {
+        const step = support(nx, nz, foot + stepHeight, foot + EPS * 2);
+        if (step && clear(nx, step.top, nz)) foot = step.top;
+      }
+      const slid = slide(nx, foot, nz);
+      nx = slid.x;
+      nz = slid.z;
+      if (foot > state.y && !support(nx, nz, foot + EPS, foot - EPS)) foot = state.y;
+      state.x = nx;
+      state.z = nz;
+      state.y = foot;
+      if (state.grounded) {
+        const floor = support(nx, nz, foot + 1e-3, foot - stepHeight);
+        if (floor && clear(nx, floor.top, nz)) {
+          state.y = floor.top;
+          state.vy = 0;
+          state.support = floor.id ?? null;
+          continue;
+        }
+      }
+      state.grounded = false;
+      state.support = null;
+      state.vy -= (config.gravity ?? 9.8) * h;
+      let next = state.y + state.vy * h;
+      if (state.vy <= 0) {
+        const floor = support(nx, nz, state.y + 1e-3, next);
+        if (floor) {
+          next = floor.top;
+          state.vy = 0;
+          state.grounded = true;
+          state.support = floor.id ?? null;
+        }
+      } else {
+        let ceiling = Infinity;
+        for (const b of boxes) if (b.bottom >= state.y + height - EPS && b.bottom <= next + height && overlap(b, nx, nz)) ceiling = Math.min(ceiling, b.bottom);
+        if (Number.isFinite(ceiling)) {
+          next = ceiling - height;
+          state.vy = 0;
+        }
+      }
+      state.y = next;
+    }
+    return { ...state };
+  }
+  return { reset, jump, update, getState: () => ({ ...state }) };
+}
+
+// realtrip/src/dynamic-navigation.js
+function createSolidBody(config, navigation) {
+  return { ...navigation, physics: createSolidPhysics(config) };
+}
+function createVoxelBody(metadata, buffer, config, navigation) {
+  if (metadata.version !== "1.1" || buffer.byteLength !== 4 * (metadata.nodeCount + metadata.leafDataCount))
+    throw Error("Invalid world-space voxel collision");
+  const words = new Uint32Array(buffer);
+  const collision = new VoxelCollision(metadata, words.slice(0, metadata.nodeCount), words.slice(metadata.nodeCount));
+  const walker = new WalkController();
+  for (const key2 of ["eyeHeight", "hoverHeight", "capsuleHeight", "capsuleRadius", "jumpSpeed"]) {
+    if (Number.isFinite(config[key2]) && config[key2] > 0) walker[key2] = config[key2];
+  }
+  walker.velocityDampingGround = walker.velocityDampingAir = 1;
+  const eyeHeight = walker.eyeHeight + walker.hoverHeight;
+  let jumping = false;
+  function state() {
+    const p2 = walker._position;
+    return { x: p2.x, y: p2.y - eyeHeight, z: p2.z, grounded: walker._grounded };
+  }
+  const physics = {
+    reset(foot) {
+      jumping = false;
+      walker.collision = collision;
+      walker.onEnter({ position: new Vec3(foot[0], foot[1] + eyeHeight, foot[2]), angles: new Vec3(), distance: 1, fov: 90 });
+      if (walker.collision !== collision) throw Error("The spawn has no clear voxel collision capsule");
+      return state();
+    },
+    jump() {
+      jumping = true;
+    },
+    stop() {
+      jumping = false;
+      walker._velocity.x = walker._velocity.z = 0;
+    },
+    update(dt, vx, vz) {
+      dt = Math.max(0, Math.min(0.05, dt));
+      if (dt === 0) return state();
+      const steps = Math.ceil(dt / (1 / 120)), h = dt / steps;
+      for (let i = 0; i < steps; i++) {
+        walker._velocity.x = vx;
+        walker._velocity.z = vz;
+        walker._step(h, [0, jumping ? 1 : 0, 0]);
+        jumping = false;
+      }
+      return state();
+    },
+    getState: state
+  };
+  return { ...navigation, eyeHeight, physics };
+}
+async function loadDynamicNavigation(scene, base2) {
+  const nav = scene.navigation;
+  async function fetchAsset(url, format) {
+    const response = await fetch(url);
+    if (!response.ok) throw Error(`Collision asset: HTTP ${response.status}`);
+    return response[format]();
+  }
+  const metadata = await fetchAsset(base2 + nav.url, "json");
+  if (nav.kind === "solid-body") return createSolidBody(metadata, nav);
+  const binary = await fetchAsset(base2 + nav.url.replace(/\.json$/, ".bin"), "arrayBuffer");
+  return createVoxelBody(metadata, binary, scene.settings.realtripWalk, nav);
+}
+
+// realtrip/src/scene-models.js
+function applyModelTransform(entity, model) {
+  if (model.modelRotation) entity.setLocalRotation(...model.modelRotation);
+  if (model.modelScale !== void 0) entity.setLocalScale(model.modelScale, model.modelScale, model.modelScale);
+  if (model.modelPosition) entity.setLocalPosition(...model.modelPosition);
+}
+async function loadSceneSupplements(viewer, models, base2) {
+  return Promise.all(models.map((model) => new Promise((resolve2, reject) => {
+    const url = base2 + model.contentUrl;
+    const asset = new Asset(model.name ?? "scene supplement", "gsplat", { url, filename: new URL(url, location.href).pathname.split("/").pop() });
+    asset.once("load", () => {
+      try {
+        const entity = new Entity(model.name ?? "scene supplement", viewer.app);
+        applyModelTransform(entity, model);
+        entity.addComponent("gsplat", { unified: true, asset });
+        viewer.app.root.addChild(entity);
+        viewer.app.renderNextFrame = true;
+        resolve2(entity);
+      } catch (error) {
+        reject(error);
+      }
+    });
+    asset.once("error", reject);
+    viewer.app.assets.add(asset);
+    viewer.app.assets.load(asset);
+  })));
+}
+
+// realtrip/src/explorer-ui.js
+var explorerScenes = [
+  ["insta360-5bfe", "\u9636\u68AF\u62A5\u544A\u5385"],
+  ["two-floor", "\u53CC\u5C42\u4F11\u606F\u7A7A\u95F4"],
+  ["building2", "2\u53F7\u697C"],
+  ["terrace", "\u9732\u53F0"],
+  ["cafeteria", "\u98DF\u5802"]
+];
+var sceneDetails = {
+  "insta360-5bfe": { icon: "gallery", description: "Hackathon \u4F1A\u573A\u4E0E\u9636\u68AF\u5EA7\u5E2D" },
+  "two-floor": { icon: "gallery", description: "\u4E00\u5C42\u4F11\u606F\u533A\u3001\u697C\u68AF\u4E0E\u4E8C\u5C42\u7A7A\u95F4" },
+  building2: { icon: "building", description: "\u4F1A\u8BAE\u5BA4\u4E0E\u7A97\u8FB9\u8FDE\u5ECA" },
+  terrace: { icon: "terrace", description: "\u6237\u5916\u9732\u53F0\u4E0E\u56ED\u533A\u98CE\u666F" },
+  cafeteria: { icon: "building", description: "\u53D6\u9910\u901A\u9053\u4E0E\u7528\u9910\u7A7A\u95F4" }
+};
+var paths = {
+  reset: '<path d="M4 10a8 8 0 1 1 1 8M4 4v6h6"/>',
+  building: '<path d="M6 21V5l12-2v18M3 21h18M10 8h1m3-1h1m-5 5h1m3-1h1m-5 5h1m3-1h1"/>',
+  gallery: '<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M8 4v16M8 15l5-5 5 5"/>',
+  terrace: '<path d="M3 14h18M5 14v6m7-6v6m7-6v6M3 20h18M7 9l5-6 5 6H7Zm5 0v5"/>',
+  chevron: '<path d="m8 10 4 4 4-4"/>',
+  check: '<path d="m5 12 4 4L19 6"/>'
+};
+var svg = (icon) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[icon] ?? paths.building}</svg>`;
+function explorerScenePath(id15, base2 = "/") {
+  const root = base2.endsWith("/") ? base2 : base2 + "/";
+  id15 = { hackathon: "insta360-5bfe", "honor-corridor": "two-floor" }[id15] ?? id15;
+  if (id15 === "sky-soho") return `${root.replace(/[^/]+\/$/, "")}sky-soho/?view=planet`;
+  if (!explorerScenes.some(([key2]) => key2 === id15)) throw new Error("Unknown scene");
+  return `${root}?scene=${id15}`;
+}
+function populateSceneMenu(select, current, base2 = "/", entries = explorerScenes) {
+  select.replaceChildren();
+  for (const [id15, label] of entries) select.add(new Option(label, id15));
+  select.value = current;
+  select.setAttribute("aria-label", "\u5207\u6362\u573A\u666F");
+  select.onchange = () => {
+    if (select.value !== current) location.href = explorerScenePath(select.value, base2);
+  };
+  select.hidden = true;
+  const picker = document.createElement("div");
+  picker.className = "scene-picker";
+  picker.dataset.explorerUi = "";
+  const detail = sceneDetails[current] ?? { icon: "building", description: "\u5B9E\u666F\u81EA\u7531\u63A2\u7D22" };
+  const trigger = document.createElement("button");
+  trigger.type = "button";
+  trigger.className = "scene-trigger";
+  trigger.setAttribute("aria-expanded", "false");
+  trigger.setAttribute("aria-controls", "scene-panel");
+  trigger.setAttribute("aria-label", `\u5207\u6362\u573A\u666F\uFF0C\u5F53\u524D${select.selectedOptions[0]?.textContent ?? "\u5B9E\u666F\u7A7A\u95F4"}`);
+  trigger.innerHTML = `<span class="scene-emblem">${svg(detail.icon)}</span><span class="scene-title"></span><span class="scene-chevron">${svg("chevron")}</span>`;
+  trigger.querySelector(".scene-title").textContent = select.selectedOptions[0]?.textContent ?? "\u5B9E\u666F\u7A7A\u95F4";
+  const panel = document.createElement("nav");
+  panel.id = "scene-panel";
+  panel.className = "scene-panel";
+  panel.hidden = true;
+  panel.setAttribute("aria-label", "\u9009\u62E9\u63A2\u7D22\u7A7A\u95F4");
+  const caption = document.createElement("div");
+  caption.className = "scene-panel-caption";
+  caption.textContent = "\u9009\u62E9\u63A2\u7D22\u7A7A\u95F4";
+  panel.append(caption);
+  for (const [id15, label] of entries) {
+    const item = document.createElement("a");
+    item.className = "scene-choice";
+    item.href = explorerScenes.some(([key2]) => key2 === id15) ? explorerScenePath(id15, base2) : location.href;
+    const info = sceneDetails[id15] ?? detail;
+    item.innerHTML = `<span class="scene-choice-icon">${svg(info.icon)}</span><span class="scene-choice-copy"><strong></strong><small></small></span><span class="scene-check">${svg("check")}</span>`;
+    item.querySelector("strong").textContent = label;
+    item.querySelector("small").textContent = info.description;
+    if (id15 === current) item.setAttribute("aria-current", "page");
+    item.addEventListener("click", (event) => {
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      close();
+      if (id15 !== current) {
+        select.value = id15;
+        select.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+    });
+    panel.append(item);
+  }
+  function close() {
+    panel.hidden = true;
+    trigger.setAttribute("aria-expanded", "false");
+  }
+  function open() {
+    panel.hidden = false;
+    trigger.setAttribute("aria-expanded", "true");
+    document.exitPointerLock?.();
+    document.dispatchEvent(new Event("explorer-menu-open"));
+  }
+  trigger.addEventListener("click", () => panel.hidden ? open() : close());
+  picker.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      close();
+      trigger.focus();
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      event.preventDefault();
+      open();
+      const items = [...panel.querySelectorAll("a")], index = items.indexOf(document.activeElement);
+      items[(index + (event.key === "ArrowDown" ? 1 : items.length - 1) + items.length) % items.length]?.focus();
+    }
+  });
+  document.addEventListener("pointerdown", (event) => {
+    if (!picker.contains(event.target)) close();
+  });
+  picker.addEventListener("focusout", (event) => {
+    if (!picker.contains(event.relatedTarget)) close();
+  });
+  picker.append(trigger, panel);
+  select.after(picker);
+}
+function setIconButton(button, icon, label, caption = "") {
+  button.innerHTML = svg(icon) + (caption ? `<span class="action-caption">${caption}</span>` : "");
+  button.setAttribute("aria-label", label);
+  button.setAttribute("title", label);
+  button.setAttribute("data-icon", icon);
+}
+function initExplorerUi() {
+  document.body.classList.add("minimal-ui");
+  const dock = document.createElement("div");
+  dock.className = "walk-actions";
+  dock.dataset.explorerUi = "";
+  dock.setAttribute("role", "group");
+  dock.setAttribute("aria-label", "\u6F2B\u6E38\u64CD\u4F5C");
+  const reset = document.getElementById("reset");
+  setIconButton(reset, "reset", "\u56DE\u5230\u8D77\u70B9", "\u590D\u4F4D");
+  dock.append(reset);
+  document.body.append(dock);
+  document.getElementById("fullscreen")?.remove();
+  document.getElementById("jump")?.remove();
+  const label = document.createElement("span");
+  label.className = "joystick-caption";
+  label.textContent = "\u79FB\u52A8";
+  document.getElementById("pad").append(label);
+}
+
 // realtrip/src/insta360.json
 var insta360_default = {
   settings: {
@@ -103126,7 +103337,330 @@ var hackathon_default = {
   }
 };
 
+// realtrip/src/two-floor.json
+var two_floor_default = {
+  settings: {
+    version: 2,
+    tonemapping: "none",
+    highPrecisionRendering: true,
+    postEffectSettings: {
+      sharpness: {
+        enabled: true,
+        amount: 0.12
+      },
+      bloom: {
+        enabled: false
+      },
+      grading: {
+        enabled: false
+      },
+      vignette: {
+        enabled: false
+      },
+      fringing: {
+        enabled: false
+      }
+    },
+    background: {
+      color: [
+        0.3,
+        0.31,
+        0.32
+      ]
+    },
+    animTracks: [],
+    annotations: [],
+    cameras: [
+      {
+        initial: {
+          position: [
+            0,
+            1.6,
+            0
+          ],
+          target: [
+            4.750391,
+            1.6,
+            -1.853049
+          ],
+          fov: 85
+        }
+      }
+    ],
+    startMode: "default"
+  },
+  contentUrl: "two-floor/scene.sog",
+  starts: {
+    clip01: {
+      position: [
+        -0.0028620163337324863,
+        1.6389324462543766,
+        -0.006610059897982239
+      ],
+      target: [
+        2.9114626781826214,
+        1.6588298192327036,
+        -0.7181686797464987
+      ],
+      fov: 65
+    },
+    clip02: {
+      position: [
+        -3.997944354588612,
+        1.580575403369329,
+        2.789015324671227
+      ],
+      target: [
+        -1.0707107133458686,
+        1.0714998925955874,
+        2.374111319017856
+      ],
+      fov: 65
+    },
+    clip03: {
+      position: [
+        -3.163974788900231,
+        5.061299232225054,
+        3.5984134027669845
+      ],
+      target: [
+        -0.7734689189555297,
+        3.3027873477185317,
+        3.1589618834736184
+      ],
+      fov: 65
+    }
+  },
+  title: "\u53CC\u5C42\u4F11\u606F\u7A7A\u95F4",
+  waypoints: {
+    downstairs: {
+      position: [
+        0,
+        1.6,
+        0
+      ],
+      target: [
+        4.750391,
+        1.6,
+        -1.853049
+      ],
+      fov: 85
+    },
+    stairs: {
+      position: [
+        -3.398446,
+        1.6,
+        2.609782
+      ],
+      target: [
+        -0.837946,
+        1.15,
+        2.158297
+      ],
+      fov: 85
+    },
+    upstairs: {
+      position: [
+        -3.864064,
+        5.04,
+        1.696765
+      ],
+      target: [
+        -1.969616,
+        5.04,
+        0.347296
+      ],
+      fov: 85
+    },
+    chair: {
+      position: [
+        -3.224299,
+        5.04,
+        4.173295
+      ],
+      target: [
+        -4.150018,
+        3.82,
+        4.336525
+      ],
+      fov: 85
+    },
+    videoStart: {
+      position: [
+        9.893394226571695,
+        5.04,
+        -1.3223473897047964
+      ],
+      target: [
+        7.135491686833465,
+        4.574628823454082,
+        -0.23726525025834921
+      ],
+      fov: 85
+    }
+  },
+  navigation: {
+    kind: "solid-body",
+    url: "two-floor/solids.json",
+    eyeHeight: 1.6,
+    speed: 1.65
+  }
+};
+
+// realtrip/src/insta360-5bfe.json
+var insta360_5bfe_default = {
+  title: "\u9636\u68AF\u62A5\u544A\u5385 \xB7 Insta360",
+  settings: {
+    version: 2,
+    tonemapping: "none",
+    highPrecisionRendering: true,
+    background: {
+      color: [
+        0.22,
+        0.25,
+        0.28
+      ]
+    },
+    postEffectSettings: {
+      sharpness: {
+        enabled: true,
+        amount: 0.12
+      },
+      bloom: {
+        enabled: false
+      },
+      grading: {
+        enabled: false
+      },
+      vignette: {
+        enabled: false
+      },
+      fringing: {
+        enabled: false
+      }
+    },
+    animTracks: [],
+    annotations: [],
+    cameras: [
+      {
+        initial: {
+          position: [
+            -4.152087,
+            -0.3,
+            0.377977
+          ],
+          target: [
+            -2.153218,
+            -0.3,
+            0.445243
+          ],
+          captureFrame: "frame_000086_cam1_center",
+          fov: 90
+        }
+      }
+    ],
+    startMode: "default",
+    realtripWalk: {
+      eyeHeight: 0.68,
+      hoverHeight: 0.12,
+      capsuleHeight: 0.85,
+      capsuleRadius: 0.14,
+      moveGroundSpeed: 2,
+      jumpSpeed: 2.4
+    }
+  },
+  contentUrl: "insta360-5bfe/scene.sog",
+  waypoints: {
+    start: {
+      position: [
+        -4.152087,
+        -0.3,
+        0.377977
+      ],
+      target: [
+        -2.153218,
+        -0.3,
+        0.445243
+      ],
+      captureFrame: "frame_000086_cam1_center",
+      fov: 90
+    },
+    middle: {
+      position: [
+        1.410157,
+        -0.2,
+        0.640267
+      ],
+      target: [
+        3.283631,
+        -0.2,
+        1.340337
+      ],
+      captureFrame: "frame_000021_cam1_center",
+      fov: 90
+    },
+    end: {
+      position: [
+        3.49075,
+        -0.25,
+        0.574752
+      ],
+      target: [
+        5.378826,
+        -0.25,
+        -0.08492
+      ],
+      captureFrame: "frame_000029_cam1_center",
+      fov: 90
+    }
+  },
+  screensUrl: "insta360-5bfe/screens.json",
+  navigation: {
+    kind: "voxel-body",
+    url: "insta360-5bfe/scene.voxel.json",
+    speed: 1.65
+  }
+};
+
 // realtrip/src/scene-screens.js
+async function loadCapturedSurfaces(viewer, url) {
+  const response = await fetch(url);
+  if (!response.ok) throw Error("Captured screens unavailable");
+  const { surfaces } = await response.json(), textures = /* @__PURE__ */ new Map(), entities = [];
+  for (const surface of surfaces) {
+    const material = new StandardMaterial();
+    material.useLighting = false;
+    material.useTonemap = false;
+    material.diffuse = new Color(0, 0, 0);
+    material.emissive = new Color(...surface.color);
+    material.cull = CULLFACE_NONE;
+    if (surface.texture) {
+      const source = new URL(surface.texture, new URL(url, location.href)).href;
+      if (!textures.has(source)) textures.set(source, new Promise((resolve2, reject) => {
+        viewer.app.assets.loadFromUrl(source, "texture", (error, asset) => {
+          if (error) return reject(error);
+          asset.resource.addressU = asset.resource.addressV = ADDRESS_CLAMP_TO_EDGE;
+          asset.resource.anisotropy = Math.min(8, viewer.app.graphicsDevice.maxAnisotropy);
+          resolve2(asset.resource);
+        });
+      }));
+      material.emissiveMap = await textures.get(source);
+    }
+    material.update();
+    const mesh = new Mesh(viewer.app.graphicsDevice);
+    mesh.setPositions(surface.positions);
+    mesh.setIndices(surface.indices);
+    mesh.setNormals(calculateNormals(surface.positions, surface.indices));
+    mesh.setUvs(0, surface.uvs);
+    mesh.update();
+    const entity = new Entity(surface.name);
+    entity.addComponent("render", { meshInstances: [new MeshInstance(mesh, material)], castShadows: false, receiveShadows: false });
+    viewer.app.root.addChild(entity);
+    entities.push(entity);
+  }
+  viewer.app.renderNextFrame = true;
+  return entities;
+}
 async function loadSceneScreens(viewer, screens, base2) {
   if (!screens?.panels?.length) return [];
   const asset = new Asset("captured Hackathon projection", "texture", { url: base2 + screens.textureUrl }, { mipmaps: true, srgb: true });
@@ -103182,7 +103716,9 @@ var instaBase = { data: insta360_default, destination: "building2", label: "2\u5
 var terraceBase = { data: terrace_default, destination: "terrace", label: "\u9732\u53F0 \xB7 \u5B9E\u666F\u63A2\u7D22", source: "https://app.insta360.com/3dspace/detail/GS3DC10601a25a50d455d8a18e2773e368879", credit: "\u9732\u53F0\u5B9E\u62CD \xB7 Remy \u91CD\u5EFA", scope: "\u5728\u9732\u53F0\u5165\u53E3\u3001\u4E2D\u592E\u7A7A\u5730\u548C\u89C2\u666F\u7AEF\u4E4B\u95F4\u8FDE\u7EED\u81EA\u7531\u8D70\u52A8\u3002\u6309\u62CD\u6444\u8F68\u8FF9\u548C\u5730\u677F\u70B9\u4E91\u6821\u6B63\u6A21\u578B\u503E\u659C\u3001\u5730\u9762\u53CA\u89C6\u70B9\u9AD8\u5EA6\uFF1B\u73BB\u7483\u5E55\u5899\u3001\u82B1\u7BB1\u3001\u62A4\u680F\u4E0E\u684C\u6905\u91C7\u7528\u7B80\u5316\u963B\u6321\u3002\u8FDC\u5904\u697C\u5B87\u4E3A\u80CC\u666F\u626B\u63CF\uFF0C\u672A\u5F00\u653E\u884C\u8D70\u3002" };
 var cafeteriaBase = { data: cafeteria_default, destination: "cafeteria", label: "\u98DF\u5802", source: "https://app.insta360.com/3dspace/detail/GS3DC9401fd20afb548cd8bfa6f5b31b8458a", credit: "\u98DF\u5802\u5B9E\u62CD", scope: "\u4FDD\u7559\u4EBA\u7269\uFF0C\u7ED3\u5408\u539F\u59CB\u53D6\u9910\u533A\u4E0E\u8865\u62CD\u7528\u9910\u533A\u3002\u5165\u53E3\u3001\u53D6\u9910\u901A\u9053\u548C\u9910\u684C\u65C1\u7684\u8FC7\u9053\u53EF\u4EE5\u8FDE\u7EED\u5F80\u8FD4\uFF0C\u5730\u9762\u3001\u67DC\u53F0\u3001\u7ACB\u67F1\u548C\u684C\u6905\u91C7\u7528\u6821\u51C6\u540E\u7684\u7B80\u5316\u78B0\u649E\u3002\u73BB\u7483\u53CD\u5C04\u3001\u4EBA\u7269\u8FD0\u52A8\u6B8B\u5F71\u4E0E\u8FDC\u5904\u672A\u5145\u5206\u62CD\u6444\u7684\u533A\u57DF\u4ECD\u6709\u91CD\u5EFA\u7455\u75B5\u3002" };
 var scenes = {
-  hackathon: { data: hackathon_default, destination: "hackathon", label: "Hackathon \u4E3B\u4F1A\u573A", title: "Hackathon \u4E3B\u4F1A\u573A", area: "\u4E3B\u4F1A\u573A", credit: "\u4E3B\u4F1A\u573A\u5B9E\u62CD", source: "https://app.insta360.com/3dspace/detail/GS3DC5bfe2359b4f24163a38f5d9314f2e94e", scope: "\u7B2C 4 \u4EFD\u7D20\u6750\u4F5C\u4E3A\u4F1A\u573A\u4E3B\u4F53\uFF0C\u7B2C 2 \u4EFD\u771F\u5B9E Hackathon \u6295\u5C4F\u753B\u9762\u7ECF\u8FC7\u900F\u89C6\u6821\u6B63\uFF0C\u56FA\u5B9A\u5728\u4E09\u5757\u5B9E\u9645\u5C4F\u5E55\u4E0A\u3002\u6CBF\u524D\u6392\u548C\u9636\u68AF\u901A\u9053\u81EA\u7531\u884C\u8D70\uFF1B\u5EA7\u6905\u548C\u7ACB\u67F1\u9650\u5236\u901A\u884C\uFF0C\u53F0\u9636\u9AD8\u5EA6\u7ECF\u8FC7\u5E73\u6ED1\u3002\u5C3A\u5EA6\u7531\u626B\u63CF\u4F30\u7B97\u3002" },
+  "insta360-5bfe": { data: insta360_5bfe_default, destination: "insta360-5bfe", label: "\u9636\u68AF\u62A5\u544A\u5385", title: "\u8D70\u8FDB\u9636\u68AF\u62A5\u544A\u5385\u3002", area: "\u62A5\u544A\u5385\u8D77\u70B9", credit: "Insta360 X6 / Remy \xB7 junhaoqin \u56E2\u961F", source: "https://app.insta360.com/3dspace/detail/GS3DC5bfe2359b4f24163a38f5d9314f2e94e", scope: "\u6765\u81EA realtrip-walk-hackathon26 \u7684\u9636\u68AF\u62A5\u544A\u5385\uFF0C\u4FDD\u7559\u539F\u59CB\u6A21\u578B\u3001\u4F53\u7D20\u78B0\u649E\u3001\u884C\u4EBA\u773C\u9AD8\u53CA\u4E09\u5757 Hackathon \u5C4F\u5E55\u3002\u4F7F\u7528\u672C\u7AD9\u7EDF\u4E00\u7684\u79FB\u52A8\u3001\u8F6C\u5934\u4E0E\u91CD\u7F6E\u64CD\u4F5C\u3002\u5C3A\u5EA6\u672A\u7ECF\u73B0\u573A\u6D4B\u91CF\uFF0C\u8584\u7269\u4F53\u548C\u7F3A\u5931\u626B\u63CF\u5904\u7684\u78B0\u649E\u53EF\u80FD\u4E0D\u5B8C\u6574\u3002" },
+  "two-floor": { data: two_floor_default, destination: "two-floor", label: "\u53CC\u5C42\u4F11\u606F\u7A7A\u95F4", title: "\u4ECE\u4E00\u5C42\uFF0C\u6162\u6162\u901B\u8D77\u3002", area: "\u4E00\u5C42\u4F11\u606F\u533A", credit: "\u516D\u6BB5\u5B9E\u62CD\u89C6\u9891 \xB7 junhaoqin \u56E2\u961F", source: "https://git.dev.sh.ctripcorp.com/junhaoqin/realtrip-walk-hackathon26", scope: "\u6765\u81EA realtrip-walk-hackathon26 \u7684\u53CC\u5C42\u5B9E\u62CD\u6A21\u578B\u3002\u4E00\u5C42\u3001\u6298\u8FD4\u697C\u68AF\u548C\u4E8C\u5C42\u53EF\u4EE5\u8FDE\u7EED\u884C\u8D70\uFF1B\u4FDD\u7559\u697C\u5C42\u3001\u53F0\u9636\u3001\u62A4\u680F\u53CA\u5BB6\u5177\u78B0\u649E\u3002\u4F7F\u7528\u672C\u7AD9\u7EDF\u4E00\u64CD\u4F5C\uFF0C\u6A21\u578B\u4E2D\u672A\u5145\u5206\u62CD\u6444\u7684\u533A\u57DF\u4ECD\u53EF\u80FD\u6A21\u7CCA\u3002" },
+  "hackathon-original": { data: hackathon_default, destination: "hackathon-original", hidden: true, label: "Hackathon \u4E3B\u4F1A\u573A\uFF08\u539F\u7248\uFF09", title: "Hackathon \u4E3B\u4F1A\u573A", area: "\u4E3B\u4F1A\u573A", credit: "\u4E3B\u4F1A\u573A\u5B9E\u62CD", source: "https://app.insta360.com/3dspace/detail/GS3DC5bfe2359b4f24163a38f5d9314f2e94e", scope: "\u539F\u7248\u4F1A\u573A\u6A21\u578B\u4E0E\u6821\u51C6\u540E\u7684\u5730\u5F62\u78B0\u649E\u3002" },
   "alpine-lake": { data: alpine_lake_default, destination: "alpine-lake", label: "\u5C71\u6E56\u6F2B\u6E38", title: "\u6CBF\u7740\u6E56\u5CB8\uFF0C\u8D70\u8D70\u770B\u770B\u3002", area: "\u6E56\u5CB8\u8349\u5730", hidden: true, credit: "\u7528\u6237\u63D0\u4F9B\u7684\u5C71\u6E56\u6A21\u578B", scope: "\u4F7F\u7528\u63D0\u4F9B\u7684 SPZ \u573A\u666F\u548C PLY \u78B0\u649E\u7F51\u683C\u3002\u53EF\u4EE5\u6CBF\u6E56\u5CB8\u8349\u5730\u81EA\u7531\u884C\u8D70\uFF0C\u968F\u5730\u5F62\u8D77\u4F0F\uFF1B\u6C34\u9762\u3001\u9661\u5761\u548C\u6A21\u578B\u8FB9\u7F18\u9650\u5236\u901A\u884C\u3002\u8FDC\u666F\u548C\u5C40\u90E8\u6C34\u9762\u5B58\u5728\u6E90\u6A21\u578B\u7684\u91CD\u5EFA\u7455\u75B5\u3002", source: null },
   cafeteria: { ...cafeteriaBase, title: "\u98DF\u5802", area: "\u98DF\u5802\u5165\u53E3", waypoint: "entrance" },
   terrace: { ...terraceBase, title: "\u5230\u9732\u53F0\uFF0C\u8D70\u8D70\u770B\u770B\u3002", area: "\u9732\u53F0\u5165\u53E3", waypoint: "entrance" },
@@ -103194,9 +103730,9 @@ var scenes = {
   "building2-far": { ...instaBase, title: "\u6362\u4E2A\u65B9\u5411\uFF0C\u770B\u770B\u3002", area: "\u8FDE\u5ECA\u53E6\u4E00\u4FA7", waypoint: "far" }
 };
 var requestedScene = new URLSearchParams(location.search).get("scene");
-var legacyScenes = { insta360: "building2", "insta360-room": "building2", "insta360-door": "building2-door", "insta360-aisle": "building2-aisle", "insta360-far": "building2-far", "cafeteria-original": "cafeteria" };
+var legacyScenes = { hackathon: "insta360-5bfe", "honor-corridor": "two-floor", insta360: "building2", "insta360-room": "building2", "insta360-door": "building2-door", "insta360-aisle": "building2-aisle", "insta360-far": "building2-far", "cafeteria-original": "cafeteria" };
 var requested = legacyScenes[requestedScene] ?? requestedScene;
-var standaloneScenes = { "honor-corridor": "\u8363\u8A89\u8FDE\u5ECA", "sky-soho": "\u51CC\u7A7A\u4E00\u65E5" };
+var standaloneScenes = { "sky-soho": "\u51CC\u7A7A\u4E00\u65E5" };
 if (Object.hasOwn(standaloneScenes, requested)) {
   const target2 = new URL(explorerScenePath(requested, base), location.origin);
   for (const [name, value] of new URLSearchParams(location.search)) if (name !== "scene") target2.searchParams.set(name, value);
@@ -103237,7 +103773,7 @@ if (Object.hasOwn(standaloneScenes, requested)) {
     $("knob").style.transform = `translate(calc(-50% + ${x2}px),calc(-50% + ${y2}px))`;
     officeNav?.setMoveInput(x2 / radius, -y2 / radius);
   };
-  const key2 = Object.hasOwn(scenes, requested) ? requested : "hackathon";
+  const key2 = Object.hasOwn(scenes, requested) ? requested : "insta360-5bfe";
   const current = scenes[key2];
   let scene = structuredClone(current.data);
   const $ = (id15) => document.getElementById(id15);
@@ -103270,10 +103806,11 @@ if (Object.hasOwn(standaloneScenes, requested)) {
     $("about-source").hidden = true;
   }
   $("scene-scope").textContent = current.scope;
-  if (current.hidden) {
+  if (current.destination === "alpine-lake") {
     $("attribution").textContent = "\u7D20\u6750\u7531\u7528\u6237\u63D0\u4F9B\u3002\u539F SPZ \u4FDD\u7559\u5168\u90E8 1,189,993 \u4E2A\u70B9\u5E76\u8F6C\u6362\u4E3A\u7F51\u9875 SOG\uFF1B\u78B0\u649E\u6765\u81EA\u914D\u5957 PLY \u7684 278,025 \u4E2A\u4E09\u89D2\u9762\uFF0C\u91C7\u6837\u4E3A\u5730\u5F62\u9AD8\u5EA6\u5E76\u9650\u5236\u6E56\u9762\u3001\u9661\u5761\u53CA\u7F3A\u5931\u533A\u57DF\u3002\u5C3A\u5BF8\u6CBF\u7528\u6A21\u578B\u5355\u4F4D\u3002\u6E32\u67D3\u5668\uFF1ASuperSplat Viewer / PlayCanvas\uFF08MIT\uFF09\u3002";
     $("area-help").hidden = true;
   }
+  if (["two-floor", "insta360-5bfe"].includes(current.destination)) $("attribution").textContent = current.scope + " \u6E32\u67D3\u5668\uFF1ASuperSplat Viewer / PlayCanvas\uFF08MIT\uFF09\u3002";
   if (current.destination === "building2") $("attribution").textContent = "\u7D20\u6750\u6765\u81EA\u7528\u6237\u63D0\u4F9B\u76842\u53F7\u697C\u5B9E\u666F\u5206\u4EAB\u9875\u3002\u4F7F\u7528\u5176 100 \u4E07\u70B9 SOG \u6A21\u578B\uFF0C\u7ED3\u5408\u62CD\u6444\u8F68\u8FF9\u4E0E\u6A21\u578B\u8F6E\u5ED3\u6821\u51C6\u7AD9\u7ACB\u773C\u9AD8\u3001\u5730\u9762\u548C\u7B80\u5316\u969C\u788D\u3002\u539F\u59CB\u4F53\u7D20\u5728\u95E8\u53E3\u548C\u684C\u6905\u5904\u5B58\u5728\u788E\u5757\uFF0C\u672C\u573A\u666F\u4F7F\u7528\u6821\u51C6\u540E\u7684\u5E73\u9762\u78B0\u649E\uFF0C\u4E0D\u4EE3\u8868\u5B9E\u6D4B\u5EFA\u7B51\u5C3A\u5BF8\u3002\u6E32\u67D3\u5668\uFF1ASuperSplat Viewer / PlayCanvas\uFF08MIT\uFF09\u3002";
   $("about-source").href = $("source").href;
   if (current.destination === "terrace") $("attribution").textContent = "\u7D20\u6750\u6765\u81EA\u7528\u6237\u63D0\u4F9B\u7684\u9732\u53F0\u5B9E\u666F\u5206\u4EAB\u9875\uFF0C\u4F7F\u7528\u5176 100 \u4E07\u70B9 SOG \u6A21\u578B\u3002\u672C\u7AD9\u6821\u6B63\u6A21\u578B\u503E\u659C\u5E76\u589E\u52A0\u81EA\u7531\u6B65\u884C\u3001\u5730\u9762\u548C\u7B80\u5316\u969C\u788D\u3002\u5C3A\u5EA6\u6309\u539F\u62CD\u6444\u89C6\u70B9\u4F30\u7B97\uFF0C\u672A\u505A\u73B0\u573A\u6D4B\u91CF\uFF1B\u684C\u6905\u3001\u82B1\u7BB1\u91C7\u7528\u6574\u4F53\u8F6E\u5ED3\u963B\u6321\uFF0C\u672A\u5EFA\u7ACB\u6BCF\u6839\u6905\u817F\u7684\u7CBE\u7EC6\u7269\u7406\u3002\u6E32\u67D3\u5668\uFF1ASuperSplat Viewer / PlayCanvas\uFF08MIT\uFF09\u3002";
@@ -103302,7 +103839,7 @@ if (Object.hasOwn(standaloneScenes, requested)) {
   const status = $("loadingText");
   let viewer, ready = false, officeNav, walkSurface;
   let supplementsReady = !scene.supplements?.length;
-  let screensReady = !scene.screens;
+  let screensReady = !scene.screens && !scene.screensUrl;
   let supplementEntities = /* @__PURE__ */ new Set();
   let walkingMotion = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   try {
@@ -103326,7 +103863,8 @@ if (Object.hasOwn(standaloneScenes, requested)) {
   let joyPointer = null;
   window.addEventListener("resize", stop);
   try {
-    if (["mesh-heightfield", "reviewed-heightfield"].includes(scene.navigation.kind)) {
+    if (["solid-body", "voxel-body"].includes(scene.navigation.kind)) walkSurface = await loadDynamicNavigation(scene, base);
+    else if (["mesh-heightfield", "reviewed-heightfield"].includes(scene.navigation.kind)) {
       const response = await fetch(base + scene.navigation.url);
       if (!response.ok) throw new Error("Collision surface unavailable");
       walkSurface = createTerrainSurface({ ...await response.json(), ...scene.navigation });
@@ -103356,6 +103894,10 @@ if (Object.hasOwn(standaloneScenes, requested)) {
     }
     if (scene.screens) {
       await loadSceneScreens(viewer, scene.screens, base);
+      screensReady = true;
+    }
+    if (scene.screensUrl) {
+      await loadCapturedSurfaces(viewer, base + scene.screensUrl);
       screensReady = true;
     }
     setReady();

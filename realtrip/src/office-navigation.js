@@ -25,6 +25,7 @@ export function routeProject(route, x, z, progress = null) {
 }
 export function createOfficeNavigation(viewer, route, initial, world, surface = null) {
  const cam=viewer.app.root.findComponents('camera')[0].entity;
+ const physics=surface?.physics;
  let x,z,y,yaw,pitch=0,capturePitch=0,progress,jumpY=0,jumpV=0,moveX=0,moveZ=0,enabled=true,look=null;
  const eye=surface?.eyeHeight??route?.eyeHeight??1.6;
  let velocityX=0,velocityZ=0,stride=0,bob=0,walkingMotion=true;
@@ -33,6 +34,7 @@ export function createOfficeNavigation(viewer, route, initial, world, surface = 
  function reset(){
   [x,y,z]=initial.position;const dx=initial.target[0]-x,dy=initial.target[1]-y,dz=initial.target[2]-z;
   yaw=Math.atan2(-dx,-dz)*180/Math.PI;pitch=Math.atan2(dy,Math.hypot(dx,dz))*180/Math.PI;capturePitch=pitch;jumpY=jumpV=bob=stride=0;keys.clear();moveX=moveZ=velocityX=velocityZ=0;
+  if(physics){const foot=physics.reset([x,y-eye,z]);x=foot.x;y=foot.y+eye;z=foot.z;render();return;}
   if(surface){if(!surface.contains(x,z))throw new Error('起点不在可行走地面内');y=(surface.heightAt?.(x,z)??surface.floorY)+eye;progress=0;render();return;}
   // Position and height together choose the right flight for quick-start locations.
   let nearest=0,score=Infinity;
@@ -40,16 +42,16 @@ export function createOfficeNavigation(viewer, route, initial, world, surface = 
   if(route.segments)nearest=route.segments.findIndex(([a,b])=>a===nearest||b===nearest);
   const hit=routeProject(route,x,z,nearest);progress=hit.progress;y=hit.y+eye;render();
  }
- function stop(){keys.clear();moveX=moveZ=velocityX=velocityZ=0;bob=0;look=null;}
+ function stop(){keys.clear();moveX=moveZ=velocityX=velocityZ=0;bob=0;look=null;physics?.stop?.();}
  // Restore only a reviewed-floor viewpoint; reset still returns to the entrance.
  function getPose(){return {position:[x,y,z],yaw,pitch};}
  function restorePose(pose){
-  if(!surface||!Array.isArray(pose?.position)||pose.position.length!==3||!pose.position.every(Number.isFinite)||!Number.isFinite(pose.yaw)||!Number.isFinite(pose.pitch)||!surface.contains(pose.position[0],pose.position[2]))return false;
+  if(physics||!surface||!Array.isArray(pose?.position)||pose.position.length!==3||!pose.position.every(Number.isFinite)||!Number.isFinite(pose.yaw)||!Number.isFinite(pose.pitch)||!surface.contains(pose.position[0],pose.position[2]))return false;
   stop();[x,,z]=pose.position;y=(surface.heightAt?.(x,z)??surface.floorY)+eye;
   yaw=pose.yaw%360;pitch=Math.max(-75,Math.min(75,pose.pitch));
   jumpY=jumpV=stride=0;render();return true;
  }
- function jump(){if(enabled&&jumpY===0)jumpV=surface?.jumpSpeed??3.6;}
+ function jump(){if(!enabled)return;if(physics)physics.jump();else if(jumpY===0)jumpV=surface?.jumpSpeed??3.6;}
  function keydown(e){
   if(!enabled||e.target.closest?.('input,select,textarea,dialog,button,a,[data-explorer-ui]'))return;
   if(['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code)){
@@ -98,9 +100,15 @@ export function createOfficeNavigation(viewer, route, initial, world, surface = 
    const easing=1-Math.exp(-dt*14);
    velocityX+=(sx-velocityX)*easing;velocityZ+=(sz-velocityZ)*easing;
    const oldX=x,oldZ=z;
-   const nx=x+(Math.cos(rad)*velocityX-Math.sin(rad)*velocityZ)*speed*dt;
-   const nz=z+(-Math.sin(rad)*velocityX-Math.cos(rad)*velocityZ)*speed*dt;
-   if(surface){const foot=surface.move(x,z,nx,nz);x=foot.x;z=foot.z;y=foot.y+eye;}
+   const vx=(Math.cos(rad)*velocityX-Math.sin(rad)*velocityZ)*speed;
+   const vz=(-Math.sin(rad)*velocityX-Math.cos(rad)*velocityZ)*speed;
+   const nx=x+vx*dt,nz=z+vz*dt;
+   let grounded=jumpY===0;
+   if(physics){
+    const foot=physics.update(dt,vx,vz);x=foot.x;z=foot.z;y=foot.y+eye;grounded=foot.grounded;
+    if(![x,y,z].every(Number.isFinite)||y<(surface.resetBelow??-8)){reset();return;}
+   }
+   else if(surface){const foot=surface.move(x,z,nx,nz);x=foot.x;z=foot.z;y=foot.y+eye;}
    else{
     const hit=routeProject(route,nx,nz,progress),radius=Math.max(.18,hit.width-.22);
     if(hit.distance>radius){x=hit.x+(nx-hit.x)*radius/hit.distance;z=hit.z+(nz-hit.z)*radius/hit.distance;}else{x=nx;z=nz;}
@@ -109,7 +117,7 @@ export function createOfficeNavigation(viewer, route, initial, world, surface = 
     y+=(foot.y+eye-y)*(1-Math.exp(-dt*18));
    }
    const distance=Math.hypot(x-oldX,z-oldZ);stride+=distance*2*Math.PI/.72;
-   const targetBob=walkingMotion&&!reducedMotion?.matches&&jumpY===0
+   const targetBob=walkingMotion&&!reducedMotion?.matches&&grounded
     ?Math.sin(stride)*.009*Math.min(1,distance/(Math.max(dt,.001)*.6)):0;
    bob+=(targetBob-bob)*(1-Math.exp(-dt*18));
    if(jumpV!==0||jumpY>0){jumpV-=9.8*dt;jumpY+=jumpV*dt;if(jumpY<=0){jumpY=0;jumpV=0;}}

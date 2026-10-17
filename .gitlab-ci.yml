@@ -6,6 +6,10 @@ pages:
     - test -f dist/presentation/index.html
     - test -f dist/walk/index.html
     - test -f dist/walk/hackathon/scene.sog
+    - test -f dist/walk/two-floor/scene.sog
+    - test -f dist/walk/two-floor/solids.json
+    - test -f dist/walk/insta360-5bfe/scene.sog
+    - test -f dist/walk/insta360-5bfe/scene.voxel.bin
     - test -f dist/sky-soho/index.html
     - test -f dist/route-3d/index.html
     - rm -rf public
