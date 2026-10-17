@@ -34,8 +34,8 @@ export async function createNpcCharacter(viewer,config,base){
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
   const anchor=new Vec3();
   let redrawClock=0;
-  let elapsed=0,near=false,state='idle',waveUntil=0,lastGreeting=-20,yaw=config.rotation,pose=npcMotion(0,{reduced:true});
-  function wave(){waveUntil=elapsed+3.1;lastGreeting=elapsed;}
+  let elapsed=0,near=false,state='idle',waveUntil=0,yaw=config.rotation,pose=npcMotion(0,{reduced:true});
+  function wave(){waveUntil=elapsed+3.1;}
   function update(dt){
     if(document.hidden)return;
     elapsed+=Math.min(dt,.05);
@@ -61,5 +61,5 @@ export async function createNpcCharacter(viewer,config,base){
   }
   const onReducedChange=()=>{app.renderNextFrame=true;};reduced.addEventListener('change',onReducedChange);
   update(0);app.renderNextFrame=true;app.on('update',update);
-  return {root,anchor,setNear(value){if(value&&!near&&elapsed-lastGreeting>9)wave();near=value;},setState(value){state=value;},wave,destroy(){reduced.removeEventListener('change',onReducedChange);app.off('update',update);root.destroy();lights.forEach(l=>l.destroy());app.assets.remove(asset);asset.unload();}};
+  return {root,anchor,setNear(value){near=value;},setState(value){state=value;},wave,destroy(){reduced.removeEventListener('change',onReducedChange);app.off('update',update);root.destroy();lights.forEach(l=>l.destroy());app.assets.remove(asset);asset.unload();}};
 }

@@ -25,23 +25,23 @@ ball('Board blue deck',m.blue,[0,.06,0],[.81,.035,.4],board);
 for(const x of [-.53,.53])ball('Hover engine',m.cyan,[x,-.04,0],[.15,.025,.22],board);
 const body=group('Body',root,[0,.16,0]);
 for(const side of [-1,1]){
- const leg=group(side<0?'LegL':'LegR',body,[side*.24,.4,0]);leg.rotation.z=-side*.1;
- ball('Cargo trousers',m.navy,[0,.01,0],[.23,.35,.24],leg);
- box('Blue cargo pocket',m.blue,[side*.16,.1,.1],[.1,.17,.2],leg);
- box('Pocket highlight',m.cyan,[side*.202,.12,.13],[.012,.07,.1],leg);
- ball('White sneaker',m.white,[0,-.23,.11],[.245,.16,.36],leg);
- ball('Sole',m.sole,[0,-.33,.13],[.25,.06,.36],leg);
- ball('Blue heel',m.blue,[0,-.23,-.09],[.24,.115,.13],leg);
- for(let i=0;i<3;i++)box('Navy laces',m.navy,[0,-.13+i*.034,.43-i*.035],[.26,.035,.035],leg);
+ const leg=group(side<0?'LegL':'LegR',body,[side*.205,.4,0]);leg.rotation.z=-side*.1;
+ ball('Cargo trousers',m.navy,[0,.01,0],[.185,.35,.205],leg);
+ box('Blue cargo pocket',m.blue,[side*.13,.1,.09],[.1,.17,.2],leg);
+ box('Pocket highlight',m.cyan,[side*.172,.12,.12],[.012,.07,.1],leg);
+ ball('White sneaker',m.white,[0,-.23,.11],[.215,.16,.34],leg);
+ ball('Sole',m.sole,[0,-.33,.13],[.22,.06,.34],leg);
+ ball('Blue heel',m.blue,[0,-.23,-.09],[.21,.115,.13],leg);
+ for(let i=0;i<3;i++)box('Navy laces',m.navy,[0,-.13+i*.034,.43-i*.035],[.23,.035,.035],leg);
 }
-ball('Dark hoodie',m.navy,[0,.94,0],[.36,.42,.25],body);
-ball('Hood',m.white,[0,1.17,-.12],[.43,.25,.27],body);
+ball('Dark hoodie',m.navy,[0,.94,0],[.29,.42,.22],body);
+ball('Hood',m.white,[0,1.17,-.12],[.36,.25,.24],body);
 for(const side of [-1,1]){
- const coat=ball('Jacket panel',m.white,[side*.25,.94,.035],[.22,.35,.27],body);coat.rotation.z=-side*.16;
- line('Blue zipper piping',[[side*.11,1.18,.25],[side*.12,.92,.285],[side*.25,.63,.25]],.018,m.blue,body);
- const arm=group(side<0?'ArmL':'ArmR',body,[side*.4,1.14,0]);arm.rotation.z=side*.34;
- ball('Sleeve',m.white,[side*.05,-.19,0],[.185,.28,.18],arm);
- ball('Blue wrist cuff',m.blue,[side*.085,-.4,.02],[.16,.075,.155],arm);
+ const coat=ball('Jacket panel',m.white,[side*.205,.94,.025],[.17,.35,.235],body);coat.rotation.z=-side*.16;
+ line('Blue zipper piping',[[side*.09,1.18,.22],[side*.10,.92,.25],[side*.20,.63,.22]],.018,m.blue,body);
+ const arm=group(side<0?'ArmL':'ArmR',body,[side*.33,1.14,0]);arm.rotation.z=side*.34;
+ ball('Sleeve',m.white,[side*.05,-.19,0],[.15,.28,.15],arm);
+ ball('Blue wrist cuff',m.blue,[side*.085,-.4,.02],[.135,.075,.135],arm);
  const hand=group('Hand',arm,[side*.09,-.51,.025]);
  ball('Palm',m.skin,[0,0,0],[.13,.14,.085],hand);
  for(let j=0;j<4;j++)ball('Finger',m.skin,[(j-1.5)*.055,-.1-Math.sin(j/3*Math.PI)*.025,.012],[.032,.09,.034],hand);

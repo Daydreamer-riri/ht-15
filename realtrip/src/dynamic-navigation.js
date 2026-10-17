@@ -1,6 +1,7 @@
 import {Vec3} from 'playcanvas';
 import {WalkController,VoxelCollision} from '@playcanvas/supersplat-viewer/viewer';
 import {createSolidPhysics} from './solid-physics.js';
+import {addCapsuleObstacles} from './collision-obstacles.js';
 
 // Both adapters expose foot coordinates. All keys, touch look, joystick, easing,
 // pause, reset and camera framing remain in our shared office-navigation module.
@@ -8,11 +9,11 @@ export function createSolidBody(config, navigation) {
  return {...navigation,physics:createSolidPhysics(config)};
 }
 
-export function createVoxelBody(metadata, buffer, config, navigation) {
+export function createVoxelBody(metadata, buffer, config, navigation, obstacles=[]) {
  if(metadata.version!=='1.1'||buffer.byteLength!==4*(metadata.nodeCount+metadata.leafDataCount))
   throw Error('Invalid world-space voxel collision');
  const words=new Uint32Array(buffer);
- const collision=new VoxelCollision(metadata,words.slice(0,metadata.nodeCount),words.slice(metadata.nodeCount));
+ const collision=addCapsuleObstacles(new VoxelCollision(metadata,words.slice(0,metadata.nodeCount),words.slice(metadata.nodeCount)),obstacles);
  const walker=new WalkController();
  for(const key of ['eyeHeight','hoverHeight','capsuleHeight','capsuleRadius','jumpSpeed']) {
   if(Number.isFinite(config[key])&&config[key]>0)walker[key]=config[key];
@@ -57,5 +58,5 @@ export async function loadDynamicNavigation(scene,base) {
  const metadata=await fetchAsset(base+nav.url,'json');
  if(nav.kind==='solid-body')return createSolidBody(metadata,nav);
  const binary=await fetchAsset(base+nav.url.replace(/\.json$/,'.bin'),'arrayBuffer');
- return createVoxelBody(metadata,binary,scene.settings.realtripWalk,nav);
+ return createVoxelBody(metadata,binary,scene.settings.realtripWalk,nav,scene.characterObstacles);
 }

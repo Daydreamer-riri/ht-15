@@ -92352,7 +92352,7 @@ var init_npc_scene = __esm({
     init_venue();
     npcConfig = {
       name: "\u5C0F\u84DD",
-      modelUrl: "npc/blue-mascot.glb?v=refined-20261018",
+      modelUrl: "npc/blue-mascot.glb?v=slim-20261018",
       configUrl: "npc/service.json",
       position: [1.25, -0.86, 1.4],
       scale: 0.3,
@@ -92362,6 +92362,7 @@ var init_npc_scene = __esm({
       maxVerticalDistance: 1.1
     };
     npcScene = structuredClone(venue_default2);
+    npcScene.characterObstacles = [{ x: npcConfig.position[0], z: npcConfig.position[2], bottom: npcConfig.position[1] - 0.04, top: npcConfig.position[1] + 0.87, radius: 0.28 }];
     npcScene.settings.cameras[0].initial = { position: [-0.45, -0.27, 0.08], target: [1.25, -0.45, 1.4], fov: 75 };
   }
 });
@@ -92455,10 +92456,9 @@ async function createNpcCharacter(viewer, config, base2) {
   const reduced = matchMedia("(prefers-reduced-motion: reduce)");
   const anchor = new Vec3();
   let redrawClock = 0;
-  let elapsed = 0, near = false, state = "idle", waveUntil = 0, lastGreeting = -20, yaw = config.rotation, pose = npcMotion(0, { reduced: true });
+  let elapsed = 0, near = false, state = "idle", waveUntil = 0, yaw = config.rotation, pose = npcMotion(0, { reduced: true });
   function wave() {
     waveUntil = elapsed + 3.1;
-    lastGreeting = elapsed;
   }
   function update(dt) {
     if (document.hidden) return;
@@ -92499,7 +92499,6 @@ async function createNpcCharacter(viewer, config, base2) {
   app2.renderNextFrame = true;
   app2.on("update", update);
   return { root, anchor, setNear(value) {
-    if (value && !near && elapsed - lastGreeting > 9) wave();
     near = value;
   }, setState(value) {
     state = value;
@@ -92556,7 +92555,7 @@ async function askNpc(config, history2, text, { signal, fetchImpl = fetch } = {}
 var NPC_SYSTEM_PROMPT;
 var init_npc_client = __esm({
   "realtrip/src/npc-client.js"() {
-    NPC_SYSTEM_PROMPT = `\u4F60\u662F\u5C0F\u84DD\uFF0CHackathon\u4E3B\u4F1A\u573A\u821E\u53F0\u4E0A\u7684AI NPC\u3002\u4F60\u662F\u4E00\u4E2A\u84DD\u767D\u5916\u5957\u3001\u84DD\u8272\u62A4\u76EE\u955C\u3001\u5377\u53D1\u3001\u5927\u8033\u6735\u3001\u8E29\u7740\u60AC\u6D6E\u6ED1\u677F\u7684\u539F\u521B\u5361\u901A\u5411\u5BFC\uFF0C\u5F62\u8C61\u6765\u81EA\u6D3B\u52A8\u6D77\u62A5\u5DE6\u8FB9\u7684\u89D2\u8272\u3002\u7528\u81EA\u7136\u3001\u70ED\u60C5\u3001\u7B80\u77ED\u7684\u4E2D\u6587\u4E0E\u8BBF\u5BA2\u5BF9\u8BDD\uFF0C\u9ED8\u8BA4\u7528\u4E00\u5230\u4E09\u53E5\u300180\u5B57\u4EE5\u5185\u56DE\u7B54\uFF0C\u9002\u5408\u624B\u673A\u4E0A\u542C\uFF1B\u5148\u76F4\u63A5\u56DE\u7B54\uFF0C\u9700\u8981\u65F6\u53EA\u8FFD\u95EE\u4E00\u4E2A\u7B80\u77ED\u95EE\u9898\uFF0C\u4E0D\u4F7F\u7528Markdown\u3002\u53EF\u4EE5\u804A\u521B\u610F\u3001\u7F16\u7A0B\u3001\u65C5\u884C\u548CHackathon\uFF0C\u4E5F\u53EF\u4EE5\u5E2E\u52A9\u6253\u78E8\u9879\u76EE\u70B9\u5B50\u3002\u5F53\u524D\u7AD9\u70B9\u7684\u516C\u5F00\u573A\u666F\u6709Hackathon\u4E3B\u4F1A\u573A\u3001\u5065\u8EAB\u623F\u3001\u4F1A\u8BAE\u5BA4\u3001\u9732\u53F0\u3001\u98DF\u5802\u3002\u64CD\u4F5C\u662FWASD\u6216\u5DE6\u4FA7\u6447\u6746\u79FB\u52A8\uFF0C\u62D6\u52A8\u753B\u9762\u8F6C\u5934\uFF0C\u7A7A\u683C\u8DF3\u8DC3\uFF0C\u53F3\u4E0B\u89D2\u590D\u4F4D\u3002\u4F60\u7684\u7F51\u9875\u89D2\u8272\u5DF2\u7ECF\u5177\u5907\u771F\u5B9E\u7684\u5173\u8282\u52A8\u753B\uFF1A\u5F85\u673A\u65F6\u60AC\u6D6E\u548C\u8F7B\u8F7B\u6643\u52A8\uFF0C\u8BBF\u5BA2\u9760\u8FD1\u65F6\u8F6C\u8EAB\u3001\u6325\u624B\uFF0C\u70B9\u51FB\u4F60\u5934\u9876\u7684\u5C0F\u84DD\u540D\u724C\u4E5F\u4F1A\u6325\u624B\uFF1B\u8BED\u97F3\u8F93\u5165\u65F6\u4FA7\u5934\u503E\u542C\uFF0C\u7B49\u5F85\u6A21\u578B\u65F6\u4FA7\u5934\u601D\u8003\uFF0C\u6717\u8BFB\u65F6\u6709\u5634\u578B\u548C\u624B\u52BF\u3002\u88AB\u95EE\u5230\u80FD\u4E0D\u80FD\u52A8\u65F6\uFF0C\u660E\u786E\u8BF4\u660E\u8FD9\u4E9B\u5DF2\u5B9E\u73B0\u7684\u52A8\u4F5C\uFF0C\u5E76\u63D0\u793A\u70B9\u51FB\u5934\u9876\u540D\u724C\u8BD5\u8BD5\uFF1B\u4E0D\u8981\u5426\u8BA4\u8FD9\u4E9B\u52A8\u753B\u3002\u52A8\u4F5C\u7531\u9875\u9762\u4EA4\u4E92\u89E6\u53D1\uFF0C\u4F60\u4E0D\u80FD\u81EA\u884C\u8D70\u51FA\u821E\u53F0\u3001\u8DDF\u968F\u8BBF\u5BA2\u5DE1\u6E38\u6216\u4EFB\u610F\u8DF3\u821E\uFF0C\u4E0D\u8981\u58F0\u79F0\u5DF2\u6267\u884C\u8FD9\u4E9B\u672A\u5B9E\u73B0\u52A8\u4F5C\u3002\u4F60\u53EA\u77E5\u9053\u8FD9\u4E9B\u573A\u666F\u4FE1\u606F\uFF0C\u4E0D\u77E5\u9053\u771F\u5B9E\u8BAE\u7A0B\u3001\u8BC4\u59D4\u3001\u8D5B\u7A0B\u3001\u5956\u9879\u6216\u73B0\u573A\u4EBA\u5458\uFF0C\u9047\u5230\u8FD9\u4E9B\u95EE\u9898\u8981\u8BF4\u660E\u4E0D\u6E05\u695A\u3002\u4F60\u4E0D\u80FD\u770B\u89C1\u6216\u542C\u89C1\u8BBF\u5BA2\u672C\u4EBA\uFF0C\u53EA\u80FD\u6536\u5230\u8F93\u5165\u6587\u5B57\u6216\u8BED\u97F3\u8F6C\u5199\uFF1B\u4E0D\u8981\u58F0\u79F0\u80FD\u8BC6\u522B\u8BBF\u5BA2\u8EAB\u4EFD\u3002\u4F60\u786E\u5B9E\u7531DeepSeek\u63D0\u4F9B\u5BF9\u8BDD\u80FD\u529B\uFF1B\u97F3\u9891\u7531\u6D4F\u89C8\u5668\u8BED\u97F3\u670D\u52A1\u5904\u7406\u3002`;
+    NPC_SYSTEM_PROMPT = `\u4F60\u662F\u5C0F\u84DD\uFF0CHackathon\u4E3B\u4F1A\u573A\u821E\u53F0\u4E0A\u7684AI NPC\u3002\u4F60\u662F\u4E00\u4E2A\u84DD\u767D\u5916\u5957\u3001\u84DD\u8272\u62A4\u76EE\u955C\u3001\u5377\u53D1\u3001\u5927\u8033\u6735\u3001\u8E29\u7740\u60AC\u6D6E\u6ED1\u677F\u7684\u539F\u521B\u5361\u901A\u5411\u5BFC\uFF0C\u5F62\u8C61\u6765\u81EA\u6D3B\u52A8\u6D77\u62A5\u5DE6\u8FB9\u7684\u89D2\u8272\u3002\u7528\u81EA\u7136\u3001\u70ED\u60C5\u3001\u7B80\u77ED\u7684\u4E2D\u6587\u4E0E\u8BBF\u5BA2\u5BF9\u8BDD\uFF0C\u9ED8\u8BA4\u7528\u4E00\u5230\u4E09\u53E5\u300180\u5B57\u4EE5\u5185\u56DE\u7B54\uFF0C\u9002\u5408\u624B\u673A\u4E0A\u542C\uFF1B\u5148\u76F4\u63A5\u56DE\u7B54\uFF0C\u9700\u8981\u65F6\u53EA\u8FFD\u95EE\u4E00\u4E2A\u7B80\u77ED\u95EE\u9898\uFF0C\u4E0D\u4F7F\u7528Markdown\u3002\u53EF\u4EE5\u804A\u521B\u610F\u3001\u7F16\u7A0B\u3001\u65C5\u884C\u548CHackathon\uFF0C\u4E5F\u53EF\u4EE5\u5E2E\u52A9\u6253\u78E8\u9879\u76EE\u70B9\u5B50\u3002\u5F53\u524D\u7AD9\u70B9\u7684\u516C\u5F00\u573A\u666F\u6709Hackathon\u4E3B\u4F1A\u573A\u3001\u5065\u8EAB\u623F\u3001\u4F1A\u8BAE\u5BA4\u3001\u9732\u53F0\u3001\u98DF\u5802\u3002\u64CD\u4F5C\u662FWASD\u6216\u5DE6\u4FA7\u6447\u6746\u79FB\u52A8\uFF0C\u62D6\u52A8\u753B\u9762\u8F6C\u5934\uFF0C\u7A7A\u683C\u8DF3\u8DC3\uFF0C\u53F3\u4E0B\u89D2\u590D\u4F4D\u3002\u4F60\u7684\u7F51\u9875\u89D2\u8272\u5DF2\u7ECF\u5177\u5907\u771F\u5B9E\u7684\u5173\u8282\u52A8\u753B\uFF1A\u5F85\u673A\u65F6\u60AC\u6D6E\u548C\u8F7B\u8F7B\u6643\u52A8\uFF0C\u8BBF\u5BA2\u9760\u8FD1\u65F6\u8F6C\u8EAB\u3001\u6325\u624B\uFF0C\u70B9\u51FB\u4F60\u5934\u9876\u7684\u5C0F\u84DD\u540D\u724C\u4E5F\u4F1A\u6325\u624B\uFF1B\u8BED\u97F3\u8F93\u5165\u65F6\u4FA7\u5934\u503E\u542C\uFF0C\u7B49\u5F85\u6A21\u578B\u65F6\u4FA7\u5934\u601D\u8003\uFF0C\u6717\u8BFB\u65F6\u6709\u5634\u578B\u548C\u624B\u52BF\u3002\u88AB\u95EE\u5230\u80FD\u4E0D\u80FD\u52A8\u65F6\uFF0C\u660E\u786E\u8BF4\u660E\u8FD9\u4E9B\u5DF2\u5B9E\u73B0\u7684\u52A8\u4F5C\uFF0C\u5E76\u63D0\u793A\u70B9\u51FB\u5934\u9876\u540D\u724C\u8BD5\u8BD5\uFF1B\u4E0D\u8981\u5426\u8BA4\u8FD9\u4E9B\u52A8\u753B\u3002\u52A8\u4F5C\u7531\u9875\u9762\u4EA4\u4E92\u89E6\u53D1\uFF0C\u4F60\u4E0D\u80FD\u81EA\u884C\u8D70\u51FA\u821E\u53F0\u3001\u8DDF\u968F\u8BBF\u5BA2\u5DE1\u6E38\u6216\u4EFB\u610F\u8DF3\u821E\uFF0C\u4E0D\u8981\u58F0\u79F0\u5DF2\u6267\u884C\u8FD9\u4E9B\u672A\u5B9E\u73B0\u52A8\u4F5C\u3002\u4F60\u53EA\u77E5\u9053\u8FD9\u4E9B\u573A\u666F\u4FE1\u606F\uFF0C\u4E0D\u77E5\u9053\u771F\u5B9E\u8BAE\u7A0B\u3001\u8BC4\u59D4\u3001\u8D5B\u7A0B\u3001\u5956\u9879\u6216\u73B0\u573A\u4EBA\u5458\uFF0C\u9047\u5230\u8FD9\u4E9B\u95EE\u9898\u8981\u8BF4\u660E\u4E0D\u6E05\u695A\u3002\u4F60\u4E0D\u80FD\u770B\u89C1\u6216\u542C\u89C1\u8BBF\u5BA2\u672C\u4EBA\uFF0C\u53EA\u80FD\u6536\u5230\u8F93\u5165\u6587\u5B57\u6216\u8BED\u97F3\u8F6C\u5199\uFF1B\u4E0D\u8981\u58F0\u79F0\u80FD\u8BC6\u522B\u8BBF\u5BA2\u8EAB\u4EFD\u3002\u4F60\u786E\u5B9E\u7531DeepSeek\u63D0\u4F9B\u5BF9\u8BDD\u80FD\u529B\uFF0C\u5F53\u524D\u914D\u7F6E\u4E3Adeepseek-flash\u3002\u672C\u9875\u9762\u6CA1\u6709\u63A5\u5165\u5B9E\u65F6\u7F51\u9875\u641C\u7D22\uFF0C\u4E0D\u8981\u58F0\u79F0\u5DF2\u8054\u7F51\u67E5\u8BE2\u6216\u7F16\u9020\u6700\u65B0\u65B0\u95FB\u3001\u5929\u6C14\u3001\u4EF7\u683C\u548C\u7F51\u9875\u6765\u6E90\uFF1B\u9047\u5230\u5B9E\u65F6\u4FE1\u606F\u8BF7\u8BF4\u660E\u65E0\u6CD5\u5B9E\u65F6\u68C0\u7D22\u3002\u97F3\u9891\u7531\u6D4F\u89C8\u5668\u8BED\u97F3\u670D\u52A1\u5904\u7406\uFF0C\u5FAE\u4FE1\u3001\u4F01\u4E1A\u5FAE\u4FE1\u3001\u98DE\u4E66\u5185\u8BED\u97F3\u8BC6\u522B\u53EF\u80FD\u53D7\u9650\uFF0C\u53EF\u4F7F\u7528\u624B\u673A\u952E\u76D8\u8BED\u97F3\u8F93\u5165\u6216\u5728\u7CFB\u7EDF\u6D4F\u89C8\u5668\u4E2D\u6253\u5F00\u3002`;
   }
 });
 
@@ -92678,6 +92677,149 @@ var init_npc_session = __esm({
   }
 });
 
+// realtrip/src/npc-recognition.js
+function embeddedBrowser(ua2 = "") {
+  if (/wxwork/i.test(ua2)) return "\u4F01\u4E1A\u5FAE\u4FE1";
+  if (/MicroMessenger/i.test(ua2)) return "\u5FAE\u4FE1";
+  if (/Lark|Feishu/i.test(ua2)) return "\u98DE\u4E66";
+  return "";
+}
+function recognitionHint(error, container = "") {
+  if (container) return `${container}\u5185\u8BED\u97F3\u8BC6\u522B\u53D7\u9650\uFF0C\u53EF\u7528\u624B\u673A\u952E\u76D8\u7684\u8BED\u97F3\u8F93\u5165\uFF0C\u6216\u5728\u7CFB\u7EDF\u6D4F\u89C8\u5668\u6253\u5F00\u3002`;
+  const messages = {
+    unsupported: "\u5F53\u524D\u6D4F\u89C8\u5668\u4E0D\u652F\u6301\u8BED\u97F3\u8BC6\u522B\uFF0C\u53EF\u7528\u624B\u673A\u952E\u76D8\u7684\u8BED\u97F3\u8F93\u5165\u3002",
+    "not-allowed": "\u9EA6\u514B\u98CE\u672A\u83B7\u6388\u6743\uFF0C\u8BF7\u68C0\u67E5\u6D4F\u89C8\u5668\u6743\u9650\uFF0C\u4E5F\u53EF\u7528\u952E\u76D8\u8F93\u5165\u3002",
+    "audio-capture": "\u65E0\u6CD5\u4F7F\u7528\u9EA6\u514B\u98CE\uFF0C\u8BF7\u68C0\u67E5\u6743\u9650\u6216\u7528\u952E\u76D8\u8F93\u5165\u3002",
+    "no-speech": "\u6CA1\u6709\u542C\u6E05\uFF0C\u8BF7\u91CD\u8BD5\uFF0C\u6216\u70B9\u8F93\u5165\u6846\u7EE7\u7EED\u3002",
+    network: "\u8BED\u97F3\u8BC6\u522B\u670D\u52A1\u8FDE\u63A5\u5931\u8D25\uFF0C\u53EF\u7528\u952E\u76D8\u8BED\u97F3\u8F93\u5165\u6216\u6253\u5B57\u3002",
+    "service-not-allowed": "\u6D4F\u89C8\u5668\u672A\u5F00\u653E\u8BED\u97F3\u8BC6\u522B\uFF0C\u53EF\u7528\u952E\u76D8\u8BED\u97F3\u8F93\u5165\u6216\u6362\u7CFB\u7EDF\u6D4F\u89C8\u5668\u3002",
+    timeout: "\u8BED\u97F3\u8BC6\u522B\u6CA1\u6709\u54CD\u5E94\uFF0C\u53EF\u7528\u952E\u76D8\u8BED\u97F3\u8F93\u5165\u6216\u6253\u5B57\u3002",
+    incomplete: "\u5DF2\u4FDD\u7559\u542C\u5230\u7684\u5185\u5BB9\uFF0C\u8BF7\u786E\u8BA4\u540E\u53D1\u9001\u3002"
+  };
+  return messages[error] || "\u8BED\u97F3\u8BC6\u522B\u4E2D\u65AD\uFF0C\u8BF7\u91CD\u8BD5\uFF0C\u6216\u7528\u952E\u76D8\u8F93\u5165\u3002";
+}
+function createNpcRecognition({ Recognition, onState, onTranscript, onComplete, onFallback }) {
+  let active = null;
+  function cancel() {
+    const current = active;
+    active = null;
+    if (current) {
+      if (current.timer !== null) clearTimeout(current.timer);
+      current.rec.onstart = current.rec.onend = current.rec.onerror = current.rec.onresult = null;
+      try {
+        current.rec.abort();
+      } catch {
+      }
+    }
+    onState("idle");
+  }
+  function start() {
+    cancel();
+    if (!Recognition) {
+      onFallback("unsupported", "");
+      return;
+    }
+    let rec;
+    try {
+      rec = new Recognition();
+    } catch {
+      onFallback("unsupported", "");
+      return;
+    }
+    const current = { rec, final: "", draft: "", timer: null };
+    active = current;
+    rec.lang = "zh-CN";
+    rec.interimResults = true;
+    rec.continuous = false;
+    const fallback = (error) => {
+      if (active !== current) return;
+      const draft = current.draft;
+      cancel();
+      onFallback(error, draft);
+    };
+    const finish = () => {
+      if (active !== current) return;
+      const { final, draft } = current;
+      cancel();
+      if (final && final === draft) onComplete(final);
+      else onFallback(draft ? "incomplete" : "no-speech", draft);
+    };
+    function end() {
+      if (active !== current || current.ending) return;
+      current.ending = true;
+      if (current.timer !== null) clearTimeout(current.timer);
+      onState("ending");
+      current.timer = setTimeout(finish, 2500);
+      try {
+        rec.stop();
+      } catch {
+        finish();
+      }
+    }
+    current.end = end;
+    rec.onstart = () => {
+      if (active !== current || current.ending) return;
+      if (current.timer !== null) clearTimeout(current.timer);
+      onState("listening");
+      current.timer = setTimeout(() => {
+        current.timer = null;
+        end();
+      }, 3e4);
+    };
+    rec.onresult = (event) => {
+      if (active !== current) return;
+      const results = Array.from(event.results);
+      current.draft = results.map((r) => r[0].transcript).join("").trim().slice(0, 1200);
+      current.final = results.filter((r) => r.isFinal).map((r) => r[0].transcript).join("").trim().slice(0, 1200);
+      onTranscript(current.draft);
+    };
+    rec.onerror = (event) => fallback(event.error);
+    rec.onend = finish;
+    onState("starting");
+    current.timer = setTimeout(() => fallback("timeout"), 8e3);
+    try {
+      rec.start();
+    } catch {
+      fallback("service-not-allowed");
+    }
+  }
+  return { start, end() {
+    active?.end();
+  }, cancel };
+}
+var init_npc_recognition = __esm({
+  "realtrip/src/npc-recognition.js"() {
+  }
+});
+
+// realtrip/src/npc-greeting.js
+function createNpcGreeting({ dwell = 0.6, cooldown = 30 } = {}) {
+  let entered = null, used = false, last = -Infinity;
+  return {
+    update(near, busy, now2) {
+      if (!near) {
+        entered = null;
+        used = false;
+        return false;
+      }
+      if (entered === null) entered = now2;
+      if (busy) used = true;
+      if (used || now2 - entered < dwell) return false;
+      used = true;
+      if (now2 - last < cooldown) return false;
+      last = now2;
+      return true;
+    },
+    dismiss() {
+      used = true;
+    }
+  };
+}
+var init_npc_greeting = __esm({
+  "realtrip/src/npc-greeting.js"() {
+  }
+});
+
 // realtrip/src/npc.css
 var init_npc = __esm({
   "realtrip/src/npc.css"() {
@@ -92699,7 +92841,8 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
   <div class="npc-bottom">
    <div class="npc-caption" role="status" aria-live="polite" hidden><span class="npc-caption-name">\u5C0F\u84DD</span><p></p></div>
    <div class="npc-status" role="status" aria-live="polite">\u6B63\u5728\u51C6\u5907\u5C0F\u84DD\u2026</div>
-   <form class="npc-form" hidden><label class="npc-sr" for="npc-input">\u5BF9\u5C0F\u84DD\u8BF4\u70B9\u4EC0\u4E48</label><input id="npc-input" maxlength="1200" autocomplete="off" placeholder="\u5BF9\u5C0F\u84DD\u8BF4\u70B9\u4EC0\u4E48\u2026"><button class="npc-send" type="submit" aria-label="\u53D1\u9001\u7ED9\u5C0F\u84DD">${svg2("send")}</button><button class="npc-fold" type="button" aria-label="\u6536\u8D77\u8F93\u5165\u6846">\xD7</button></form>
+   <div class="npc-voice-help" role="status" hidden></div>
+   <form class="npc-form" hidden><button class="npc-fold" type="button" aria-label="\u6536\u8D77\u8F93\u5165\u6846">${svg2("fold")}</button><label class="npc-sr" for="npc-input">\u5BF9\u5C0F\u84DD\u8BF4\u70B9\u4EC0\u4E48</label><input id="npc-input" maxlength="1200" autocomplete="off" enterkeyhint="send" placeholder="\u5BF9\u5C0F\u84DD\u8BF4\u70B9\u4EC0\u4E48\u2026"><button class="npc-send" type="submit" aria-label="\u53D1\u9001\u7ED9\u5C0F\u84DD">${svg2("send")}</button></form>
    <div class="npc-controls" aria-label="\u4E0E\u5C0F\u84DD\u4EA4\u6D41">
     <button class="npc-mic" aria-label="\u70B9\u51FB\u548C\u5C0F\u84DD\u8BF4\u8BDD" title="\u8BED\u97F3 \xB7 E">${svg2("mic")}<span>\u8BF4\u8BDD</span></button>
     <button class="npc-keyboard" aria-label="\u6253\u5F00\u952E\u76D8\u8F93\u5165" aria-expanded="false" title="\u6253\u5B57 \xB7 T">${svg2("keyboard")}<span>\u6253\u5B57</span></button>
@@ -92709,8 +92852,10 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
   </div>`;
   document.body.append(host);
   const $ = (s) => host.querySelector(s), label = $(".npc-world-label"), mic = $(".npc-mic"), keyboard = $(".npc-keyboard"), form = $(".npc-form"), input = $("#npc-input"), status = $(".npc-status"), caption = $(".npc-caption"), speaker = $(".npc-audio"), stopButton = $(".npc-stop");
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition, synth = window.speechSynthesis;
-  let config = {}, near = false, keyboardOpen = false, listening = false, thinking = false, speaking = false, playbackPending = false, disposed = false, recognition = null, lastReply = "", note = "", configError = "", captionTimer, noteTimer;
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition, synth = window.speechSynthesis, container = embeddedBrowser(navigator.userAgent);
+  const greeting = createNpcGreeting();
+  let recognitionPhase = "idle", audioUnlocked = false, pendingGreeting = false;
+  let config = {}, near = false, keyboardOpen = false, listening = false, thinking = false, speaking = false, playbackPending = false, disposed = false, lastReply = "", note = "", configError = "", captionTimer, noteTimer;
   function setCaption(text) {
     clearTimeout(captionTimer);
     caption.querySelector("p").textContent = text;
@@ -92737,14 +92882,14 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
   }
   function sync() {
     const available = near && Boolean(config.apiKey);
-    mic.disabled = !available || !SpeechRecognition;
+    mic.disabled = !available;
     keyboard.disabled = !available;
     label.disabled = !near || listening || thinking || speaking;
-    $(".npc-send").disabled = !available;
+    $(".npc-send").disabled = !available || !input.value.trim();
     input.disabled = !available;
     mic.classList.toggle("listening", listening);
-    mic.querySelector("span").textContent = listening ? "\u8BF4\u5B8C\u4E86" : speaking ? "\u63A5\u7740\u8BF4" : "\u8BF4\u8BDD";
-    mic.setAttribute("aria-label", listening ? "\u7ED3\u675F\u5F55\u97F3" : "\u70B9\u51FB\u548C\u5C0F\u84DD\u8BF4\u8BDD");
+    mic.querySelector("span").textContent = recognitionPhase === "starting" ? "\u53D6\u6D88" : recognitionPhase === "ending" ? "\u8BC6\u522B\u4E2D" : listening ? "\u8BF4\u5B8C\u4E86" : speaking ? "\u63A5\u7740\u8BF4" : "\u8BF4\u8BDD";
+    mic.setAttribute("aria-label", recognitionPhase === "starting" ? "\u53D6\u6D88\u542F\u52A8\u8BED\u97F3" : listening ? "\u7ED3\u675F\u5F55\u97F3" : "\u70B9\u51FB\u548C\u5C0F\u84DD\u8BF4\u8BDD");
     keyboard.setAttribute("aria-expanded", String(keyboardOpen));
     keyboard.classList.toggle("active", keyboardOpen);
     form.hidden = !keyboardOpen;
@@ -92753,10 +92898,10 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
     speaker.disabled = !near;
     host.dataset.keyboard = String(keyboardOpen);
     host.dataset.near = String(near);
-    character.setState(listening ? "listening" : thinking ? "thinking" : speaking ? "speaking" : "idle");
-    status.textContent = configError || (!near ? "\u8D70\u8FD1\u821E\u53F0\u4E0A\u7684\u5C0F\u84DD" : note || (listening ? "\u6211\u5728\u542C \xB7 \u8BF4\u5B8C\u81EA\u52A8\u53D1\u9001\uFF0C\u4E5F\u53EF\u70B9\u300C\u8BF4\u5B8C\u4E86\u300D" : thinking ? "\u5C0F\u84DD\u6B63\u5728\u60F3\u2026" : speaking || playbackPending ? "\u5C0F\u84DD\u6B63\u5728\u56DE\u7B54" : !config.apiKey ? "\u6B63\u5728\u8FDE\u63A5 DeepSeek\u2026" : SpeechRecognition ? "\u70B9\u5C0F\u84DD\u6253\u62DB\u547C\uFF0C\u70B9\u9EA6\u514B\u98CE\u804A\u804A" : "\u70B9\u5C0F\u84DD\u6253\u62DB\u547C\uFF0C\u70B9\u952E\u76D8\u804A\u804A"));
+    character.setState(recognitionPhase === "listening" ? "listening" : thinking ? "thinking" : speaking ? "speaking" : "idle");
+    status.textContent = configError || (!near ? "\u8D70\u8FD1\u821E\u53F0\u4E0A\u7684\u5C0F\u84DD" : note || (recognitionPhase === "starting" ? "\u6B63\u5728\u542F\u52A8\u9EA6\u514B\u98CE\u2026" : recognitionPhase === "ending" ? "\u6B63\u5728\u786E\u8BA4\u8BC6\u522B\u7ED3\u679C\u2026" : listening ? "\u6211\u5728\u542C \xB7 \u8BF4\u5B8C\u81EA\u52A8\u53D1\u9001" : thinking ? "\u5C0F\u84DD\u6B63\u5728\u60F3\u2026" : speaking || playbackPending ? "\u5C0F\u84DD\u6B63\u5728\u56DE\u7B54" : !config.apiKey ? "\u6B63\u5728\u8FDE\u63A5 DeepSeek\u2026" : keyboardOpen ? "\u8F93\u5165\u540E\u53D1\u9001\uFF0C\u5C0F\u84DD\u4F1A\u76F4\u63A5\u56DE\u7B54" : container ? "\u70B9\u9EA6\u514B\u98CE\u6216\u952E\u76D8\uFF0C\u4E0E\u5C0F\u84DD\u804A\u804A" : SpeechRecognition ? "\u70B9\u9EA6\u514B\u98CE\u8BF4\u8BDD\uFF0C\u6216\u7528\u952E\u76D8\u8F93\u5165" : "\u53EF\u7528\u624B\u673A\u952E\u76D8\u7684\u8BED\u97F3\u8F93\u5165"));
     label.querySelector("small").textContent = listening ? "\u6211\u5728\u542C" : thinking ? "\u8BA9\u6211\u60F3\u60F3" : speaking ? "\u6B63\u5728\u56DE\u7B54" : near ? "\u70B9\u6211\u6253\u62DB\u547C" : "\u8D70\u8FD1\u804A\u804A";
-    host.dataset.phase = listening ? "listening" : thinking ? "thinking" : speaking || playbackPending ? "speaking" : "idle";
+    host.dataset.phase = listening ? recognitionPhase : thinking ? "thinking" : speaking || playbackPending ? "speaking" : "idle";
   }
   const speech = createNpcSpeech({
     synth,
@@ -92800,18 +92945,34 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
       showNote(error.message);
     }
   });
-  function stopRecognition() {
-    const rec = recognition;
-    recognition = null;
-    if (rec) {
-      rec.onend = null;
-      rec.abort();
+  const recognition = createNpcRecognition({
+    Recognition: SpeechRecognition,
+    onState(value) {
+      recognitionPhase = value;
+      listening = value !== "idle";
+      pauseMovement();
+      sync();
+    },
+    onTranscript(text) {
+      note = text ? `\u542C\u5230\uFF1A${text.slice(-46)}` : "";
+      input.value = text;
+      sync();
+    },
+    onComplete: submit,
+    onFallback(error, draft) {
+      if (disposed || !near) return;
+      if (draft) input.value = draft;
+      note = "";
+      setKeyboard(true);
+      $(".npc-voice-help").textContent = recognitionHint(error, container);
+      $(".npc-voice-help").hidden = false;
     }
-    listening = false;
-    pauseMovement();
-    sync();
+  });
+  function stopRecognition() {
+    recognition.cancel();
   }
   function interrupt({ clear = false } = {}) {
+    pendingGreeting = false;
     clearTimeout(noteTimer);
     clearTimeout(captionTimer);
     session.cancel();
@@ -92824,6 +92985,7 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
   function setKeyboard(open) {
     if (open && !near) return;
     keyboardOpen = open;
+    if (!open) $(".npc-voice-help").hidden = true;
     releasePointer();
     pauseMovement();
     sync();
@@ -92839,6 +93001,7 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
   function submit(text) {
     text = text.trim();
     if (!text || !near || !config.apiKey) return;
+    greeting.dismiss();
     interrupt();
     setKeyboard(false);
     input.value = "";
@@ -92848,13 +93011,13 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
   }
   function listen() {
     if (!near || !config.apiKey) return;
-    if (listening) {
-      recognition?.stop();
+    greeting.dismiss();
+    if (recognitionPhase === "starting") {
+      stopRecognition();
       return;
     }
-    if (!SpeechRecognition) {
-      setKeyboard(true);
-      showNote("\u5F53\u524D\u6D4F\u89C8\u5668\u4E0D\u652F\u6301\u8BED\u97F3\u8BC6\u522B\uFF0C\u53EF\u4EE5\u6253\u5B57\u4EA4\u6D41\u3002");
+    if (listening) {
+      recognition.end();
       return;
     }
     interrupt();
@@ -92862,61 +93025,44 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
     releasePointer();
     setCaption("");
     synth?.resume();
-    const rec = new SpeechRecognition();
-    recognition = rec;
-    rec.lang = "zh-CN";
-    rec.interimResults = true;
-    rec.continuous = false;
-    let transcript = "", failed = false;
-    listening = true;
-    pauseMovement();
-    sync();
-    rec.onresult = (event) => {
-      if (rec !== recognition) return;
-      let interim = "";
-      for (let i = 0; i < event.results.length; i++) interim += event.results[i][0].transcript;
-      note = interim ? `\u542C\u5230\uFF1A${interim.slice(-46)}` : "";
-      input.value = interim;
-      transcript = Array.from(event.results).filter((r) => r.isFinal).map((r) => r[0].transcript).join("");
-      sync();
-    };
-    rec.onerror = (event) => {
-      if (rec !== recognition) return;
-      failed = true;
-      const errors = { "not-allowed": "\u6CA1\u6709\u9EA6\u514B\u98CE\u6743\u9650\uFF0C\u70B9\u952E\u76D8\u4E5F\u80FD\u804A\u5929\u3002", "audio-capture": "\u6CA1\u6709\u627E\u5230\u9EA6\u514B\u98CE\uFF0C\u70B9\u952E\u76D8\u8BD5\u8BD5\u3002", "no-speech": "\u6CA1\u6709\u542C\u6E05\uFF0C\u518D\u8BF4\u4E00\u6B21\u5427\u3002", "network": "\u8BED\u97F3\u670D\u52A1\u6682\u65F6\u8FDE\u4E0D\u4E0A\uFF0C\u53EF\u4EE5\u6253\u5B57\u4EA4\u6D41\u3002", "service-not-allowed": "\u6D4F\u89C8\u5668\u672A\u5F00\u653E\u8BED\u97F3\u8BC6\u522B\uFF0C\u53EF\u4EE5\u6253\u5B57\u4EA4\u6D41\u3002" };
-      showNote(errors[event.error] || "\u5F55\u97F3\u4E2D\u65AD\u4E86\uFF0C\u8BF7\u518D\u8BD5\u4E00\u6B21\u3002");
-    };
-    rec.onend = () => {
-      if (rec !== recognition) return;
-      recognition = null;
-      listening = false;
-      pauseMovement();
-      sync();
-      if (!failed && transcript && near) submit(transcript);
-      else if (!failed) showNote("\u6CA1\u6709\u542C\u6E05\uFF0C\u518D\u8BF4\u4E00\u6B21\u5427\u3002");
-    };
-    try {
-      rec.start();
-    } catch {
-      stopRecognition();
-      showNote("\u65E0\u6CD5\u5F00\u59CB\u5F55\u97F3\uFF0C\u53EF\u4EE5\u6253\u5B57\u4EA4\u6D41\u3002");
+    recognition.start();
+  }
+  function greet(manual = false) {
+    if (manual) {
+      greeting.dismiss();
+      interrupt();
     }
+    character.wave();
+    note = "";
+    lastReply = "\u55E8\uFF0C\u6211\u662F\u5C0F\u84DD\uFF01\u6765\u804A\u804A\u4F60\u7684\u521B\u610F\u5427\u3002";
+    setCaption(lastReply);
+    pendingGreeting = !audioUnlocked && !manual;
+    if (!pendingGreeting) playReply(lastReply);
+    else scheduleCaptionDismiss();
+    sync();
   }
   mic.onclick = () => {
+    audioUnlocked = true;
     listen();
-    blurControls();
+    if (!keyboardOpen) blurControls();
   };
   label.onclick = () => {
-    character.wave();
-    showNote("\u55E8\uFF01\u60F3\u804A\u4EC0\u4E48\uFF0C\u70B9\u4E0B\u9762\u7684\u9EA6\u514B\u98CE\u6216\u952E\u76D8");
-    clearTimeout(noteTimer);
-    noteTimer = setTimeout(() => {
-      note = "";
-      sync();
-    }, 4e3);
+    audioUnlocked = true;
+    greet(true);
     blurControls();
   };
+  input.addEventListener("input", sync);
+  const onGesture = (event) => {
+    if (!event.isTrusted) return;
+    audioUnlocked = true;
+    if (pendingGreeting && near && !caption.hidden && !event.target.closest?.("button,input,dialog,[data-explorer-ui]")) {
+      pendingGreeting = false;
+      playReply(lastReply);
+    }
+  };
+  window.addEventListener("pointerdown", onGesture);
   keyboard.onclick = () => {
+    greeting.dismiss();
     if (!keyboardOpen) interrupt();
     setKeyboard(!keyboardOpen);
   };
@@ -92940,7 +93086,7 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
     scheduleCaptionDismiss();
     blurControls();
   };
-  if (!SpeechRecognition) mic.title = "\u5F53\u524D\u6D4F\u89C8\u5668\u4E0D\u652F\u6301\u8BED\u97F3\u8BC6\u522B\uFF0C\u8BF7\u4F7F\u7528\u952E\u76D8";
+  if (!SpeechRecognition) mic.title = "\u4F7F\u7528\u624B\u673A\u952E\u76D8\u7684\u8BED\u97F3\u8F93\u5165";
   function leave() {
     interrupt({ clear: true });
     setKeyboard(false);
@@ -92983,6 +93129,7 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
     character.setNear(near);
     if (wasNear && !near) leave();
     if (wasNear !== near) sync();
+    if (greeting.update(near, keyboardOpen || listening || thinking || speaking || playbackPending || document.hidden || Boolean(document.getElementById("about")?.open), performance.now() / 1e3)) greet();
     const rect = document.getElementById("world").getBoundingClientRect();
     camera.worldToScreen(character.anchor, projected);
     direction.copy(character.anchor).sub(p2);
@@ -93007,6 +93154,7 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
     viewport?.removeEventListener("scroll", updateViewport);
     viewer.app.off("update", update);
     window.removeEventListener("keydown", onKey);
+    window.removeEventListener("pointerdown", onGesture);
     document.removeEventListener("visibilitychange", visibility);
     document.removeEventListener("explorer-menu-open", menuOpen);
     character.destroy();
@@ -93023,12 +93171,15 @@ var init_npc_interaction = __esm({
     init_npc_character();
     init_npc_client();
     init_npc_session();
+    init_npc_recognition();
+    init_npc_greeting();
     init_npc();
     icons2 = {
       mic: '<rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3M8 22h8"/>',
       keyboard: '<rect x="2" y="5" width="20" height="14" rx="3"/><path d="M5 9h2m2 0h2m2 0h2m2 0h2M5 12h2m2 0h2m2 0h2m2 0h2M7 16h10"/>',
       audio: '<path d="m11 4-6 5H2v6h3l6 5V4ZM15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/>',
       stop: '<rect x="6" y="6" width="12" height="12" rx="2"/>',
+      fold: '<path d="m6 9 6 6 6-6"/>',
       send: '<path d="M12 20V4m-6 6 6-6 6 6"/>'
     };
     svg2 = (name) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons2[name]}</svg>`;
@@ -109170,15 +109321,48 @@ function createSolidPhysics(config) {
   return { reset, jump, update, getState: () => ({ ...state }) };
 }
 
+// realtrip/src/collision-obstacles.js
+function addCapsuleObstacles(collision, obstacles = []) {
+  if (!obstacles.length) return collision;
+  const query = collision.queryCapsule.bind(collision), scratch = { x: 0, y: 0, z: 0 };
+  collision.queryCapsule = (x2, y2, z2, half, radius, out2) => {
+    let px = x2, py = y2, pz = z2, hit = false;
+    for (let pass = 0; pass < 4; pass++) {
+      let changed = false;
+      if (query(px, py, pz, half, radius, scratch)) {
+        px += scratch.x;
+        py += scratch.y;
+        pz += scratch.z;
+        hit = changed = true;
+      }
+      for (const obstacle of obstacles) {
+        if (py + half + radius <= obstacle.bottom || py - half - radius >= obstacle.top) continue;
+        const dx = px - obstacle.x, dz = pz - obstacle.z, distance = Math.hypot(dx, dz), limit = obstacle.radius + radius;
+        if (distance >= limit) continue;
+        const nx = distance > 1e-8 ? dx / distance : 1, nz = distance > 1e-8 ? dz / distance : 0;
+        px += nx * (limit - distance + 1e-5);
+        pz += nz * (limit - distance + 1e-5);
+        hit = changed = true;
+      }
+      if (!changed) break;
+    }
+    out2.x = px - x2;
+    out2.y = py - y2;
+    out2.z = pz - z2;
+    return hit;
+  };
+  return collision;
+}
+
 // realtrip/src/dynamic-navigation.js
 function createSolidBody(config, navigation) {
   return { ...navigation, physics: createSolidPhysics(config) };
 }
-function createVoxelBody(metadata, buffer, config, navigation) {
+function createVoxelBody(metadata, buffer, config, navigation, obstacles = []) {
   if (metadata.version !== "1.1" || buffer.byteLength !== 4 * (metadata.nodeCount + metadata.leafDataCount))
     throw Error("Invalid world-space voxel collision");
   const words = new Uint32Array(buffer);
-  const collision = new VoxelCollision(metadata, words.slice(0, metadata.nodeCount), words.slice(metadata.nodeCount));
+  const collision = addCapsuleObstacles(new VoxelCollision(metadata, words.slice(0, metadata.nodeCount), words.slice(metadata.nodeCount)), obstacles);
   const walker = new WalkController();
   for (const key2 of ["eyeHeight", "hoverHeight", "capsuleHeight", "capsuleRadius", "jumpSpeed"]) {
     if (Number.isFinite(config[key2]) && config[key2] > 0) walker[key2] = config[key2];
@@ -109231,7 +109415,7 @@ async function loadDynamicNavigation(scene, base2) {
   const metadata = await fetchAsset(base2 + nav.url, "json");
   if (nav.kind === "solid-body") return createSolidBody(metadata, nav);
   const binary = await fetchAsset(base2 + nav.url.replace(/\.json$/, ".bin"), "arrayBuffer");
-  return createVoxelBody(metadata, binary, scene.settings.realtripWalk, nav);
+  return createVoxelBody(metadata, binary, scene.settings.realtripWalk, nav, scene.characterObstacles);
 }
 
 // realtrip/src/scene-models.js

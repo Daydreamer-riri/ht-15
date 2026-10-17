@@ -1694,9 +1694,9 @@
   overflow-wrap: anywhere;
 }
 .npc-controls {
-  display: grid;
-  grid-template-columns: 44px 104px 44px;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   pointer-events: auto;
 }
@@ -1714,6 +1714,7 @@
   background: #173041cd;
   box-shadow: 0 5px 24px #0002;
   transition: background .2s, transform .2s;
+  box-sizing: border-box;
 }
 .npc-controls svg,
 .npc-form svg {
@@ -1725,8 +1726,8 @@
   font-size: 12px;
 }
 .npc-controls .npc-mic {
-  grid-column: 2;
-  grid-row: 1;
+  order: 1;
+  min-width: 104px;
   background:
     linear-gradient(
       145deg,
@@ -1734,7 +1735,6 @@
       #6dcff5);
   color: #143b51;
   border-color: #bfefff;
-  height: 56px;
   box-shadow: 0 4px 25px #1d8acd40;
 }
 .npc-controls .npc-mic.listening {
@@ -1747,27 +1747,22 @@
   animation: npc-listening 1.5s ease-in-out infinite;
 }
 .npc-keyboard {
-  grid-column: 1;
-  grid-row: 1;
-  width: 44px;
+  order: 0;
+  width: 48px;
   padding: 0 !important;
 }
 .npc-keyboard span {
   display: none;
 }
-.npc-keyboard.active {
-  background: #426b82;
-}
 .npc-extra {
-  grid-column: 3;
-  grid-row: 1;
-  width: 44px;
-  height: 44px;
+  order: 2;
+}
+.npc-extra:has(.npc-audio[hidden]):has(.npc-stop[hidden]) {
+  display: none;
 }
 .npc-controls .npc-audio,
 .npc-controls .npc-stop {
-  width: 44px;
-  height: 44px;
+  width: 48px;
   padding: 0;
   background: #163046b8;
   border-color: #c5ebff33;
@@ -1777,48 +1772,71 @@
   height: 18px;
 }
 .npc-form {
-  display: flex;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
   align-items: center;
   gap: 4px;
-  width: min(440px, calc(100vw - 24px));
+  width: min(440px, 100%);
   padding: 6px;
   background: #102635ed;
-  border: 1px solid #b9e7ff77;
-  border-radius: 17px;
+  border: 1px solid #b9e7ff66;
+  border-radius: 20px;
   backdrop-filter: blur(20px);
   box-sizing: border-box;
   pointer-events: auto;
   box-shadow: 0 10px 35px #0003;
 }
 .npc-form input {
-  flex: 1;
+  width: 100%;
   min-width: 0;
+  box-sizing: border-box;
   background: transparent;
   border: 0;
   outline: none;
   color: #fff;
-  padding: 6px 8px;
+  padding: 8px 2px;
   font-size: 16px !important;
-  line-height: 25px;
+  line-height: 24px;
 }
 .npc-form input::placeholder {
   color: #9eb4c5;
 }
 .npc-form button {
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 44px;
   height: 44px;
-  flex-shrink: 0;
+  min-height: 44px;
+  padding: 0;
+  box-sizing: border-box;
   border: 0;
-  border-radius: 12px;
+  border-radius: 14px;
   background: #a1eaff;
   color: #153b50;
+  line-height: 1;
 }
 .npc-form .npc-fold {
   color: #b8d2df;
   background: transparent;
-  font-size: 23px;
+}
+.npc-form .npc-send:disabled {
+  background: #305365;
+  color: #a8c3d1;
+  opacity: 1 !important;
+}
+.npc-voice-help {
+  box-sizing: border-box;
+  width: min(440px, 100%);
+  font-size: 12px;
+  line-height: 1.6;
+  text-align: center;
+  padding: 9px 12px;
+  border-radius: 12px;
+  color: #e2f5ff;
+  background: #102635e6;
+  backdrop-filter: blur(16px);
+  pointer-events: auto;
 }
 .npc-sr {
   position: absolute;
@@ -1828,19 +1846,21 @@
   clip: rect(0, 0, 0, 0);
 }
 #npc-ui[data-near=false] .npc-controls,
-#npc-ui[data-keyboard=true] .npc-caption {
+#npc-ui[data-keyboard=true] .npc-controls,
+#npc-ui[data-keyboard=true] .npc-caption,
+#npc-ui[data-keyboard=true] .npc-status {
   display: none;
 }
 body:has(#npc-ui[data-keyboard=true]) #pad,
 body:has(#npc-ui[data-keyboard=true]) .walk-actions,
 body:has(#npc-ui[data-phase=listening]) #pad,
-body:has(#npc-ui[data-phase=listening]) .walk-actions {
+body:has(#npc-ui[data-phase=listening]) .walk-actions,
+body:has(#npc-ui[data-phase=starting]) #pad,
+body:has(#npc-ui[data-phase=starting]) .walk-actions,
+body:has(#npc-ui[data-phase=ending]) #pad,
+body:has(#npc-ui[data-phase=ending]) .walk-actions {
   visibility: hidden;
   pointer-events: none;
-}
-#npc-ui[data-soft-keyboard=true] .npc-controls,
-#npc-ui[data-soft-keyboard=true] .npc-status {
-  display: none;
 }
 @media (max-width: 600px) {
   .npc-experience {
@@ -1854,26 +1874,21 @@ body:has(#npc-ui[data-phase=listening]) .walk-actions {
     gap: 8px;
   }
   .npc-controls {
-    grid-template-columns: 44px 56px 44px;
-    gap: 8px;
+    gap: 6px;
   }
   .npc-controls .npc-mic {
-    flex-direction: column;
-    gap: 2px;
-    padding: 0;
-    width: 56px;
-    height: 56px;
+    min-width: 72px;
+    padding: 0 10px;
+    gap: 5px;
   }
   .npc-controls .npc-mic span {
-    font-size: 10px;
+    font-size: 11px;
   }
-  .npc-controls .npc-keyboard {
+  .npc-controls .npc-keyboard,
+  .npc-controls .npc-audio,
+  .npc-controls .npc-stop {
     width: 44px;
-    height: 44px;
     padding: 0;
-  }
-  .npc-keyboard span {
-    display: none;
   }
   .npc-caption {
     width: calc(100vw - 24px);
@@ -1895,7 +1910,7 @@ body:has(#npc-ui[data-phase=listening]) .walk-actions {
     font-size: 12px;
   }
   .npc-form {
-    width: calc(100vw - 24px);
+    width: 100%;
   }
   body:has(#npc-ui) #pad {
     width: 64px;

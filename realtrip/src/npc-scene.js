@@ -1,11 +1,12 @@
 import venue from './venue.json' with {type:'json'};
 
 export const npcConfig = {
-  name:'小蓝', modelUrl:'npc/blue-mascot.glb?v=refined-20261018', configUrl:'npc/service.json',
+  name:'小蓝', modelUrl:'npc/blue-mascot.glb?v=slim-20261018', configUrl:'npc/service.json',
   position:[1.25,-.86,1.4], scale:.30, rotation:180,
   approachRadius:2.4, leaveRadius:2.8, maxVerticalDistance:1.1,
 };
 export const npcScene = structuredClone(venue);
+npcScene.characterObstacles=[{x:npcConfig.position[0],z:npcConfig.position[2],bottom:npcConfig.position[1]-.04,top:npcConfig.position[1]+.87,radius:.28}];
 npcScene.settings.cameras[0].initial={position:[-.45,-.27,.08],target:[1.25,-.45,1.4],fov:75};
 
 export function isNearNpc(position,previous=false,config=npcConfig){

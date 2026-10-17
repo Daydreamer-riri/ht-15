@@ -4,6 +4,7 @@ import {readFileSync} from 'node:fs';
 import {build} from 'esbuild';
 import {createOfficeNavigation} from '../src/office-navigation.js';
 import {explorerScenes,explorerScenePath} from '../src/explorer-ui.js';
+import {npcScene,npcConfig} from '../src/npc-scene.js';
 import {viewerPhysicsPlugin,exposeViewerPhysics} from '../../scripts/viewer-physics-plugin.mjs';
 
 const json=path=>JSON.parse(readFileSync(new URL(path,import.meta.url)));
@@ -15,6 +16,25 @@ const binary=bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLeng
 // Test the same pinned native physics exports as the browser bundle.
 const output=await build({entryPoints:['realtrip/src/dynamic-navigation.js'],plugins:[viewerPhysicsPlugin],bundle:true,write:false,format:'esm',platform:'node',external:['node:worker_threads'],logLevel:'silent'});
 const {createVoxelBody,createSolidBody}=await import('data:text/javascript;base64,'+Buffer.from(output.outputFiles[0].contents).toString('base64'));
+
+test('NPC capsule blocks forward motion on the real venue floor at several frame rates and permits backing away',()=>{
+ for(const dt of [1/120,1/60,1/20]){
+  const body=createVoxelBody(metadata,binary,hall.settings.realtripWalk,hall.navigation,npcScene.characterObstacles);
+  const start=npcScene.settings.cameras[0].initial.position;
+  body.physics.reset([start[0],start[1]-body.eyeHeight,start[2]]);
+  let closest=Infinity;
+  for(let frame=0;frame<6/dt;frame++){
+   const p=body.physics.getState(),dx=npcConfig.position[0]-p.x,dz=npcConfig.position[2]-p.z,d=Math.hypot(dx,dz);
+   const next=body.physics.update(dt,1.65*dx/d,1.65*dz/d);
+   closest=Math.min(closest,Math.hypot(next.x-npcConfig.position[0],next.z-npcConfig.position[2]));
+   assert(next.y>-1.4&&next.y<-.5,'standing on original floor');
+  }
+  assert(closest>=.4199&&closest<.44,'stops at NPC radius + walker radius');
+  const contact=body.physics.getState(),dx=contact.x-npcConfig.position[0],dz=contact.z-npcConfig.position[2],d=Math.hypot(dx,dz);
+  for(let frame=0;frame<.3/dt;frame++)body.physics.update(dt,dx/d,dz/d);
+  const end=body.physics.getState();assert(Math.hypot(end.x-contact.x,end.z-contact.z)>.2);
+ }
+});
 
 class Events {
  callbacks=new Map();
