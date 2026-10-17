@@ -101521,14 +101521,14 @@ async function loadSceneSupplements(viewer, models, base2) {
 // realtrip/src/explorer-ui.js
 var explorerScenes = [
   ["hackathon", "Hackathon\u4E3B\u4F1A\u573A"],
-  ["two-floor", "\u53CC\u5C42\u4F11\u606F\u7A7A\u95F4"],
+  ["two-floor", "\u5065\u8EAB\u623F"],
   ["building2", "2\u53F7\u697C"],
   ["terrace", "\u9732\u53F0"],
   ["cafeteria", "\u98DF\u5802"]
 ];
 var sceneDetails = {
   "hackathon": { icon: "gallery", description: "Hackathon \u4F1A\u573A\u4E0E\u9636\u68AF\u5EA7\u5E2D" },
-  "two-floor": { icon: "gallery", description: "\u4E00\u5C42\u4F11\u606F\u533A\u3001\u697C\u68AF\u4E0E\u4E8C\u5C42\u7A7A\u95F4" },
+  "two-floor": { icon: "gallery", description: "\u5065\u8EAB\u5668\u68B0\u3001\u4F11\u606F\u533A\u4E0E\u4E0A\u4E0B\u5C42\u6B65\u9053" },
   building2: { icon: "building", description: "\u4F1A\u8BAE\u5BA4\u4E0E\u7A97\u8FB9\u8FDE\u5ECA" },
   terrace: { icon: "terrace", description: "\u6237\u5916\u9732\u53F0\u4E0E\u56ED\u533A\u98CE\u666F" },
   cafeteria: { icon: "building", description: "\u53D6\u9910\u901A\u9053\u4E0E\u7528\u9910\u7A7A\u95F4" }
@@ -103346,13 +103346,21 @@ var two_floor_default = {
     postEffectSettings: {
       sharpness: {
         enabled: true,
-        amount: 0.12
+        amount: 0.3
       },
       bloom: {
         enabled: false
       },
       grading: {
-        enabled: false
+        enabled: true,
+        brightness: 1,
+        contrast: 1.04,
+        saturation: 1.03,
+        tint: [
+          1,
+          1,
+          1
+        ]
       },
       vignette: {
         enabled: false
@@ -103389,7 +103397,7 @@ var two_floor_default = {
     ],
     startMode: "default"
   },
-  contentUrl: "two-floor/scene.sog",
+  contentUrl: "two-floor/scene.sog?v=da511fcffcf4",
   starts: {
     clip01: {
       position: [
@@ -103431,7 +103439,7 @@ var two_floor_default = {
       fov: 65
     }
   },
-  title: "\u53CC\u5C42\u4F11\u606F\u7A7A\u95F4",
+  title: "\u5065\u8EAB\u623F",
   waypoints: {
     downstairs: {
       position: [
@@ -103717,7 +103725,7 @@ var terraceBase = { data: terrace_default, destination: "terrace", label: "\u973
 var cafeteriaBase = { data: cafeteria_default, destination: "cafeteria", label: "\u98DF\u5802", source: null, credit: "\u98DF\u5802\u5B9E\u62CD", scope: "\u4FDD\u7559\u4EBA\u7269\uFF0C\u7ED3\u5408\u539F\u59CB\u53D6\u9910\u533A\u4E0E\u8865\u62CD\u7528\u9910\u533A\u3002\u5165\u53E3\u3001\u53D6\u9910\u901A\u9053\u548C\u9910\u684C\u65C1\u7684\u8FC7\u9053\u53EF\u4EE5\u8FDE\u7EED\u5F80\u8FD4\uFF0C\u5730\u9762\u3001\u67DC\u53F0\u3001\u7ACB\u67F1\u548C\u684C\u6905\u91C7\u7528\u6821\u51C6\u540E\u7684\u7B80\u5316\u78B0\u649E\u3002\u73BB\u7483\u53CD\u5C04\u3001\u4EBA\u7269\u8FD0\u52A8\u6B8B\u5F71\u4E0E\u8FDC\u5904\u672A\u5145\u5206\u62CD\u6444\u7684\u533A\u57DF\u4ECD\u6709\u91CD\u5EFA\u7455\u75B5\u3002" };
 var scenes = {
   "hackathon": { data: venue_default, destination: "hackathon", label: "Hackathon\u4E3B\u4F1A\u573A", title: "\u8D70\u8FDBHackathon\u4E3B\u4F1A\u573A\u3002", area: "\u4E3B\u4F1A\u573A\u8D77\u70B9", credit: "Remy \xB7 junhaoqin \u56E2\u961F", source: null, scope: "\u6765\u81EA realtrip-walk-hackathon26 \u7684Hackathon\u4E3B\u4F1A\u573A\uFF0C\u4FDD\u7559\u539F\u59CB\u6A21\u578B\u3001\u4F53\u7D20\u78B0\u649E\u3001\u884C\u4EBA\u773C\u9AD8\u53CA\u4E09\u5757 Hackathon \u5C4F\u5E55\u3002\u4F7F\u7528\u672C\u7AD9\u7EDF\u4E00\u7684\u79FB\u52A8\u3001\u8F6C\u5934\u4E0E\u91CD\u7F6E\u64CD\u4F5C\u3002\u5C3A\u5EA6\u672A\u7ECF\u73B0\u573A\u6D4B\u91CF\uFF0C\u8584\u7269\u4F53\u548C\u7F3A\u5931\u626B\u63CF\u5904\u7684\u78B0\u649E\u53EF\u80FD\u4E0D\u5B8C\u6574\u3002" },
-  "two-floor": { data: two_floor_default, destination: "two-floor", label: "\u53CC\u5C42\u4F11\u606F\u7A7A\u95F4", title: "\u4ECE\u4E00\u5C42\uFF0C\u6162\u6162\u901B\u8D77\u3002", area: "\u4E00\u5C42\u4F11\u606F\u533A", credit: "\u516D\u6BB5\u5B9E\u62CD\u89C6\u9891 \xB7 junhaoqin \u56E2\u961F", source: "https://git.dev.sh.ctripcorp.com/junhaoqin/realtrip-walk-hackathon26", scope: "\u6765\u81EA realtrip-walk-hackathon26 \u7684\u53CC\u5C42\u5B9E\u62CD\u6A21\u578B\u3002\u4E00\u5C42\u3001\u6298\u8FD4\u697C\u68AF\u548C\u4E8C\u5C42\u53EF\u4EE5\u8FDE\u7EED\u884C\u8D70\uFF1B\u4FDD\u7559\u697C\u5C42\u3001\u53F0\u9636\u3001\u62A4\u680F\u53CA\u5BB6\u5177\u78B0\u649E\u3002\u4F7F\u7528\u672C\u7AD9\u7EDF\u4E00\u64CD\u4F5C\uFF0C\u6A21\u578B\u4E2D\u672A\u5145\u5206\u62CD\u6444\u7684\u533A\u57DF\u4ECD\u53EF\u80FD\u6A21\u7CCA\u3002" },
+  "two-floor": { data: two_floor_default, destination: "two-floor", label: "\u5065\u8EAB\u623F", title: "\u8D70\u8FDB\u5065\u8EAB\u623F\u3002", area: "\u5065\u8EAB\u623F\u4E00\u5C42", credit: "junhaoqin \u56E2\u961F\u539F\u6A21\u578B \xB7 \u7528\u6237\u8865\u62CD\u4F18\u5316", source: "https://git.dev.sh.ctripcorp.com/junhaoqin/realtrip-walk-hackathon26", scope: "\u6765\u81EA realtrip-walk-hackathon26 \u7684\u5065\u8EAB\u623F\u5B9E\u62CD\u6A21\u578B\u3002\u4E00\u5C42\u3001\u6298\u8FD4\u697C\u68AF\u548C\u4E8C\u5C42\u53EF\u4EE5\u8FDE\u7EED\u884C\u8D70\uFF1B\u4FDD\u7559\u697C\u5C42\u3001\u53F0\u9636\u3001\u62A4\u680F\u53CA\u5BB6\u5177\u78B0\u649E\u3002\u4F7F\u7528\u672C\u7AD9\u7EDF\u4E00\u64CD\u4F5C\uFF0C\u7ED3\u5408\u4E0A\u53F0\u9636\u8865\u62CD\u4F18\u5316\u4E0B\u6BB5\u53F0\u9636\u7684\u989C\u8272\u4E0E\u7EB9\u7406\u3002\u5668\u68B0\u7EC6\u6746\u3001\u73BB\u7483\u53CD\u5C04\u53CA\u672A\u5145\u5206\u62CD\u6444\u7684\u533A\u57DF\u4ECD\u53EF\u80FD\u6A21\u7CCA\u3002" },
   "hackathon-original": { data: hackathon_default, destination: "hackathon-original", hidden: true, label: "Hackathon \u4E3B\u4F1A\u573A\uFF08\u539F\u7248\uFF09", title: "Hackathon \u4E3B\u4F1A\u573A", area: "\u4E3B\u4F1A\u573A", credit: "\u4E3B\u4F1A\u573A\u5B9E\u62CD", source: null, scope: "\u539F\u7248\u4F1A\u573A\u6A21\u578B\u4E0E\u6821\u51C6\u540E\u7684\u5730\u5F62\u78B0\u649E\u3002" },
   "alpine-lake": { data: alpine_lake_default, destination: "alpine-lake", label: "\u5C71\u6E56\u6F2B\u6E38", title: "\u6CBF\u7740\u6E56\u5CB8\uFF0C\u8D70\u8D70\u770B\u770B\u3002", area: "\u6E56\u5CB8\u8349\u5730", hidden: true, credit: "\u7528\u6237\u63D0\u4F9B\u7684\u5C71\u6E56\u6A21\u578B", scope: "\u4F7F\u7528\u63D0\u4F9B\u7684 SPZ \u573A\u666F\u548C PLY \u78B0\u649E\u7F51\u683C\u3002\u53EF\u4EE5\u6CBF\u6E56\u5CB8\u8349\u5730\u81EA\u7531\u884C\u8D70\uFF0C\u968F\u5730\u5F62\u8D77\u4F0F\uFF1B\u6C34\u9762\u3001\u9661\u5761\u548C\u6A21\u578B\u8FB9\u7F18\u9650\u5236\u901A\u884C\u3002\u8FDC\u666F\u548C\u5C40\u90E8\u6C34\u9762\u5B58\u5728\u6E90\u6A21\u578B\u7684\u91CD\u5EFA\u7455\u75B5\u3002", source: null },
   cafeteria: { ...cafeteriaBase, title: "\u98DF\u5802", area: "\u98DF\u5802\u5165\u53E3", waypoint: "entrance" },

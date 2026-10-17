@@ -1,0 +1,75 @@
+{
+  "splats": 2749156,
+  "editedStairColors": 42324,
+  "unchangedOutsideSplats": 2642816,
+  "geometryOpacityAndDirectionalColorByteIdentical": true,
+  "changedArchiveMembers": [
+    "sh0.webp"
+  ],
+  "title": "健身房",
+  "date": "2026-10-18",
+  "baselineSha256": "d8695775cdace8a84e05b1c9f9154bd104e449c33e7f23e050ef4a94ee15d7c8",
+  "modelSha256": "da511fcffcf41c876a05f950b3484a1c35b7b2966f649c45a8f479ed5fb74459",
+  "upstreamCommit": "16c3cd93c766bcd890c71ad395cc59b883e1e684",
+  "upstreamProvenanceSha256": "79542550ab7d6fdddfa4c7104b4a10911465dfa906febbcc32d2393b4ddc42de",
+  "sources": [
+    {
+      "file": "双层.mp4",
+      "sha256": "ca010cc80bb93b5aeeaa356fbd906a507c06e43bfaa6a5ac9f9f8dffef722451",
+      "durationSeconds": 59.86,
+      "alreadyInUpstream": true
+    },
+    {
+      "file": "上台阶.mp4",
+      "sha256": "55527642340d4b32e2999d86f586ee6191f0d02b6e3b730b536a6d8da869ad10",
+      "durationSeconds": 15.27,
+      "alreadyInUpstream": false
+    },
+    {
+      "file": "下台阶.mp4",
+      "sha256": "5e6709615cad18f9268258a45ca703f401e2f9c2064d29f09e85083298723a93",
+      "durationSeconds": 58.4,
+      "alreadyInUpstream": true
+    }
+  ],
+  "additionalTrainingSteps": 600,
+  "acceptedViews": 3,
+  "trainingViews": 2,
+  "comparisonViews": 1,
+  "method": "Fixed-geometry color refinement from real source pixels with bounded bidirectional-flow alignment. Patch only lower-flight DC color indices using the original quantization codebook.",
+  "comparison": [
+    {
+      "name": "frame-001.png",
+      "role": "training view",
+      "maskedPSNRBefore": 22.798779024422572,
+      "maskedPSNRAfter": 23.649426189898048,
+      "maskPixels": 183984
+    },
+    {
+      "name": "frame-002.png",
+      "role": "held-out adjacent frame",
+      "maskedPSNRBefore": 23.87898726489359,
+      "maskedPSNRAfter": 25.051047181829297,
+      "maskPixels": 139212
+    },
+    {
+      "name": "frame-004.png",
+      "role": "training view",
+      "maskedPSNRBefore": 25.79920537615849,
+      "maskedPSNRAfter": 29.89094788624893,
+      "maskPixels": 92044
+    }
+  ],
+  "comparisonNote": "Masked aligned reference views. The comparison frame is temporally adjacent and used for checkpoint comparison; this is not independent full-scene accuracy.",
+  "postprocessing": {
+    "sharpness": 0.3,
+    "contrast": 1.04,
+    "saturation": 1.03
+  },
+  "limitations": [
+    "Only opaque lower-flight stair appearance is refined from the new ascent clip.",
+    "Reflective railing ghosting, thin equipment parts and poorly observed regions remain soft.",
+    "No new geometry, full-scene reconstruction, invented image pixels or AI-generated frames."
+  ],
+  "collisionSha256": "068a40fc0f69e16904ce190802f27c39a1a572a994dcf0087e57b1d11e9b0960"
+}

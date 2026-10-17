@@ -6,13 +6,21 @@
     "postEffectSettings": {
       "sharpness": {
         "enabled": true,
-        "amount": 0.12
+        "amount": 0.3
       },
       "bloom": {
         "enabled": false
       },
       "grading": {
-        "enabled": false
+        "enabled": true,
+        "brightness": 1,
+        "contrast": 1.04,
+        "saturation": 1.03,
+        "tint": [
+          1,
+          1,
+          1
+        ]
       },
       "vignette": {
         "enabled": false
@@ -49,7 +57,7 @@
     ],
     "startMode": "default"
   },
-  "contentUrl": "two-floor/scene.sog",
+  "contentUrl": "two-floor/scene.sog?v=da511fcffcf4",
   "starts": {
     "clip01": {
       "position": [
@@ -91,7 +99,7 @@
       "fov": 65
     }
   },
-  "title": "双层休息空间",
+  "title": "健身房",
   "waypoints": {
     "downstairs": {
       "position": [

@@ -1,10 +1,10 @@
 export const explorerScenes = [
  ['hackathon','Hackathon主会场'],
- ['two-floor','双层休息空间'], ['building2','2号楼'], ['terrace','露台'], ['cafeteria','食堂']
+ ['two-floor','健身房'], ['building2','2号楼'], ['terrace','露台'], ['cafeteria','食堂']
 ];
 const sceneDetails = {
  'hackathon': {icon:'gallery', description:'Hackathon 会场与阶梯座席'},
- 'two-floor': {icon:'gallery', description:'一层休息区、楼梯与二层空间'},
+ 'two-floor': {icon:'gallery', description:'健身器械、休息区与上下层步道'},
  building2: {icon:'building', description:'会议室与窗边连廊'},
  terrace: {icon:'terrace', description:'户外露台与园区风景'},
  cafeteria: {icon:'building', description:'取餐通道与用餐空间'}
