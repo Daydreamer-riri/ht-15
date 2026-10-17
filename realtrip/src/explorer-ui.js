@@ -1,13 +1,13 @@
 export const explorerScenes = [
  ['hackathon','Hackathon主会场'],
- ['two-floor','健身房'], ['building2','2号楼'], ['terrace','露台'], ['cafeteria','食堂']
+ ['two-floor','健身房'], ['building2','会议室'], ['terrace','露台'], ['cafeteria','食堂']
 ];
 const sceneDetails = {
- 'hackathon': {icon:'gallery', description:'Hackathon 会场与阶梯座席'},
- 'two-floor': {icon:'gallery', description:'健身器械、休息区与上下层步道'},
- building2: {icon:'building', description:'会议室与窗边连廊'},
- terrace: {icon:'terrace', description:'户外露台与园区风景'},
- cafeteria: {icon:'building', description:'取餐通道与用餐空间'}
+ 'hackathon': {icon:'gallery'},
+ 'two-floor': {icon:'gallery'},
+ building2: {icon:'building'},
+ terrace: {icon:'terrace'},
+ cafeteria: {icon:'building'}
 };
 const paths = {
  reset:'<path d="M4 10a8 8 0 1 1 1 8M4 4v6h6"/>',
@@ -37,7 +37,7 @@ export function populateSceneMenu(select, current, base='/', entries=explorerSce
  // Keep the existing scene router while presenting the same picker on all devices.
  select.hidden=true;
  const picker=document.createElement('div');picker.className='scene-picker';picker.dataset.explorerUi='';
- const detail=sceneDetails[current]??{icon:'building',description:'实景自由探索'};
+ const detail=sceneDetails[current]??{icon:'building'};
  const trigger=document.createElement('button');trigger.type='button';trigger.className='scene-trigger';
  trigger.setAttribute('aria-expanded','false');trigger.setAttribute('aria-controls','scene-panel');
  trigger.setAttribute('aria-label',`切换场景，当前${select.selectedOptions[0]?.textContent??'实景空间'}`);
@@ -49,8 +49,8 @@ export function populateSceneMenu(select, current, base='/', entries=explorerSce
   const item=document.createElement('a');item.className='scene-choice';
   item.href=explorerScenes.some(([key])=>key===id)?explorerScenePath(id,base):location.href;
   const info=sceneDetails[id]??detail;
-  item.innerHTML=`<span class="scene-choice-icon">${svg(info.icon)}</span><span class="scene-choice-copy"><strong></strong><small></small></span><span class="scene-check">${svg('check')}</span>`;
-  item.querySelector('strong').textContent=label;item.querySelector('small').textContent=info.description;
+  item.innerHTML=`<span class="scene-choice-icon">${svg(info.icon)}</span><span class="scene-choice-copy"><strong></strong></span><span class="scene-check">${svg('check')}</span>`;
+  item.querySelector('strong').textContent=label;
   if(id===current)item.setAttribute('aria-current','page');
   item.addEventListener('click',event=>{
    if(event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;

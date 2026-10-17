@@ -148,7 +148,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  min-height: 65px;
+  min-height: 58px;
   padding: 10px 12px;
   margin: 2px 0;
   text-decoration: none;
@@ -169,8 +169,8 @@
   color: #c5cdd1;
 }
 .scene-choice-copy {
-  display: grid;
-  gap: 5px;
+  display: flex;
+  align-items: center;
   flex: 1;
 }
 .scene-choice strong {
@@ -178,12 +178,6 @@
   line-height: 1.2;
   font-weight: 550;
   letter-spacing: .02em;
-}
-.scene-choice small {
-  font-size: 10px;
-  line-height: 1.2;
-  color: #aab5bc;
-  font-weight: 400;
 }
 .scene-check {
   color: var(--ui-accent);

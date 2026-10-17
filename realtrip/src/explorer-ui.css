@@ -20,11 +20,10 @@
 .scene-panel{position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);width:280px;max-width:calc(100vw - 32px);padding:8px;border:1px solid var(--ui-line);border-radius:22px;background:rgba(25,30,33,.96);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px);box-shadow:0 18px 50px #0004;color:#f7faf9;animation:scene-reveal .16s ease-out}
 .scene-panel[hidden]{display:none!important}
 .scene-panel-caption{padding:10px 12px 12px;font-size:11px;font-weight:500;letter-spacing:.1em;color:#a8b2b8}
-.scene-choice{display:flex;align-items:center;gap:12px;min-height:65px;padding:10px 12px;margin:2px 0;text-decoration:none;color:inherit;border:1px solid transparent;border-radius:14px;transition:background .15s}
+.scene-choice{display:flex;align-items:center;gap:12px;min-height:58px;padding:10px 12px;margin:2px 0;text-decoration:none;color:inherit;border:1px solid transparent;border-radius:14px;transition:background .15s}
 .scene-choice-icon{display:grid;place-items:center;flex:none;width:36px;height:36px;border:1px solid #ffffff0c;background:#ffffff05;border-radius:11px;color:#c5cdd1}
-.scene-choice-copy{display:grid;gap:5px;flex:1}
+.scene-choice-copy{display:flex;align-items:center;flex:1}
 .scene-choice strong{font-size:14px;line-height:1.2;font-weight:550;letter-spacing:.02em}
-.scene-choice small{font-size:10px;line-height:1.2;color:#aab5bc;font-weight:400}
 .scene-check{color:var(--ui-accent);visibility:hidden}
 .scene-check svg{width:16px!important;height:16px!important}
 .scene-choice[aria-current=page]{background:#bee8dc12;border-color:#bee8dc23}

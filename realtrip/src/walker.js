@@ -18,7 +18,7 @@ import {loadSceneScreens,loadCapturedSurfaces} from './scene-screens.js';
 // The site runs both at a domain root and under a sub-path (such as GitLab Pages), so
 // asset URLs are resolved against the directory of the current document.
 const base=new URL('.',location.href).pathname;
-const buildingBase={data:building2,destination:'building2',label:'2号楼 · 会议室与连廊',source:null,credit:'2号楼实拍 · Remy 重建',scope:'从会议室穿过门口，可以直接走到连廊，也能原路走回来。视点对齐原拍摄眼高。地面、墙面、护栏和会议桌采用按扫描轮廓校准的简化碰撞；椅子、门扇和细小物体尚未逐一建模。已结合补拍画面校正会议室细节，横屏视野更开阔；玻璃反射、细椅脚及未充分拍摄的角落仍可能有重建瑕疵。'};
+const buildingBase={data:building2,destination:'building2',label:'会议室',source:null,credit:'会议室实拍 · Remy 重建',scope:'从会议室穿过门口，可以直接走到连廊，也能原路走回来。视点对齐原拍摄眼高。地面、墙面、护栏和会议桌采用按扫描轮廓校准的简化碰撞；椅子、门扇和细小物体尚未逐一建模。已结合补拍画面校正会议室细节，横屏视野更开阔；玻璃反射、细椅脚及未充分拍摄的角落仍可能有重建瑕疵。'};
 const terraceBase={data:terrace,destination:'terrace',label:'露台 · 实景探索',source:null,credit:'露台实拍 · Remy 重建',scope:'在露台入口、中央空地和观景端之间连续自由走动。按拍摄轨迹和地板点云校正模型倾斜、地面及视点高度；玻璃幕墙、花箱、护栏与桌椅采用简化阻挡。远处楼宇为背景扫描，未开放行走。'};
 const cafeteriaBase={data:cafeteria,destination:'cafeteria',label:'食堂',source:null,credit:'食堂实拍',scope:'保留人物，结合原始取餐区与补拍用餐区。入口、取餐通道和餐桌旁的过道可以连续往返，地面、柜台、立柱和桌椅采用校准后的简化碰撞。玻璃反射、人物运动残影与远处未充分拍摄的区域仍有重建瑕疵。'};
 const scenes={
@@ -74,7 +74,7 @@ $('source').hidden=!current.source;$('about-source').hidden=!current.source;
 $('scene-scope').textContent=current.scope;
 if(current.destination==='alpine-lake'){$('attribution').textContent='素材由用户提供。原 SPZ 保留全部 1,189,993 个点并转换为网页 SOG；碰撞来自配套 PLY 的 278,025 个三角面，采样为地形高度并限制湖面、陡坡及缺失区域。尺寸沿用模型单位。渲染器：SuperSplat Viewer / PlayCanvas（MIT）。';$('area-help').hidden=true;}
 if(['two-floor','hackathon'].includes(current.destination))$('attribution').textContent=current.scope+' 渲染器：SuperSplat Viewer / PlayCanvas（MIT）。';
-if(current.destination==='building2')$('attribution').textContent='素材来自用户提供的2号楼实景分享页。使用其 100 万点 SOG 模型，结合拍摄轨迹与模型轮廓校准站立眼高、地面和简化障碍。原始体素在门口和桌椅处存在碎块，本场景使用校准后的平面碰撞，不代表实测建筑尺寸。渲染器：SuperSplat Viewer / PlayCanvas（MIT）。';
+if(current.destination==='building2')$('attribution').textContent='素材来自用户提供的会议室实景分享页。使用其 100 万点 SOG 模型，结合拍摄轨迹与模型轮廓校准站立眼高、地面和简化障碍。原始体素在门口和桌椅处存在碎块，本场景使用校准后的平面碰撞，不代表实测建筑尺寸。渲染器：SuperSplat Viewer / PlayCanvas（MIT）。';
 $('about-source').href=$('source').href;
 if(current.destination==='terrace')$('attribution').textContent='素材来自用户提供的露台实景分享页，使用其 100 万点 SOG 模型。本站校正模型倾斜并增加自由步行、地面和简化障碍。尺度按原拍摄视点估算，未做现场测量；桌椅、花箱采用整体轮廓阻挡，未建立每根椅腿的精细物理。渲染器：SuperSplat Viewer / PlayCanvas（MIT）。';
 const area=$('area');

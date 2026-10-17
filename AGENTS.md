@@ -10,7 +10,7 @@ This repository hosts five static entry points under one GitLab Pages project pr
 - `/sky-soho/`: Sky SOHO day-trip planet, in `src/sky-soho/`.
 - `/route-3d/`: North Xinjiang planet, in `src/route-3d/`.
 
-The two planets share `src/atlas/` and Three.js. The walking menu contains only Hackathon Venue (`hackathon`), Gym (`two-floor`), Building 2, Terrace and Cafeteria. Planets use independent links; both planets can link back to `/walk/`. Keep this navigation inside the Pages project prefix. Scene names, IDs and resource paths use neutral place names.
+The two planets share `src/atlas/` and Three.js. The walking menu contains only Hackathon Venue (`hackathon`), Gym (`two-floor`), Meeting Room (`building2`), Terrace and Cafeteria. Planets use independent links; both planets can link back to `/walk/`. Keep this navigation inside the Pages project prefix. Scene names, IDs and resource paths use neutral place names.
 
 `realtrip/models/` contains canonical model files. Preparation scripts verify SHA-256 and assemble ignored model copies under `realtrip/public/`. The build copies these assets and bundles the viewers into `dist/walk/`. Presentation sources are bundled separately into `dist/presentation/`.
 

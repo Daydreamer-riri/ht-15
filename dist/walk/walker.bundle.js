@@ -101522,16 +101522,16 @@ async function loadSceneSupplements(viewer, models, base2) {
 var explorerScenes = [
   ["hackathon", "Hackathon\u4E3B\u4F1A\u573A"],
   ["two-floor", "\u5065\u8EAB\u623F"],
-  ["building2", "2\u53F7\u697C"],
+  ["building2", "\u4F1A\u8BAE\u5BA4"],
   ["terrace", "\u9732\u53F0"],
   ["cafeteria", "\u98DF\u5802"]
 ];
 var sceneDetails = {
-  "hackathon": { icon: "gallery", description: "Hackathon \u4F1A\u573A\u4E0E\u9636\u68AF\u5EA7\u5E2D" },
-  "two-floor": { icon: "gallery", description: "\u5065\u8EAB\u5668\u68B0\u3001\u4F11\u606F\u533A\u4E0E\u4E0A\u4E0B\u5C42\u6B65\u9053" },
-  building2: { icon: "building", description: "\u4F1A\u8BAE\u5BA4\u4E0E\u7A97\u8FB9\u8FDE\u5ECA" },
-  terrace: { icon: "terrace", description: "\u6237\u5916\u9732\u53F0\u4E0E\u56ED\u533A\u98CE\u666F" },
-  cafeteria: { icon: "building", description: "\u53D6\u9910\u901A\u9053\u4E0E\u7528\u9910\u7A7A\u95F4" }
+  "hackathon": { icon: "gallery" },
+  "two-floor": { icon: "gallery" },
+  building2: { icon: "building" },
+  terrace: { icon: "terrace" },
+  cafeteria: { icon: "building" }
 };
 var paths = {
   reset: '<path d="M4 10a8 8 0 1 1 1 8M4 4v6h6"/>',
@@ -101561,7 +101561,7 @@ function populateSceneMenu(select, current, base2 = "/", entries = explorerScene
   const picker = document.createElement("div");
   picker.className = "scene-picker";
   picker.dataset.explorerUi = "";
-  const detail = sceneDetails[current] ?? { icon: "building", description: "\u5B9E\u666F\u81EA\u7531\u63A2\u7D22" };
+  const detail = sceneDetails[current] ?? { icon: "building" };
   const trigger = document.createElement("button");
   trigger.type = "button";
   trigger.className = "scene-trigger";
@@ -101584,9 +101584,8 @@ function populateSceneMenu(select, current, base2 = "/", entries = explorerScene
     item.className = "scene-choice";
     item.href = explorerScenes.some(([key2]) => key2 === id15) ? explorerScenePath(id15, base2) : location.href;
     const info = sceneDetails[id15] ?? detail;
-    item.innerHTML = `<span class="scene-choice-icon">${svg(info.icon)}</span><span class="scene-choice-copy"><strong></strong><small></small></span><span class="scene-check">${svg("check")}</span>`;
+    item.innerHTML = `<span class="scene-choice-icon">${svg(info.icon)}</span><span class="scene-choice-copy"><strong></strong></span><span class="scene-check">${svg("check")}</span>`;
     item.querySelector("strong").textContent = label;
-    item.querySelector("small").textContent = info.description;
     if (id15 === current) item.setAttribute("aria-current", "page");
     item.addEventListener("click", (event) => {
       if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -103720,7 +103719,7 @@ async function loadSceneScreens(viewer, screens, base2) {
 
 // realtrip/src/walker.js
 var base = new URL(".", location.href).pathname;
-var buildingBase = { data: building2_default, destination: "building2", label: "2\u53F7\u697C \xB7 \u4F1A\u8BAE\u5BA4\u4E0E\u8FDE\u5ECA", source: null, credit: "2\u53F7\u697C\u5B9E\u62CD \xB7 Remy \u91CD\u5EFA", scope: "\u4ECE\u4F1A\u8BAE\u5BA4\u7A7F\u8FC7\u95E8\u53E3\uFF0C\u53EF\u4EE5\u76F4\u63A5\u8D70\u5230\u8FDE\u5ECA\uFF0C\u4E5F\u80FD\u539F\u8DEF\u8D70\u56DE\u6765\u3002\u89C6\u70B9\u5BF9\u9F50\u539F\u62CD\u6444\u773C\u9AD8\u3002\u5730\u9762\u3001\u5899\u9762\u3001\u62A4\u680F\u548C\u4F1A\u8BAE\u684C\u91C7\u7528\u6309\u626B\u63CF\u8F6E\u5ED3\u6821\u51C6\u7684\u7B80\u5316\u78B0\u649E\uFF1B\u6905\u5B50\u3001\u95E8\u6247\u548C\u7EC6\u5C0F\u7269\u4F53\u5C1A\u672A\u9010\u4E00\u5EFA\u6A21\u3002\u5DF2\u7ED3\u5408\u8865\u62CD\u753B\u9762\u6821\u6B63\u4F1A\u8BAE\u5BA4\u7EC6\u8282\uFF0C\u6A2A\u5C4F\u89C6\u91CE\u66F4\u5F00\u9614\uFF1B\u73BB\u7483\u53CD\u5C04\u3001\u7EC6\u6905\u811A\u53CA\u672A\u5145\u5206\u62CD\u6444\u7684\u89D2\u843D\u4ECD\u53EF\u80FD\u6709\u91CD\u5EFA\u7455\u75B5\u3002" };
+var buildingBase = { data: building2_default, destination: "building2", label: "\u4F1A\u8BAE\u5BA4", source: null, credit: "\u4F1A\u8BAE\u5BA4\u5B9E\u62CD \xB7 Remy \u91CD\u5EFA", scope: "\u4ECE\u4F1A\u8BAE\u5BA4\u7A7F\u8FC7\u95E8\u53E3\uFF0C\u53EF\u4EE5\u76F4\u63A5\u8D70\u5230\u8FDE\u5ECA\uFF0C\u4E5F\u80FD\u539F\u8DEF\u8D70\u56DE\u6765\u3002\u89C6\u70B9\u5BF9\u9F50\u539F\u62CD\u6444\u773C\u9AD8\u3002\u5730\u9762\u3001\u5899\u9762\u3001\u62A4\u680F\u548C\u4F1A\u8BAE\u684C\u91C7\u7528\u6309\u626B\u63CF\u8F6E\u5ED3\u6821\u51C6\u7684\u7B80\u5316\u78B0\u649E\uFF1B\u6905\u5B50\u3001\u95E8\u6247\u548C\u7EC6\u5C0F\u7269\u4F53\u5C1A\u672A\u9010\u4E00\u5EFA\u6A21\u3002\u5DF2\u7ED3\u5408\u8865\u62CD\u753B\u9762\u6821\u6B63\u4F1A\u8BAE\u5BA4\u7EC6\u8282\uFF0C\u6A2A\u5C4F\u89C6\u91CE\u66F4\u5F00\u9614\uFF1B\u73BB\u7483\u53CD\u5C04\u3001\u7EC6\u6905\u811A\u53CA\u672A\u5145\u5206\u62CD\u6444\u7684\u89D2\u843D\u4ECD\u53EF\u80FD\u6709\u91CD\u5EFA\u7455\u75B5\u3002" };
 var terraceBase = { data: terrace_default, destination: "terrace", label: "\u9732\u53F0 \xB7 \u5B9E\u666F\u63A2\u7D22", source: null, credit: "\u9732\u53F0\u5B9E\u62CD \xB7 Remy \u91CD\u5EFA", scope: "\u5728\u9732\u53F0\u5165\u53E3\u3001\u4E2D\u592E\u7A7A\u5730\u548C\u89C2\u666F\u7AEF\u4E4B\u95F4\u8FDE\u7EED\u81EA\u7531\u8D70\u52A8\u3002\u6309\u62CD\u6444\u8F68\u8FF9\u548C\u5730\u677F\u70B9\u4E91\u6821\u6B63\u6A21\u578B\u503E\u659C\u3001\u5730\u9762\u53CA\u89C6\u70B9\u9AD8\u5EA6\uFF1B\u73BB\u7483\u5E55\u5899\u3001\u82B1\u7BB1\u3001\u62A4\u680F\u4E0E\u684C\u6905\u91C7\u7528\u7B80\u5316\u963B\u6321\u3002\u8FDC\u5904\u697C\u5B87\u4E3A\u80CC\u666F\u626B\u63CF\uFF0C\u672A\u5F00\u653E\u884C\u8D70\u3002" };
 var cafeteriaBase = { data: cafeteria_default, destination: "cafeteria", label: "\u98DF\u5802", source: null, credit: "\u98DF\u5802\u5B9E\u62CD", scope: "\u4FDD\u7559\u4EBA\u7269\uFF0C\u7ED3\u5408\u539F\u59CB\u53D6\u9910\u533A\u4E0E\u8865\u62CD\u7528\u9910\u533A\u3002\u5165\u53E3\u3001\u53D6\u9910\u901A\u9053\u548C\u9910\u684C\u65C1\u7684\u8FC7\u9053\u53EF\u4EE5\u8FDE\u7EED\u5F80\u8FD4\uFF0C\u5730\u9762\u3001\u67DC\u53F0\u3001\u7ACB\u67F1\u548C\u684C\u6905\u91C7\u7528\u6821\u51C6\u540E\u7684\u7B80\u5316\u78B0\u649E\u3002\u73BB\u7483\u53CD\u5C04\u3001\u4EBA\u7269\u8FD0\u52A8\u6B8B\u5F71\u4E0E\u8FDC\u5904\u672A\u5145\u5206\u62CD\u6444\u7684\u533A\u57DF\u4ECD\u6709\u91CD\u5EFA\u7455\u75B5\u3002" };
 var scenes = {
@@ -103817,7 +103816,7 @@ if (Object.hasOwn(standaloneScenes, requested)) {
     $("area-help").hidden = true;
   }
   if (["two-floor", "hackathon"].includes(current.destination)) $("attribution").textContent = current.scope + " \u6E32\u67D3\u5668\uFF1ASuperSplat Viewer / PlayCanvas\uFF08MIT\uFF09\u3002";
-  if (current.destination === "building2") $("attribution").textContent = "\u7D20\u6750\u6765\u81EA\u7528\u6237\u63D0\u4F9B\u76842\u53F7\u697C\u5B9E\u666F\u5206\u4EAB\u9875\u3002\u4F7F\u7528\u5176 100 \u4E07\u70B9 SOG \u6A21\u578B\uFF0C\u7ED3\u5408\u62CD\u6444\u8F68\u8FF9\u4E0E\u6A21\u578B\u8F6E\u5ED3\u6821\u51C6\u7AD9\u7ACB\u773C\u9AD8\u3001\u5730\u9762\u548C\u7B80\u5316\u969C\u788D\u3002\u539F\u59CB\u4F53\u7D20\u5728\u95E8\u53E3\u548C\u684C\u6905\u5904\u5B58\u5728\u788E\u5757\uFF0C\u672C\u573A\u666F\u4F7F\u7528\u6821\u51C6\u540E\u7684\u5E73\u9762\u78B0\u649E\uFF0C\u4E0D\u4EE3\u8868\u5B9E\u6D4B\u5EFA\u7B51\u5C3A\u5BF8\u3002\u6E32\u67D3\u5668\uFF1ASuperSplat Viewer / PlayCanvas\uFF08MIT\uFF09\u3002";
+  if (current.destination === "building2") $("attribution").textContent = "\u7D20\u6750\u6765\u81EA\u7528\u6237\u63D0\u4F9B\u7684\u4F1A\u8BAE\u5BA4\u5B9E\u666F\u5206\u4EAB\u9875\u3002\u4F7F\u7528\u5176 100 \u4E07\u70B9 SOG \u6A21\u578B\uFF0C\u7ED3\u5408\u62CD\u6444\u8F68\u8FF9\u4E0E\u6A21\u578B\u8F6E\u5ED3\u6821\u51C6\u7AD9\u7ACB\u773C\u9AD8\u3001\u5730\u9762\u548C\u7B80\u5316\u969C\u788D\u3002\u539F\u59CB\u4F53\u7D20\u5728\u95E8\u53E3\u548C\u684C\u6905\u5904\u5B58\u5728\u788E\u5757\uFF0C\u672C\u573A\u666F\u4F7F\u7528\u6821\u51C6\u540E\u7684\u5E73\u9762\u78B0\u649E\uFF0C\u4E0D\u4EE3\u8868\u5B9E\u6D4B\u5EFA\u7B51\u5C3A\u5BF8\u3002\u6E32\u67D3\u5668\uFF1ASuperSplat Viewer / PlayCanvas\uFF08MIT\uFF09\u3002";
   $("about-source").href = $("source").href;
   if (current.destination === "terrace") $("attribution").textContent = "\u7D20\u6750\u6765\u81EA\u7528\u6237\u63D0\u4F9B\u7684\u9732\u53F0\u5B9E\u666F\u5206\u4EAB\u9875\uFF0C\u4F7F\u7528\u5176 100 \u4E07\u70B9 SOG \u6A21\u578B\u3002\u672C\u7AD9\u6821\u6B63\u6A21\u578B\u503E\u659C\u5E76\u589E\u52A0\u81EA\u7531\u6B65\u884C\u3001\u5730\u9762\u548C\u7B80\u5316\u969C\u788D\u3002\u5C3A\u5EA6\u6309\u539F\u62CD\u6444\u89C6\u70B9\u4F30\u7B97\uFF0C\u672A\u505A\u73B0\u573A\u6D4B\u91CF\uFF1B\u684C\u6905\u3001\u82B1\u7BB1\u91C7\u7528\u6574\u4F53\u8F6E\u5ED3\u963B\u6321\uFF0C\u672A\u5EFA\u7ACB\u6BCF\u6839\u6905\u817F\u7684\u7CBE\u7EC6\u7269\u7406\u3002\u6E32\u67D3\u5668\uFF1ASuperSplat Viewer / PlayCanvas\uFF08MIT\uFF09\u3002";
   const area = $("area");
