@@ -17,13 +17,29 @@ export function encodePcmWav(chunks,sampleRate){
 export function createCloudRecognition({getEndpoint,workletUrl,onState,onTranscript,onComplete,onFallback,onLevel=()=>{},mediaDevices=navigator.mediaDevices,AudioContext=window.AudioContext||window.webkitAudioContext,WorkletNode=window.AudioWorkletNode,fetchImpl=fetch}){
  let active=null;
  function release(s){
-  clearTimeout(s.timer);s.stream?.getTracks().forEach(t=>t.stop());
+  clearTimeout(s.timer);clearTimeout(s.previewTimer);s.previewController?.abort();s.stream?.getTracks().forEach(t=>t.stop());
   for(const node of [s.source,s.processor,s.gain])try{node?.disconnect();}catch{}
   if(s.context){s.context.close().catch(()=>{});s.context=null;}
   onLevel(0);
  }
  function cancel(){const s=active;active=null;if(s){s.controller.abort();release(s);}onState('idle');}
  function fail(s,message){if(s!==active)return;cancel();onFallback(message,'');}
+ async function preview(s){
+  if(s!==active||s.ending||s.previewBusy||!s.heard||s.samples/s.rate<s.nextPreview)return;
+  // The HTTP ASR endpoint accepts complete WAVs. Send bounded, sequential
+  // snapshots for a provisional caption; only end() can submit a conversation.
+  s.previewBusy=true;s.nextPreview=s.samples/s.rate+3;
+  const controller=new AbortController();s.previewController=controller;
+  s.previewTimer=setTimeout(()=>controller.abort(),4500);
+  try{
+   const response=await fetchImpl(getEndpoint()+'/api/npc/transcribe',{method:'POST',headers:{'Content-Type':'audio/wav'},body:encodePcmWav(s.chunks,s.rate),signal:controller.signal});
+   if(!response.ok)return;
+   const data=await response.json();if(s!==active||s.ending||controller.signal.aborted)return;
+   const text=typeof data.text==='string'?data.text.trim():'';
+   if(text)onTranscript(text,{final:false});
+  }catch{/* A missed preview must not interrupt recording or final recognition. */}
+  finally{clearTimeout(s.previewTimer);s.previewBusy=false;if(s.previewController===controller)s.previewController=null;}
+ }
  async function end(){
   const s=active;if(!s||s.ending)return;s.ending=true;
   if(!s.rate||s.samples/s.rate<.3||!s.heard){fail(s,'no-speech');return;}
@@ -34,14 +50,14 @@ export function createCloudRecognition({getEndpoint,workletUrl,onState,onTranscr
    const data=await response.json();if(s!==active)return;
    if(!response.ok)throw Error(data.error||'语音识别失败，请重试。');
    const text=typeof data.text==='string'?data.text.trim():'';
-   cancel();if(text){onTranscript(text);onComplete(text);}else onFallback('no-speech','');
+   cancel();if(text){onTranscript(text,{final:true});onComplete(text);}else onFallback('no-speech','');
   }catch(error){if(s===active)fail(s,error.name==='AbortError'?'timeout':error instanceof TypeError?'语音服务连接失败，请检查网络后重试。':error.message||'network');}
  }
  async function start(){
   cancel();
   if(!getEndpoint()){onFallback('语音服务尚未连接，请完成服务地址配置。','');return;}
   if(!mediaDevices?.getUserMedia||!AudioContext){onFallback('当前应用未开放网页麦克风，请检查微信或飞书的麦克风权限与版本。','');return;}
-  const s={controller:new AbortController(),chunks:[],samples:0,heard:false,voiceTime:0,silence:0,ending:false};active=s;onState('starting');
+  const s={controller:new AbortController(),chunks:[],samples:0,heard:false,voiceTime:0,silence:0,ending:false,nextPreview:1.4,previewBusy:false};active=s;onState('starting');
   s.timer=setTimeout(()=>fail(s,'麦克风没有启动，请允许微信或飞书访问麦克风后重试。'),15000);
   try{
    // Create/resume in the tap event, before awaiting the permission dialog.
@@ -57,6 +73,7 @@ export function createCloudRecognition({getEndpoint,workletUrl,onState,onTranscr
     if(energy>.012){s.voiceTime+=dt;s.silence=0;if(s.voiceTime>.16)s.heard=true;}else s.silence+=dt;
     if(s.samples/s.rate>=30||(s.heard&&s.silence>1.35))end();
     else if(!s.heard&&s.samples/s.rate>10)fail(s,'no-speech');
+    else void preview(s);
    };
    s.source=s.context.createMediaStreamSource(stream);s.gain=s.context.createGain();s.gain.gain.value=0;
    if(s.context.audioWorklet&&WorkletNode){

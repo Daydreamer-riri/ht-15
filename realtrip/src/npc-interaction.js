@@ -26,6 +26,7 @@ export async function initNpc({viewer,navigation,base,stop,space}){
  host.innerHTML=`<div class="npc-experience"><span></span> NPC 独立体验</div>
   <button class="npc-world-label" aria-label="让小蓝挥手打招呼"><span>小蓝 <i>AI</i></span><small>点我打招呼</small></button>
   <div class="npc-bottom">
+   <div class="npc-transcript" role="status" aria-live="polite" hidden><span>正在听</span><p></p></div>
    <div class="npc-caption" role="status" aria-live="polite" hidden><span class="npc-caption-name">小蓝</span><p></p></div>
    <div class="npc-status" role="status" aria-live="polite">正在准备小蓝…</div>
    <div class="npc-voice-help" role="status" hidden></div>
@@ -33,7 +34,7 @@ export async function initNpc({viewer,navigation,base,stop,space}){
    <div class="npc-controls" aria-label="与小蓝交流">
     <button class="npc-mic" aria-label="点击和小蓝说话" title="语音 · E">${svg('mic')}<span>说话</span></button>
     <button class="npc-keyboard" aria-label="打开键盘输入" aria-expanded="false" title="打字 · T">${svg('keyboard')}<span>打字</span></button>
-    <div class="npc-extra"><button class="npc-audio" aria-label="重播小蓝的回答" title="重播回答" disabled>${svg('audio')}</button>
+    <div class="npc-extra"><button class="npc-audio" aria-label="重播小蓝的回答" title="没听到？点此重播" disabled>${svg('audio')}<span>重播</span></button>
     <button class="npc-stop" aria-label="打断小蓝" title="停止回答" hidden>${svg('stop')}</button></div>
    </div>
   </div>`;
@@ -44,7 +45,8 @@ export async function initNpc({viewer,navigation,base,stop,space}){
  let recognitionPhase='idle',audioUnlocked=false,pendingGreeting=false,voiceGateway='';
  let config={},near=false,keyboardOpen=false,listening=false,thinking=false,speaking=false,playbackPending=false,disposed=false,lastReply='',note='',configError='',captionTimer,noteTimer;
  function setCaption(text){clearTimeout(captionTimer);caption.querySelector('p').textContent=text;caption.hidden=!text;}
- function scheduleCaptionDismiss(){clearTimeout(captionTimer);captionTimer=setTimeout(()=>setCaption(''),8000);}
+ function setTranscript(text,confirmed=false){const element=$('.npc-transcript'),content=element.querySelector('p');element.querySelector('span').textContent=confirmed?'你说':'正在听';content.textContent=text;element.hidden=!text;content.scrollTop=confirmed?0:content.scrollHeight;}
+ function scheduleCaptionDismiss(){clearTimeout(captionTimer);captionTimer=setTimeout(()=>{setCaption('');setTranscript('');},8000);}
  function showNote(text){note=text;sync();}
  function pauseMovement(){navigation.setEnabled(!keyboardOpen&&!listening&&!document.getElementById('about')?.open);stop();}
  function releasePointer(){stop();if(document.pointerLockElement)document.exitPointerLock();}
@@ -59,12 +61,12 @@ export async function initNpc({viewer,navigation,base,stop,space}){
   host.dataset.keyboard=String(keyboardOpen);host.dataset.near=String(near);
   character.setEngaged(keyboardOpen||listening||thinking||speaking||playbackPending);
   character.setState(recognitionPhase==='listening'?'listening':thinking?'thinking':speaking?'speaking':'idle');
-  status.textContent=configError||(!near?'走近舞台上的小蓝':note||(recognitionPhase==='starting'?'正在启动麦克风…':recognitionPhase==='transcribing'?'正在识别你说的话…':recognitionPhase==='ending'?'正在确认识别结果…':listening?'我在听 · 说完自动发送':thinking?'小蓝正在想…':speaking||playbackPending?'小蓝正在回答':!config.apiKey?'正在连接 DeepSeek…':keyboardOpen?'输入后发送，小蓝会直接回答':voiceGateway||container?'点麦克风或键盘，与小蓝聊聊':SpeechRecognition?'点麦克风说话，或用键盘输入':'可用手机键盘的语音输入'));
-  label.querySelector('small').textContent=listening?'我在听':thinking?'让我想想':speaking?'正在回答':near?'点我打招呼':'走近聊聊';
-  host.dataset.phase=listening?recognitionPhase:thinking?'thinking':speaking||playbackPending?'speaking':'idle';
+  status.textContent=configError||(!near?'走近舞台上的小蓝':note||(recognitionPhase==='starting'?'正在启动麦克风…':recognitionPhase==='transcribing'?'正在识别你说的话…':recognitionPhase==='ending'?'正在确认识别结果…':listening?'我在听 · 说完自动发送':thinking?'小蓝正在想…':playbackPending?'文字已回复 · 正在准备语音…':speaking?'小蓝正在说话':!config.apiKey?'正在连接 DeepSeek…':keyboardOpen?'输入后发送，小蓝会直接回答':voiceGateway||container?'点麦克风或键盘，与小蓝聊聊':SpeechRecognition?'点麦克风说话，或用键盘输入':'可用手机键盘的语音输入'));
+  label.querySelector('small').textContent=listening?'我在听':thinking?'让我想想':playbackPending?'准备语音':speaking?'正在说话':near?'点我打招呼':'走近聊聊';
+  host.dataset.phase=listening?recognitionPhase:thinking?'thinking':playbackPending?'preparing':speaking?'speaking':'idle';
  }
  const speechEvents={
-  onQueued(){playbackPending=true;sync();},
+  onQueued(){playbackPending=true;speaking=false;sync();},
   onStart(){playbackPending=false;speaking=true;sync();},
   onEnd(){playbackPending=false;speaking=false;sync();},
   onCaption:setCaption,onComplete:scheduleCaptionDismiss,onError:showNote};
@@ -78,10 +80,10 @@ export async function initNpc({viewer,navigation,base,stop,space}){
   onError(error,text){input.value=text;showNote(error.message);}});
  const recognitionEvents={
   onState(value){recognitionPhase=value;listening=value!=='idle';pauseMovement();sync();},
-  onTranscript(text){note=text?`听到：${text.slice(-46)}`:'';input.value=text;sync();},
-  onComplete:submit,
+  onTranscript(text,{final=false}={}){setTranscript(text,final);input.value=text;sync();},
+  onComplete(text){submit(text,{voice:true});},
   onFallback(error,draft){
-   if(disposed||!near)return;if(draft)input.value=draft;note='';
+   if(disposed||!near)return;if(draft)input.value=draft;note='';setTranscript('');
    if(!voiceGateway){setKeyboard(true);$('.npc-voice-help').textContent=recognitionHint(error,container);}
    else{$('.npc-voice-help').textContent=({'not-allowed':'请在系统设置中允许微信或飞书访问麦克风，然后重新点击说话。','audio-capture':'没有找到可用麦克风，请检查手机的麦克风权限。','no-speech':'没听清，再点一次麦克风告诉我吧。',timeout:'语音识别超时了，请重新说一次。'})[error]||error;}
    $('.npc-voice-help').hidden=false;
@@ -90,27 +92,28 @@ export async function initNpc({viewer,navigation,base,stop,space}){
  const browserRecognition=createNpcRecognition({...recognitionEvents,Recognition:SpeechRecognition});
  const cloudRecognition=createCloudRecognition({...recognitionEvents,getEndpoint:()=>voiceGateway,workletUrl:base+'npc/pcm-capture-worklet.js',onLevel:level=>mic.style.setProperty('--voice-level',String(level))});
  function stopRecognition(){browserRecognition.cancel();cloudRecognition.cancel();}
- function interrupt({clear=false}={}){pendingGreeting=false;clearTimeout(noteTimer);clearTimeout(captionTimer);session.cancel();stopRecognition();speech.stop();cloudSpeech.stop();if(clear)setCaption('');note='';sync();}
+ function interrupt({clear=false}={}){const unfinished=listening;pendingGreeting=false;clearTimeout(noteTimer);clearTimeout(captionTimer);session.cancel();stopRecognition();speech.stop();cloudSpeech.stop();if(clear)setCaption('');if(clear||unfinished)setTranscript('');note='';sync();}
  function setKeyboard(open){
   if(open&&!near)return;
+  if(open)setTranscript('');
   keyboardOpen=open;if(!open)$('.npc-voice-help').hidden=true;releasePointer();pauseMovement();sync();updateViewport();
   if(open){stopRecognition();input.focus();}else{blurControls();if(!caption.hidden&&!speaking&&!thinking)scheduleCaptionDismiss();}
  }
- function submit(text){
+ function submit(text,{voice=false}={}){
   text=text.trim();if(!text||!near||!config.apiKey)return;unlockAudio();
-  greeting.dismiss();interrupt();setKeyboard(false);input.value='';setCaption('');
+  greeting.dismiss();interrupt();setKeyboard(false);input.value='';setCaption('');setTranscript(voice?text:'',true);
   synth?.resume();session.submit(text);
  }
  function listen(){
   if(!near||!config.apiKey)return;
   greeting.dismiss();
-  if(['starting','transcribing'].includes(recognitionPhase)){stopRecognition();return;}
+  if(['starting','transcribing'].includes(recognitionPhase)){stopRecognition();setTranscript('');return;}
   if(listening){(voiceGateway?cloudRecognition:browserRecognition).end();return;}
-  interrupt();setKeyboard(false);releasePointer();setCaption('');synth?.resume();
+  interrupt({clear:true});setKeyboard(false);releasePointer();synth?.resume();
   (voiceGateway?cloudRecognition:browserRecognition).start();
  }
  function greet(manual=false){
-  if(manual){greeting.dismiss();interrupt();}
+  if(manual){greeting.dismiss();interrupt({clear:true});}
   character.wave();note='';lastReply=reactions.greeting();setCaption(lastReply);
   pendingGreeting=!audioUnlocked&&!manual;
   if(!pendingGreeting)playReply(lastReply);else scheduleCaptionDismiss();
@@ -124,7 +127,7 @@ export async function initNpc({viewer,navigation,base,stop,space}){
   if(pendingGreeting&&near&&!caption.hidden&&!event.target.closest?.('button,input,dialog,[data-explorer-ui]')){pendingGreeting=false;playReply(lastReply);}
  };
  window.addEventListener('pointerdown',onGesture);
- keyboard.onclick=()=>{greeting.dismiss();if(!keyboardOpen)interrupt();setKeyboard(!keyboardOpen);};
+ keyboard.onclick=()=>{greeting.dismiss();if(!keyboardOpen)interrupt({clear:true});setKeyboard(!keyboardOpen);};
  $('.npc-fold').onclick=()=>setKeyboard(false);
  form.onsubmit=event=>{event.preventDefault();if(!event.isComposing)submit(input.value);};
  input.addEventListener('keydown',event=>{if(event.key==='Enter'&&event.isComposing)event.preventDefault();});

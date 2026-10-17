@@ -4,11 +4,13 @@
 
 ## 当前链路
 
-网页麦克风 → 16 kHz 单声道 PCM WAV → `/api/npc/transcribe` → `qwen3-asr-flash` → 已有 DeepSeek 对话 → `/api/npc/speak` → `qwen3-tts-flash`（Ethan）→ 网页 AudioContext 播放。
+网页麦克风 → 16 kHz 单声道 PCM WAV → `/api/npc/transcribe` → `qwen3-asr-flash` → 已有 DeepSeek 对话 → `/api/npc/speak` → `qwen3-tts-flash`（Ethan）→ 网页媒体播放器播放。
 
 云模式不依赖 SpeechRecognition。点击开始，再次点击或说完停顿约 1.35 秒后发送，最长 30 秒。录音结束立即释放麦克风；取消/离开/隐藏页面会停止录音和播放，并忽略迟到结果。录音走 AudioWorklet；不支持时使用 WebAudio ScriptProcessor。未获麦克风权限的 WebView 无法由云 ASR 绕过，需在微信/飞书系统权限中允许访问。实际 iOS、Android 微信/飞书需真机验证。
 
-语音和对话都是用户点击后进行；首次靠近可先显示字幕，首次触摸解锁后才播放声音。全程没有聊天历史弹框。
+录音约 1.4 秒后开始请求文字预览，后续最多每 3 秒一次、同时只允许一个预览请求；它复用 WAV 识别接口，不是逐字流式识别，会增加少量 ASR 调用。预览失败不影响录音，停止时取消预览并以整段录音的最终识别为准。最终内容以“你说”字幕保留到本轮回答结束后 8 秒；开始下一轮、取消录音或离开时清除。预览永不触发对话提交。
+
+首次靠近可先显示字幕，首次触摸解锁后才播放声音。播放器复用同一个 HTMLAudioElement，区分语音准备与实际播放，只有播放时间推进才进入说话动画；被拦截或卡住会显示重播提示。已生成的当前回复音频只缓存在页面内存中，点重播可直接启动，不必再等生成。全程没有聊天历史弹框。
 
 ## 本地运行
 

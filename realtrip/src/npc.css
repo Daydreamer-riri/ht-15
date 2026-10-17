@@ -5,6 +5,7 @@
 .npc-bottom{position:fixed;bottom:calc(max(24px,env(safe-area-inset-bottom)) + var(--npc-keyboard-inset,0px));left:50%;transform:translateX(-50%);z-index:20;width:min(520px,calc(100vw - 190px));display:flex;align-items:center;flex-direction:column;gap:10px;pointer-events:none}
 .npc-caption{width:min(520px,calc(100vw - 28px));text-align:center;padding:8px 12px;background:radial-gradient(ellipse at center,#07162599,transparent 75%);box-sizing:border-box;max-height:22dvh;overflow-y:auto;pointer-events:auto;scrollbar-width:thin}.npc-caption-name{font-size:10px;letter-spacing:3px;color:#b3f3ff;text-shadow:0 1px 6px #000}.npc-caption p{font-size:16px;line-height:1.65;font-weight:500;color:#fff;margin:4px 0 0;text-shadow:0 2px 5px #000,0 0 14px #000c;overflow-wrap:anywhere;white-space:pre-wrap}
 .npc-status{color:#e5f3fd;font-size:11px;line-height:1.5;text-align:center;text-shadow:0 1px 5px #000,0 0 12px #000;max-width:100%;overflow-wrap:anywhere}
+.npc-transcript{width:min(440px,calc(100vw - 28px));box-sizing:border-box;padding:6px 12px;text-align:center;color:#d6f4ff;background:radial-gradient(ellipse at center,#102635a8,transparent 78%);pointer-events:auto}.npc-transcript>span{font-size:10px;color:#accede}.npc-transcript p{margin:3px 0 0;font-size:13px;line-height:1.55;max-height:4.65em;overflow-y:auto;overflow-wrap:anywhere;white-space:pre-wrap;text-shadow:0 1px 5px #000;scrollbar-width:thin}
 .npc-controls{display:flex;align-items:center;justify-content:center;gap:8px;pointer-events:auto}
 .npc-controls button{display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid #e2f7ff44;border-radius:99px;backdrop-filter:blur(20px);color:#e6f7ff;height:48px;padding:0 14px;background:#173041cd;box-shadow:0 5px 24px #0002;transition:background .2s,transform .2s;box-sizing:border-box}
 .npc-controls svg,.npc-form svg{width:20px;height:20px;flex-shrink:0}.npc-controls span{font-size:12px}
@@ -13,6 +14,7 @@
 .npc-keyboard{order:0;width:48px;padding:0!important}.npc-keyboard span{display:none}.npc-extra{order:2}
 .npc-extra:has(.npc-audio[hidden]):has(.npc-stop[hidden]){display:none}
 .npc-controls .npc-audio,.npc-controls .npc-stop{width:48px;padding:0;background:#163046b8;border-color:#c5ebff33}.npc-extra svg{width:18px;height:18px}
+.npc-controls .npc-audio{flex-direction:column;gap:2px}.npc-controls .npc-audio span{font-size:9px;line-height:1}
 .npc-form{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:4px;width:min(440px,100%);padding:6px;background:#102635ed;border:1px solid #b9e7ff66;border-radius:20px;backdrop-filter:blur(20px);box-sizing:border-box;pointer-events:auto;box-shadow:0 10px 35px #0003}
 .npc-form input{width:100%;min-width:0;box-sizing:border-box;background:transparent;border:0;outline:none;color:#fff;padding:8px 2px;font-size:16px!important;line-height:24px}.npc-form input::placeholder{color:#9eb4c5}
 .npc-form button{display:flex;align-items:center;justify-content:center;width:44px;height:44px;min-height:44px;padding:0;box-sizing:border-box;border:0;border-radius:14px;background:#a1eaff;color:#153b50;line-height:1}
