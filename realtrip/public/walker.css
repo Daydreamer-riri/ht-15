@@ -1,0 +1,56 @@
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#18322d;color:#fff;font:14px -apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif}button,select{font:inherit;cursor:pointer}button{touch-action:manipulation}#world{position:absolute;inset:0}header{position:absolute;inset:0 0 auto;height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 25px;gap:12px;background:linear-gradient(#102921bd,transparent);pointer-events:none}header>*{pointer-events:auto}.brand{color:white;text-decoration:none;font-size:19px;font-weight:650}select{border:1px solid #ffffff45;border-radius:20px;padding:9px;background:#193b32ce;color:white;max-width:230px}option{background:#173c35}button{border:1px solid #ffffff50;border-radius:22px;padding:9px 14px;background:#16382ed9;color:white}#help{border-radius:50%;width:34px;height:34px;padding:0}.place{position:absolute;top:93px;left:26px;pointer-events:none;text-shadow:0 2px 7px #0008}.place>span{font-size:9px;letter-spacing:2px;opacity:.8}.place h1{font-size:27px;font-weight:500;margin:8px 0}.place p{font-size:11px;margin:0}.place b{color:#d6edb4;font-weight:500}.tools{position:absolute;right:25px;top:93px;display:flex;gap:6px}.tools button{font-size:12px}.controls{pointer-events:none;position:absolute;inset:0}#pad{pointer-events:auto;position:absolute;left:28px;bottom:66px;width:126px;height:126px;border-radius:50%;background:#173c3566;border:1px solid #ffffff70;box-shadow:inset 0 0 0 12px #ffffff0a;touch-action:none;padding:0;user-select:none;-webkit-user-select:none}#pad:disabled{opacity:.3}.pad-cross{font-size:45px;font-weight:200;color:#ffffff30;pointer-events:none}#knob{position:absolute;left:50%;top:50%;width:48px;height:48px;border-radius:50%;background:#edf5e8de;border:1px solid #fff;box-shadow:0 2px 12px #0004;transform:translate(-50%,-50%);pointer-events:none}.move-label{position:absolute;left:64px;bottom:44px;font-size:11px;text-shadow:0 1px 4px #000}.look-label{position:absolute;right:32px;bottom:105px;font-size:12px;color:#ffffffe0;text-shadow:0 1px 4px #000}.desktop-label{position:absolute;bottom:48px;left:50%;transform:translateX(-50%);font-size:11px;text-shadow:0 1px 4px #000;white-space:nowrap}footer{position:absolute;bottom:0;left:0;right:0;padding:10px 18px;display:flex;justify-content:space-between;background:linear-gradient(transparent,#11291bab);font-size:9px;color:#ffffffb8;pointer-events:none}footer a{pointer-events:auto;color:inherit;text-decoration:none}#loading{position:absolute;inset:0;display:grid;place-items:center;background:#142a24cc;z-index:10}.loading-card{padding:30px;text-align:center}.loading-card h2{font-weight:400;font-size:23px}.loading-card p{font-size:13px}.loading-card small{color:#bdc9c2;font-size:11px}.loading-card button{display:block;margin:20px auto}.spinner{display:inline-block;width:28px;height:28px;border:2px solid #ffffff30;border-top-color:#d6edb4;border-radius:50%;animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}dialog{max-width:490px;width:calc(100% - 32px);max-height:85dvh;padding:30px;border:0;border-radius:18px;background:#f6f5ef;color:#173c35}dialog::backdrop{background:#0b241bbb}dialog h2{font-weight:500;font-size:24px}dialog h3{font-size:14px}dialog p{font-size:13px;line-height:1.8;color:#50645a}dialog a{color:#265d42}#close-about{float:right;background:transparent;color:#173c35;border:0;font-size:23px;padding:0}#world .sse-viewer{width:100%;height:100%}[hidden]{display:none!important}@media(max-width:600px){header{height:62px;padding:0 12px;gap:7px}.brand{font-size:14px;white-space:nowrap}select{max-width:190px;font-size:12px;padding:8px}#help{width:27px;height:27px;flex-shrink:0}.place{left:17px;top:90px}.place>span{font-size:7px}.place h1{font-size:22px}.tools{top:auto;bottom:42px;right:14px;flex-direction:column}.tools button{font-size:11px;padding:8px 10px}#pad{left:20px;bottom:71px;width:122px;height:122px}.move-label{left:60px;bottom:50px}.look-label{right:23px;bottom:210px;font-size:11px}.desktop-label{display:none}footer{font-size:8px;padding:8px 13px}}@media(max-height:500px){header{height:52px}.place{top:67px}.place h1{font-size:19px}.tools{top:67px;bottom:auto;right:16px;flex-direction:row}#pad{width:100px;height:100px;bottom:51px}.move-label{bottom:32px;left:53px}.look-label{bottom:62px}.desktop-label{display:none}}button:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #d6edb4;outline-offset:3px}
+.immersive header,.immersive .place,.immersive footer{display:none}
+
+#coverage{display:block;font-size:10px;opacity:.85;margin-top:8px}.place #area-picker{pointer-events:auto;display:flex;align-items:center;gap:7px;font-size:11px;margin-top:10px}.place #area{font-size:12px;padding:6px 10px}@media(max-height:500px){#coverage{display:none}.place #area-picker{margin-top:4px}}
+
+/* Destination switching stays available while remote scan assets load. */
+header{z-index:11}
+
+/* Keep touch controls inside the visible viewport and clear of phone cutouts. */
+html,body{overscroll-behavior:none}body{position:relative;height:100dvh}
+#world canvas{touch-action:none}
+#jump{display:none;pointer-events:auto;position:absolute;right:24px;bottom:190px;width:66px;height:66px;padding:8px;border-radius:50%;background:#173c35b8;touch-action:manipulation;font-size:11px}
+#jump span{display:block;font-size:25px;line-height:27px}
+#rotate-hint{position:absolute;z-index:20;left:50%;top:40%;transform:translate(-50%,-50%);width:min(320px,calc(100% - 40px));padding:24px;border:1px solid #ffffff40;border-radius:22px;text-align:center;background:#15362ff2;box-shadow:0 16px 60px #0005}
+#rotate-hint .rotate-phone{display:block;font-size:34px;color:#d6edb4;margin-bottom:12px}
+#rotate-hint strong{display:block;font-size:20px;font-weight:550}
+#rotate-hint p{font-size:12px;margin:12px 0}
+#rotate-hint small{display:block;color:#d4dfd9;font-size:11px;line-height:1.7}
+#rotate-hint button{margin-top:18px;min-height:44px}
+@media(any-pointer:coarse),(max-width:600px),(max-height:600px){
+ #jump{display:block}
+ #help{width:44px;height:44px}
+ #fullscreen{min-height:44px}
+ .desktop-label{display:none}
+}
+@media(orientation:portrait) and (max-width:600px){
+ header{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
+ .look-label{bottom:275px;right:24px}
+ #pad{bottom:calc(71px + env(safe-area-inset-bottom))}
+ #jump{bottom:calc(205px + env(safe-area-inset-bottom))}
+ .tools{bottom:calc(42px + env(safe-area-inset-bottom))}
+ .immersive .tools{top:calc(12px + env(safe-area-inset-top));bottom:auto;flex-direction:row;right:max(12px,env(safe-area-inset-right))}
+}
+@media(orientation:landscape) and (max-height:600px){
+ header{left:env(safe-area-inset-left);right:auto;width:auto;max-width:45%;height:62px;padding:8px 12px;gap:8px;background:none}
+ .brand{display:none}
+ #destination{max-width:220px;font-size:12px;min-height:44px}
+ .place{top:70px;left:calc(16px + env(safe-area-inset-left))}
+ .place>span,.place h1,.place p,#coverage,.place #area-label{display:none}
+ .place #area-picker{margin:0}
+ .place #area{min-height:38px;font-size:11px;background:#16382ec9}
+ .tools,.immersive .tools{top:calc(10px + env(safe-area-inset-top));bottom:auto;right:calc(12px + env(safe-area-inset-right));flex-direction:row;gap:6px}
+ .tools button{min-height:44px;font-size:11px;padding:8px 12px}
+ .tools>a{display:none}
+ #pad{left:calc(30px + env(safe-area-inset-left));bottom:calc(42px + env(safe-area-inset-bottom));width:116px;height:116px}
+ #knob{width:46px;height:46px}
+ .move-label{left:calc(30px + env(safe-area-inset-left));bottom:calc(18px + env(safe-area-inset-bottom));width:116px;text-align:center}
+ #jump{right:calc(30px + env(safe-area-inset-right));bottom:calc(30px + env(safe-area-inset-bottom));width:68px;height:68px}
+ .look-label{right:calc(124px + env(safe-area-inset-right));bottom:calc(54px + env(safe-area-inset-bottom));font-size:11px}
+ footer,.desktop-label{display:none}
+ dialog{max-height:90dvh;padding:20px}
+}
+@media(orientation:landscape) and (max-width:700px) and (max-height:600px){
+ #destination{max-width:165px;font-size:11px}
+ .tools button{padding:8px;font-size:10px}
+}

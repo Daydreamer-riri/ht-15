@@ -1,0 +1,10 @@
+{
+  "version": "terrace-20261017-v1",
+  "entry": "/?scene=terrace",
+  "modelSha256": "b2fcad5b76f236a8a39d19dd0c2fa7896409857b37ae3f4cb07a5a06fa50b647",
+  "starts": [
+    "terrace",
+    "terrace-open",
+    "terrace-view"
+  ]
+}

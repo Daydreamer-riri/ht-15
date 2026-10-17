@@ -1,0 +1,166 @@
+{
+  "name": "七天六晚北疆",
+  "source": {
+    "repository": "https://git.dev.sh.ctripcorp.com/haojiaxu/hackathon-15",
+    "path": "src/data/itinerary.ts",
+    "commit": "053ec16e64aa151ca953296d10d6f8999d9407ef",
+    "sha256": "ff9b57b021c136ec63af9101283cb1a127fcb8bc94dbce2cd69965a9d0cd0d90"
+  },
+  "days": [
+    {
+      "index": 1,
+      "cities": [
+        "上海",
+        "吐鲁番",
+        "福海",
+        "布尔津"
+      ],
+      "items": [
+        {
+          "kind": "transport",
+          "mode": "flight",
+          "from": "上海 浦东国际机场",
+          "to": "吐鲁番 交河机场"
+        },
+        {
+          "kind": "poi",
+          "name": "克拉美丽沙漠公园",
+          "image": "https://dimg04.c-ctrip.com/images/1lo1612000nu7vmckAFAC_C_180_180_R5.jpg"
+        },
+        {
+          "kind": "poi",
+          "name": "乌伦古湖(黄金海岸景区)",
+          "image": "https://dimg04.c-ctrip.com/images/0105w120009cehaav1157_C_180_180_R5.jpg"
+        },
+        {
+          "kind": "hotel",
+          "name": "布尔津夏日酒店",
+          "image": "https://dimg04.c-ctrip.com/images/1mc1l12000slq20wt9575_C_348_236_R5.jpg"
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "cities": [
+        "哈巴河",
+        "布尔津"
+      ],
+      "items": [
+        {
+          "kind": "hotel",
+          "name": "一枕云民宿(哈巴河铁热克提店)",
+          "image": "https://dimg04.c-ctrip.com/images/1mc5w12000stgq6k21E61_C_348_236_R5.jpg"
+        },
+        {
+          "kind": "custom",
+          "name": "白哈巴村"
+        },
+        {
+          "kind": "poi",
+          "name": "观鱼台",
+          "image": "https://dimg04.c-ctrip.com/images/350m160000010kn9y1F27_C_180_180_R5.jpg"
+        },
+        {
+          "kind": "poi",
+          "name": "白哈巴景区",
+          "image": "https://dimg04.c-ctrip.com/images/0102512000rw5341cEB50_C_180_180_R5.jpg"
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "cities": [
+        "布尔津",
+        "克拉玛依"
+      ],
+      "items": [
+        {
+          "kind": "poi",
+          "name": "喀纳斯景区",
+          "image": "https://dimg04.c-ctrip.com/images/100t0z000000mqgft13FF_C_180_180_R5.jpg"
+        },
+        {
+          "kind": "hotel",
+          "name": "和颐至格酒店(克拉玛依市政府店)",
+          "image": "https://dimg04.c-ctrip.com/images/1mc0p12000sxma59g7A9C_C_348_236_R5.jpg"
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "cities": [
+        "克拉玛依",
+        "博乐"
+      ],
+      "items": [
+        {
+          "kind": "poi",
+          "name": "世界魔鬼城",
+          "image": "https://dimg04.c-ctrip.com/images/0103s120009l4pao7B7A6_C_180_180_R5.jpg"
+        },
+        {
+          "kind": "poi",
+          "name": "赛里木湖",
+          "image": "https://dimg04.c-ctrip.com/images/0105212000a2cvssuAE2B_C_180_180_R5.jpg"
+        },
+        {
+          "kind": "hotel",
+          "name": "蓝湖国际酒店A座(赛里木湖景区店)",
+          "image": "https://dimg04.c-ctrip.com/images/1mc4312000qrbxplo6F0C_C_348_236_R5.jpg"
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "cities": [
+        "博乐"
+      ],
+      "items": [
+        {
+          "kind": "poi",
+          "name": "赛里木湖",
+          "image": "https://dimg04.c-ctrip.com/images/0105212000a2cvssuAE2B_C_180_180_R5.jpg"
+        },
+        {
+          "kind": "hotel",
+          "name": "蓝湖国际酒店A座(赛里木湖景区店)",
+          "image": "https://dimg04.c-ctrip.com/images/1mc4312000qrbxplo6F0C_C_348_236_R5.jpg"
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "cities": [
+        "奎屯",
+        "吐鲁番"
+      ],
+      "items": [
+        {
+          "kind": "poi",
+          "name": "独库公路",
+          "image": "https://dimg04.c-ctrip.com/images/0100e1200085kcifv469A_C_180_180_R5.jpg"
+        },
+        {
+          "kind": "hotel",
+          "name": "吐鲁番国泰民生广场军民共建路亚朵酒店",
+          "image": "https://dimg04.c-ctrip.com/images/0206p12000qgdjcd5FAD4_C_348_236_R5.jpg"
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "cities": [
+        "吐鲁番",
+        "上海"
+      ],
+      "items": [
+        {
+          "kind": "transport",
+          "mode": "flight",
+          "from": "吐鲁番 交河机场",
+          "to": "上海 浦东国际机场"
+        }
+      ]
+    }
+  ]
+}

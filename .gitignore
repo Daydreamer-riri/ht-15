@@ -23,3 +23,8 @@ dist-ssr
 *.sw?
 
 .pi
+
+# RealTrip model assembly; canonical inputs live in realtrip/models/.
+realtrip/public/**/*.sog
+realtrip/public/**/*.bundle.*
+target/

@@ -1,0 +1,25 @@
+{
+  "files": {
+    "index.html": "0087ea95ad854b00f53f176afccb42f19ba5391913fd2c21e879559e0b548888",
+    "provenance.json": "159f8be54788659f10aa1585072fda2014a5a1933eabfbc739d5584898c56e1d",
+    "scene.sog": "45a87f0fc30689e3a228abf80584728b1ade2a97f965ee9f06752a677cf7c5d8",
+    "scene.json": "0369179eb16411125451e9bd518d120980225588b0b72ac8f1faf1e6389b6de8",
+    "walk.bundle.css": "c2a5925c5044c72e7e908e793ce28b0e46849b9716a39c2e38d0251dd2b75c26",
+    "route.json": "b4dc0d8b73d06bd22293f019a75abfcccd958173b6349d929bfc20a69a7c41e9",
+    "capture-scope.json": "5032bb396d976136206c3eeaf43eb72af88c2350226b34945b5e2c944323adcb",
+    "walk-report.json": "18a98a37e0d3bd46ec2ed20311637abb548e7a206a9ad7229b3ad1c26954afb1",
+    "walk.bundle.js": "602deba234d35c48b0d8a9c5db4a8e91d02f26642b6c1da8d758906a92b852a9",
+    "THIRD-PARTY-LICENSES.txt": "f54eda96033ff51679257b78e51ad9ad1ad19900382b34545f4eec1a9602eb11"
+  },
+  "modelSha256": "37efff04045051c99dc42497b96f89f1ce1098c4d2cc8d900eb13d2981c954a5",
+  "reviewRequired": true,
+  "sourceIncluded": false,
+  "releaseStage": "user-feedback-preview",
+  "competitionReady": false,
+  "visualReview": "\u5df2\u52a0\u5165\u7b2c\u4e09\u6bb5\u56de\u5934\u89c6\u9891\uff0c\u6539\u5584\u8d77\u70b9\u540e\u65b9\u84dd\u8272\u8363\u8a89\u5899\u548c\u5361\u5ea7\u7ec6\u8282\u3002\u4fa7\u9762\u3001\u9876\u90e8\u4ecd\u6709\u91cd\u5f71\uff1b\u671d\u4f11\u95f2\u533a\u76f4\u8d70\u7684\u8fb9\u754c\u5c1a\u672a\u6269\u5c55\u3002\u6b22\u8fce\u53cd\u9988\u5177\u4f53\u4f4d\u7f6e\u548c\u64cd\u4f5c\u3002",
+  "limitations": [
+    "\u8d77\u70b9\u56de\u5934\u7684\u84dd\u8272\u8363\u8a89\u5899\u548c\u5361\u5ea7\u5c40\u90e8\u66f4\u6e05\u695a\uff1b\u4fa7\u770b\u5c55\u67dc\u3001\u9876\u90e8\u548c\u8fdc\u5904\u4ecd\u6709\u6a21\u7cca\u4e0e\u91cd\u5f71\u3002",
+    "\u4ece\u5c55\u793a\u67dc\u671d\u4f11\u95f2\u533a\u6301\u7eed\u76f4\u884c\u4ecd\u53d7\u539f\u8def\u7ebf\u8fb9\u754c\u9650\u5236\uff0c\u5f53\u524d\u7248\u672c\u6ca1\u6709\u5f00\u653e\u65b0\u7684\u76f4\u884c\u8303\u56f4\u3002",
+    "\u7b2c\u4e09\u6bb5\u89c6\u9891\u5df2\u52a0\u5165\u91cd\u5efa\uff0c\u4f46\u8fd9\u4e0d\u662f\u5b8c\u6210\u7248\uff1b\u624b\u673a\u5b9e\u673a\u4f53\u9a8c\u7b49\u5f85\u7528\u6237\u53cd\u9988\u3002"
+  ]
+}

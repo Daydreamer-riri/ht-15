@@ -1,0 +1,40 @@
+{
+  "title": "荣誉连廊",
+  "sourceVideos": 3,
+  "originalInputMB": 732.506125,
+  "registeredViews": 521,
+  "trainingRangesSeconds": {
+    "corridor": [
+      30.446667,
+      159.000417
+    ],
+    "honors": [
+      0.0,
+      43.755
+    ],
+    "return3": [
+      0.216667,
+      22.96
+    ]
+  },
+  "walkRangesSeconds": {
+    "main": [
+      34,
+      148
+    ],
+    "honorSupplement": [
+      0,
+      44
+    ]
+  },
+  "excludedReason": "Rapid turn segments and weak outer edges are excluded from this preview; original files remain unchanged. Added return footage improves appearance within the existing walking area.",
+  "originalVideosIncluded": false,
+  "modelType": "Gaussian Splatting / SOG",
+  "metricScale": "Estimated from assumed camera height, not surveyed.",
+  "coreRegisteredViews": 419,
+  "contextRegisteredViews": 102,
+  "geometryOnlyViews": 7,
+  "appearanceTrainingViews": 494,
+  "appearanceTrainingSamples": 583,
+  "appearanceReferenceViews": 20
+}

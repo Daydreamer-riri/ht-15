@@ -1,0 +1,55 @@
+{
+  "source": "https://app.insta360.com/3dspace/detail/GS3DCedd7c150d451455497575a8852bf7285",
+  "retrieved": "2026-10-17",
+  "camera": "Insta360 X6",
+  "generator": "Remy base; local Brush texture refinement",
+  "splats": 1000000,
+  "coordinateConversion": "Camera: negate X/Y to match SuperSplat SOG rendering. Voxel v1.1 is already in PlayCanvas coordinates.",
+  "files": {
+    "scene.sog": {
+      "bytes": 16265345,
+      "sha256": "3218e14007b451c85fc74f0327378d1a5d8b845a486055a7c5ad1c0515d1ceed"
+    }
+  },
+  "calibration": "2026-10-17 core capture GS3DCedd7c150. Floor peak Y=-1.49; standing eye Y=0.06, 1.55 scan units above floor. New room/table/doorway and railing fitted to splat density and capture paths. Furniture simplified to central table; chairs and door leaves are not individual colliders.",
+  "activeCollision": {
+    "type": "reviewed level floor plan",
+    "config": "src/insta360.json#navigation",
+    "basis": "SOG point density, capture camera trajectory, visible doorway and browser round trip",
+    "rawVoxelUsed": false,
+    "limitations": "Approximate walls, railing and central table; chairs and door leaves are not individual colliders."
+  },
+  "replaces": "GS3DCfacd293e9520485594389f4aac2a0b61",
+  "review": "24 capture viewpoints and 32 four-direction inspection views plus 8 eye-level walk views visually reviewed; no people observed in reviewed views. Not a guarantee for every arbitrary viewpoint.",
+  "rawVoxelPublished": false,
+  "refinement": {
+    "sourceViews": 31,
+    "steps": 1200,
+    "geometry": "All original Gaussian means, scales, rotations and opacity restored exactly before output compression",
+    "exterior": "616304 exterior Gaussian records retained exactly before output compression",
+    "mask": "Reviewed person and TV masks; enlarged before bidirectionally consistent source-pixel alignment",
+    "imagesPublished": false,
+    "limitation": "Moderate appearance correction; transparent glass and thin chair geometry remain imperfect. Reference comparisons are not held-out accuracy."
+  },
+  "replacesModelSHA256": "80bb009bd73a956d087d493eb1309c5b272e2a48c06bad70d9a6bd0ac080d991",
+  "doorwayCleanup": {
+    "changedSplats": 497,
+    "boundsWorld": {
+      "min": [
+        1.89,
+        -1.17,
+        -1.48
+      ],
+      "max": [
+        2.58,
+        0.39,
+        0.36
+      ]
+    },
+    "feather": 0.12,
+    "opacityReductionMax": 0.94,
+    "method": "Only losslessly reencode SOG sh0 alpha for verified empty central doorway; preserve all RGB indices, geometry, SH, and all opacity outside the volume.",
+    "geometryAndColorPreservedExactly": true,
+    "limitation": "Reduces reconstructed haze inside the open doorway; does not create unobserved leaf, glass or doorframe details."
+  }
+}

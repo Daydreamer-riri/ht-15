@@ -1,0 +1,69 @@
+{
+  "settings": {
+    "version": 2,
+    "tonemapping": "none",
+    "highPrecisionRendering": true,
+    "background": {
+      "color": [
+        0.35,
+        0.55,
+        0.7
+      ]
+    },
+    "postEffectSettings": {
+      "sharpness": {
+        "enabled": true,
+        "amount": 0.08
+      },
+      "bloom": {
+        "enabled": false
+      },
+      "grading": {
+        "enabled": false
+      },
+      "vignette": {
+        "enabled": false
+      },
+      "fringing": {
+        "enabled": false
+      }
+    },
+    "animTracks": [],
+    "annotations": [],
+    "cameras": [
+      {
+        "initial": {
+          "position": [
+            0,
+            1.25,
+            1
+          ],
+          "target": [
+            -4,
+            1.1,
+            -2
+          ],
+          "fov": 68,
+          "landscapeFov": 84
+        }
+      }
+    ],
+    "startMode": "default"
+  },
+  "contentUrl": "alpine-lake/scene.sog",
+  "modelRotation": [
+    0,
+    0,
+    0,
+    1
+  ],
+  "navigation": {
+    "kind": "mesh-heightfield",
+    "url": "alpine-lake/terrain.json",
+    "eyeHeight": 1.55,
+    "radius": 0.22,
+    "speed": 1.25,
+    "jumpSpeed": 2.6,
+    "maxSlope": 0.85
+  }
+}

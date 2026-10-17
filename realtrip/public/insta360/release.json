@@ -1,0 +1,38 @@
+{
+  "version": "building2-doorway-20261017",
+  "entry": "/?scene=building2",
+  "name": "2号楼 · 会议室与连廊",
+  "sourceCapture": "GS3DCedd7c150d451455497575a8852bf7285",
+  "modelBytes": 16265345,
+  "modelSHA256": "3218e14007b451c85fc74f0327378d1a5d8b845a486055a7c5ad1c0515d1ceed",
+  "captureHeightMeters": [
+    1.5,
+    1.7
+  ],
+  "eyeHeightUnits": 1.55,
+  "floorY": -1.49,
+  "collision": "Reviewed floor, room walls, doorway, railing and central table; chairs and door leaves omitted.",
+  "landscapeHorizontalFov": 84,
+  "portraitVerticalFov": 68,
+  "refinement": "31 masked portrait views; 1200-step texture refinement; native geometry and exterior retained before SOG compression",
+  "doorwayCleanup": {
+    "changedSplats": 497,
+    "boundsWorld": {
+      "min": [
+        1.89,
+        -1.17,
+        -1.48
+      ],
+      "max": [
+        2.58,
+        0.39,
+        0.36
+      ]
+    },
+    "feather": 0.12,
+    "opacityReductionMax": 0.94,
+    "method": "Only losslessly reencode SOG sh0 alpha for verified empty central doorway; preserve all RGB indices, geometry, SH, and all opacity outside the volume.",
+    "geometryAndColorPreservedExactly": true,
+    "limitation": "Reduces reconstructed haze inside the open doorway; does not create unobserved leaf, glass or doorframe details."
+  }
+}

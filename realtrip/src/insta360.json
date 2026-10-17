@@ -1,0 +1,196 @@
+{
+  "settings": {
+    "version": 2,
+    "tonemapping": "none",
+    "highPrecisionRendering": true,
+    "background": {
+      "color": [
+        0.06,
+        0.07,
+        0.06
+      ]
+    },
+    "postEffectSettings": {
+      "sharpness": {
+        "enabled": true,
+        "amount": 0.18
+      },
+      "bloom": {
+        "enabled": false
+      },
+      "grading": {
+        "enabled": false
+      },
+      "vignette": {
+        "enabled": false
+      },
+      "fringing": {
+        "enabled": false
+      }
+    },
+    "animTracks": [],
+    "annotations": [],
+    "cameras": [
+      {
+        "initial": {
+          "position": [
+            0,
+            0.06,
+            0.22
+          ],
+          "target": [
+            0,
+            0.06,
+            3
+          ],
+          "fov": 68,
+          "landscapeFov": 84
+        }
+      }
+    ],
+    "startMode": "default"
+  },
+  "contentUrl": "insta360/scene.sog?v=building2-doorway-20261017",
+  "waypoints": {
+    "room": {
+      "position": [
+        0,
+        0.06,
+        0.22
+      ],
+      "target": [
+        0,
+        0.06,
+        3
+      ],
+      "fov": 68,
+      "landscapeFov": 84
+    },
+    "door": {
+      "position": [
+        2.2,
+        0.06,
+        -2.15
+      ],
+      "target": [
+        2.2,
+        0.06,
+        0.8
+      ],
+      "fov": 68,
+      "landscapeFov": 84
+    },
+    "aisle": {
+      "position": [
+        2.2,
+        0.06,
+        -2.2
+      ],
+      "target": [
+        -1,
+        0.06,
+        -2.2
+      ],
+      "fov": 68,
+      "landscapeFov": 84
+    },
+    "far": {
+      "position": [
+        -3,
+        0.06,
+        -2.2
+      ],
+      "target": [
+        1,
+        0.06,
+        -2.2
+      ],
+      "fov": 68,
+      "landscapeFov": 84
+    }
+  },
+  "navigation": {
+    "kind": "reviewed-level-floor",
+    "floorY": -1.49,
+    "eyeHeight": 1.55,
+    "radius": 0.18,
+    "speed": 1.45,
+    "jumpSpeed": 3.0,
+    "boundary": [
+      [
+        -6.2,
+        -2.86
+      ],
+      [
+        6.7,
+        -2.86
+      ],
+      [
+        6.7,
+        -1.22
+      ],
+      [
+        2.78,
+        -1.22
+      ],
+      [
+        2.78,
+        -0.2
+      ],
+      [
+        3.48,
+        -0.2
+      ],
+      [
+        -0.87,
+        7.03
+      ],
+      [
+        -1.91,
+        7.03
+      ],
+      [
+        -1.91,
+        -0.2
+      ],
+      [
+        1.72,
+        -0.2
+      ],
+      [
+        1.72,
+        -1.22
+      ],
+      [
+        -6.2,
+        -1.22
+      ]
+    ],
+    "obstacles": [
+      [
+        [
+          -0.68,
+          0.73
+        ],
+        [
+          0.94,
+          0.73
+        ],
+        [
+          0.9,
+          4.38
+        ],
+        [
+          -0.58,
+          4.38
+        ]
+      ]
+    ],
+    "calibration": "2026-10-17 core capture GS3DCedd7c150. Floor peak Y=-1.49; standing eye Y=0.06, 1.55 scan units above floor. New room/table/doorway and railing fitted to splat density and capture paths. Furniture simplified to central table; chairs and door leaves are not individual colliders.",
+    "captureHeightMeters": [
+      1.5,
+      1.7
+    ],
+    "estimatedMetersPerUnit": 1.032258064516129
+  }
+}

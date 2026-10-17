@@ -3,6 +3,9 @@ image: hub.cloud.ctripcorp.com/devops/centos7.2:0.0.1
 pages:
   script:
     - echo "Building the static site..."
+    - test -f dist/presentation/index.html
+    - test -f dist/walk/index.html
+    - test -f dist/walk/hackathon/scene.sog
     - rm -rf public
     - mv dist public
   artifacts:

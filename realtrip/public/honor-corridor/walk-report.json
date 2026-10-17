@@ -1,0 +1,80 @@
+{
+  "clipComponents": [
+    [
+      "corridor",
+      "honors"
+    ]
+  ],
+  "continuousAcrossAllClips": true,
+  "junctions": 14,
+  "reviewedJunctions": [],
+  "sameClipJunctions": [
+    {
+      "vertices": [
+        4,
+        11
+      ],
+      "clip": "corridor",
+      "frames": [
+        "corridor__0066.jpg",
+        "corridor__0073.jpg"
+      ],
+      "distance": 0.19289837030255388,
+      "sharedPoints": 827,
+      "floorPoints": 422
+    },
+    {
+      "vertices": [
+        5,
+        10
+      ],
+      "clip": "corridor",
+      "frames": [
+        "corridor__0066.jpg",
+        "corridor__0072.jpg"
+      ],
+      "distance": 0.14405620369498695,
+      "sharedPoints": 643,
+      "floorPoints": 520
+    },
+    {
+      "vertices": [
+        19,
+        23
+      ],
+      "clip": "corridor",
+      "frames": [
+        "corridor__0093.jpg",
+        "corridor__0114.jpg"
+      ],
+      "distance": 0.19989139262171182,
+      "sharedPoints": 130,
+      "floorPoints": 2271
+    }
+  ],
+  "floorSupportedCameras": 390,
+  "lengthEstimate": 42.26513519986778,
+  "captureCorridorHalfWidth": 0.35,
+  "estimatedGeometry": true,
+  "excludedCaptureRanges": [
+    {
+      "clip": "corridor",
+      "retainedStart": 34,
+      "retainedEnd": 148,
+      "reason": "reviewed_walk_coverage",
+      "note": "Retain corridor and lounge; omit weak opening edge and final phone-booth approach from walking. All scoped registered images remain in splat training."
+    }
+  ],
+  "floorMode": "reviewed-level",
+  "floorSupport": {
+    "corridor": {
+      "supportedViews": 224,
+      "totalViews": 225
+    },
+    "honors": {
+      "supportedViews": 166,
+      "totalViews": 166
+    }
+  },
+  "limitations": "Approximate capture corridor with local floor evidence, not a surveyed collision mesh. Reviewed level floors and junctions are recorded explicitly; walls can be under-observed."
+}
