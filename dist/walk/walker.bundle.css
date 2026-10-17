@@ -1555,3 +1555,463 @@
   right: max(0px, env(safe-area-inset-right));
   border-radius: 6px 0 0 6px;
 }
+
+/* realtrip/src/npc.css */
+#npc-ui {
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "PingFang SC",
+    sans-serif;
+  color: #f4f7ff;
+}
+#npc-ui button,
+#npc-ui textarea {
+  font: inherit;
+}
+#npc-ui button {
+  cursor: pointer;
+}
+#npc-ui button:disabled {
+  cursor: default;
+  opacity: .55;
+}
+.npc-experience {
+  position: fixed;
+  left: 25px;
+  top: 27px;
+  padding: 10px 14px;
+  border: 1px solid #b4dcff32;
+  border-radius: 99px;
+  background: #102332bb;
+  backdrop-filter: blur(16px);
+  font-size: 11px;
+  letter-spacing: 1px;
+  pointer-events: none;
+  z-index: 18;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.npc-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #73e7ff;
+  box-shadow: 0 0 14px #32d9ff;
+}
+.npc-world-label {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 18;
+  border: 1px solid #b4eeff77;
+  background: #102535dc;
+  color: #fff;
+  border-radius: 14px;
+  padding: 10px 19px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 25px #0003;
+  display: grid;
+  gap: 5px;
+  text-align: center;
+}
+.npc-world-label[hidden],
+.npc-invite[hidden] {
+  display: none;
+}
+.npc-world-label span {
+  font-size: 15px;
+  font-weight: 650;
+}
+.npc-world-label i {
+  font-size: 9px;
+  font-style: normal;
+  background: #63defb;
+  color: #123b50;
+  border-radius: 4px;
+  padding: 2px 4px;
+  margin-left: 5px;
+}
+.npc-world-label small {
+  font-size: 10px;
+  color: #b6dbe7;
+}
+.npc-invite {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #a4daff55;
+  border-radius: 19px;
+  background: #102332e8;
+  color: #fff;
+  padding: 12px 17px;
+  box-shadow: 0 12px 48px #0004;
+  backdrop-filter: blur(20px);
+  z-index: 18;
+  text-align: left;
+  transition: background .2s;
+}
+.npc-invite:hover {
+  background: #184865f2;
+}
+.npc-invite strong {
+  font-size: 13px;
+  display: block;
+  margin-bottom: 4px;
+}
+.npc-invite small {
+  font-size: 11px;
+  color: #bfd2df;
+}
+.npc-invite kbd {
+  margin-left: 20px;
+  padding: 5px 8px;
+  border: 1px solid #ffffff42;
+  border-radius: 6px;
+  font: 12px inherit;
+}
+.npc-orb {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  color: #d6fbff;
+  font-size: 27px;
+  background:
+    radial-gradient(
+      circle at 25% 20%,
+      #74ecff,
+      #0863d4 75%);
+  box-shadow: inset 0 0 0 1px #c0faff66, 0 0 20px #40c6ff20;
+}
+dialog.npc-dialog {
+  position: fixed;
+  inset: 0 25px 0 auto;
+  margin: auto 0;
+  box-sizing: border-box;
+  width: min(390px, calc(100vw - 32px));
+  max-height: min(720px, calc(100dvh - 40px));
+  padding: 0;
+  border: 1px solid #b2dfff44;
+  border-radius: 24px;
+  background: #10212fed;
+  color: #f2f7ff;
+  backdrop-filter: blur(25px);
+  box-shadow: 0 24px 100px #0007;
+  overflow: hidden;
+  font-family: inherit;
+}
+dialog.npc-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+dialog.npc-dialog::backdrop {
+  background: #00122624;
+}
+.npc-dialog .npc-header {
+  position: static;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 0;
+  border-bottom: 1px solid #d0e7ff1c;
+  padding: 20px;
+  background: transparent;
+  color: inherit;
+  flex-shrink: 0;
+}
+.npc-header h2 {
+  font-size: 19px;
+  margin: 0 0 5px;
+  font-weight: 650;
+  letter-spacing: .2px;
+}
+.npc-header h2 span {
+  color: #94bace;
+  font-size: 10px;
+  font-weight: 400;
+  margin-left: 7px;
+}
+.npc-header p {
+  margin: 0;
+  color: #8ee5f9;
+  font-size: 10px;
+}
+.npc-dialog .npc-close {
+  margin-left: auto;
+  background: #ffffff0d;
+  border: 1px solid #ffffff18;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  color: #cbd9e3;
+  font-size: 23px;
+  line-height: 1;
+}
+.npc-messages {
+  padding: 22px 20px 6px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  min-height: 100px;
+  max-height: 350px;
+  flex: 1;
+}
+.npc-message {
+  margin-bottom: 18px;
+  max-width: 96%;
+}
+.npc-message small {
+  display: block;
+  margin-bottom: 7px;
+  color: #96bdce;
+  font-size: 10px;
+}
+.npc-message p {
+  font-size: 13px;
+  line-height: 1.85;
+  white-space: pre-wrap;
+  margin: 0;
+  background: #ffffff08;
+  border: 1px solid #b1e2ff16;
+  padding: 12px 14px;
+  border-radius: 3px 14px 14px 14px;
+  overflow-wrap: anywhere;
+}
+.npc-message.user {
+  margin-left: 15%;
+  text-align: right;
+}
+.npc-message.user p {
+  background: #1577c33d;
+  border-color: #63bfff30;
+  text-align: left;
+  border-radius: 14px 3px 14px 14px;
+}
+.npc-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  padding: 3px 20px 12px;
+  flex-shrink: 0;
+}
+.npc-suggestions button {
+  border: 1px solid #9ed9ff26;
+  border-radius: 99px;
+  background: transparent;
+  color: #c5d9e8;
+  font-size: 10px !important;
+  padding: 7px 10px;
+}
+.npc-suggestions button:hover {
+  background: #ffffff12;
+}
+.npc-status {
+  font-size: 11px;
+  color: #9edff6;
+  min-height: 15px;
+  padding: 0 20px 8px;
+  line-height: 1.5;
+  flex-shrink: 0;
+}
+.npc-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #07172299;
+  border: 1px solid #b9e7ff33;
+  border-radius: 14px;
+  padding: 10px;
+  margin: 0 16px;
+  flex-shrink: 0;
+}
+.npc-form:focus-within {
+  border-color: #7de4ff99;
+}
+.npc-form textarea {
+  resize: none;
+  min-height: 25px;
+  max-height: 75px;
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  outline: none;
+  color: #fff;
+  font-size: 13px !important;
+  line-height: 25px;
+}
+.npc-form textarea::placeholder {
+  color: #8299ac;
+}
+.npc-send {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 10px;
+  background: #87e8ff;
+  color: #12303f;
+  font-size: 24px !important;
+}
+.npc-voice {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 12px 17px 0;
+  flex-shrink: 0;
+}
+.npc-mic {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid #a3dfff40;
+  background: #8cd7ff0e;
+  color: #d6eff9;
+  border-radius: 11px;
+  padding: 10px 12px;
+  font-size: 12px !important;
+  flex: 1;
+}
+.npc-mic svg {
+  width: 16px;
+  height: 16px;
+}
+.npc-mic.listening {
+  border-color: #ff9393;
+  color: #ffd3d3;
+  background: #ff55551a;
+}
+.npc-audio {
+  background: transparent;
+  border: 0;
+  color: #b4cad8;
+  font-size: 11px !important;
+  padding: 10px 3px;
+}
+.npc-note {
+  text-align: center;
+  font-size: 9px;
+  color: #7893a5;
+  letter-spacing: .2px;
+  margin: 12px 15px 17px;
+  flex-shrink: 0;
+}
+.npc-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+#npc-ui button:focus-visible {
+  outline: 2px solid #9df0ff;
+  outline-offset: 3px;
+}
+.npc-dialog .npc-header {
+  height: auto;
+  min-height: 78px;
+  box-sizing: border-box;
+}
+.npc-dialog .npc-message p {
+  color: #eef6ff;
+}
+.npc-dialog .npc-message small {
+  color: #9ec6d9;
+}
+@media (max-width: 600px) {
+  .npc-experience {
+    left: 13px;
+    top: 83px;
+    font-size: 9px;
+    padding: 7px 10px;
+  }
+  .npc-invite {
+    bottom: 25px;
+    max-width: calc(100vw - 160px);
+    padding: 10px;
+    gap: 8px;
+    border-radius: 15px;
+  }
+  .npc-invite .npc-orb {
+    width: 26px;
+    height: 26px;
+    font-size: 21px;
+    border-radius: 9px;
+  }
+  .npc-invite strong {
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .npc-invite small {
+    font-size: 9px;
+  }
+  .npc-invite kbd {
+    display: none;
+  }
+  dialog.npc-dialog {
+    inset: auto 10px max(10px, env(safe-area-inset-bottom)) 10px;
+    margin: 0;
+    width: calc(100vw - 20px);
+    max-height: calc(100dvh - 90px);
+    border-radius: 22px;
+  }
+  .npc-messages {
+    max-height: 34dvh;
+  }
+  .npc-dialog .npc-header {
+    padding: 15px 17px;
+  }
+  .npc-world-label {
+    padding: 8px 12px;
+  }
+  .npc-world-label span {
+    font-size: 13px;
+  }
+}
+@media (max-height: 500px) {
+  dialog.npc-dialog {
+    inset: 10px 12px 10px auto;
+    max-height: calc(100dvh - 20px);
+    width: 360px;
+  }
+  .npc-dialog .npc-header {
+    padding: 10px 15px;
+  }
+  .npc-messages {
+    padding: 12px 15px 0;
+    max-height: none;
+    min-height: 55px;
+  }
+  .npc-suggestions {
+    padding-bottom: 6px;
+  }
+  .npc-message {
+    margin-bottom: 10px;
+  }
+  .npc-voice {
+    margin-top: 8px;
+  }
+  .npc-note {
+    margin: 7px;
+  }
+  .npc-status {
+    min-height: 0;
+  }
+  .npc-experience {
+    top: 25px;
+    font-size: 9px;
+  }
+  .npc-invite {
+    bottom: 20px;
+  }
+}

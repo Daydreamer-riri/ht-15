@@ -10,6 +10,8 @@
 
 山湖保留独立入口 `/walk/?scene=alpine-lake`，不加入公开场景菜单。旧场景参数如 `building2` 和 `cafeteria-original` 在 `/walk/` 下仍可使用。
 
+小蓝 NPC 保留独立入口 [`/walk/?scene=hackathon-npc`](https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/walk/?scene=hackathon-npc)：舞台上的蓝白卡通角色支持靠近交互、DeepSeek 对话、浏览器语音输入与朗读，不加入场景菜单。纯前端演示配置与模型构建说明见 [NPC-WORKFLOW.md](NPC-WORKFLOW.md)。
+
 ## 开发与构建
 
 ```sh

@@ -10,6 +10,8 @@ pages:
     - test -f dist/walk/two-floor/solids.json
     - test -f dist/walk/venue/scene.sog
     - test -f dist/walk/venue/scene.voxel.bin
+    - test -f dist/walk/npc/blue-mascot.glb
+    - test -f dist/walk/npc/service.json
     - test -f dist/sky-soho/index.html
     - test -f dist/route-3d/index.html
     - rm -rf public

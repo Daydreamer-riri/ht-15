@@ -14,6 +14,7 @@ import alpineLake from './alpine-lake.json';
 import hackathon from './hackathon.json';
 import twoFloor from './two-floor.json';
 import auditorium from './venue.json';
+import {npcScene} from './npc-scene.js';
 import {loadSceneScreens,loadCapturedSurfaces} from './scene-screens.js';
 // The site runs both at a domain root and under a sub-path (such as GitLab Pages), so
 // asset URLs are resolved against the directory of the current document.
@@ -22,6 +23,7 @@ const buildingBase={data:building2,destination:'building2',label:'会议室',sou
 const terraceBase={data:terrace,destination:'terrace',label:'露台 · 实景探索',source:null,credit:'露台实拍 · Remy 重建',scope:'在露台入口、中央空地和观景端之间连续自由走动。按拍摄轨迹和地板点云校正模型倾斜、地面及视点高度；玻璃幕墙、花箱、护栏与桌椅采用简化阻挡。远处楼宇为背景扫描，未开放行走。'};
 const cafeteriaBase={data:cafeteria,destination:'cafeteria',label:'食堂',source:null,credit:'食堂实拍',scope:'保留人物，结合原始取餐区与补拍用餐区。入口、取餐通道和餐桌旁的过道可以连续往返，地面、柜台、立柱和桌椅采用校准后的简化碰撞。玻璃反射、人物运动残影与远处未充分拍摄的区域仍有重建瑕疵。'};
 const scenes={
+ 'hackathon-npc':{data:npcScene,destination:'hackathon-npc',hidden:true,label:'Hackathon · NPC',title:'来和小蓝聊聊天。',area:'舞台前',credit:'Remy · junhaoqin 团队',source:null,scope:'独立 NPC 体验，复用主会场实景和碰撞。小蓝是根据活动海报左侧角色制作的立体卡通模型；靠近后可文字或语音交流，回答由 DeepSeek 生成。'},
  'hackathon':{data:auditorium,destination:'hackathon',label:'Hackathon主会场',title:'走进Hackathon主会场。',area:'主会场起点',credit:'Remy · junhaoqin 团队',source:null,scope:'来自 realtrip-walk-hackathon26 的Hackathon主会场，保留原始模型、体素碰撞、行人眼高及三块 Hackathon 屏幕。使用本站统一的移动、转头与重置操作。尺度未经现场测量，薄物体和缺失扫描处的碰撞可能不完整。'},
  'two-floor':{data:twoFloor,destination:'two-floor',label:'健身房',title:'走进健身房。',area:'健身房一层',credit:'junhaoqin 团队原模型 · 用户补拍优化',source:'https://git.dev.sh.ctripcorp.com/junhaoqin/realtrip-walk-hackathon26',scope:'来自 realtrip-walk-hackathon26 的健身房实拍模型。一层、折返楼梯和二层可以连续行走；保留楼层、台阶、护栏及家具碰撞。使用本站统一操作，结合上台阶补拍优化下段台阶的颜色与纹理。器械细杆、玻璃反射及未充分拍摄的区域仍可能模糊。'},
  'hackathon-original':{data:hackathon,destination:'hackathon-original',hidden:true,label:'Hackathon 主会场（原版）',title:'Hackathon 主会场',area:'主会场',credit:'主会场实拍',source:null,scope:'原版会场模型与校准后的地形碰撞。'},
@@ -112,6 +114,7 @@ function setReady(){
  ready=true;viewer.state.cameraMode='fly';viewer.state.gamingControls=true;viewer.state.inputEnabled=false;
  officeNav=createOfficeNavigation(viewer,null,scene.settings.cameras[0].initial,$('world'),walkSurface);
  officeNav?.setWalkingMotion(walkingMotion);
+ if(key==='hackathon-npc')import('./npc-interaction.js').then(({initNpc})=>initNpc({viewer,navigation:officeNav,base,stop})).catch(error=>{console.error('NPC initialization failed',error);const notice=document.createElement('p');notice.textContent='小蓝加载失败，请刷新页面重试。';notice.style.cssText='position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#132d3f;color:white;padding:14px;border-radius:12px;z-index:30';document.body.append(notice);});
 
  queueMicrotask(tuneWalkingDetail);
  $('loading').hidden=true;$('pad').disabled=false;$('mode').textContent='步行中';
