@@ -2,17 +2,21 @@
 
 ## Architecture
 
-This repository hosts three independent static entry points under one GitLab Pages project prefix:
+This repository hosts five static entry points under one GitLab Pages project prefix:
 
 - `/`: original React + TypeScript + Vite itinerary app in `src/`.
 - `/presentation/`: manually advanced presentation chat in `src/presentation/`.
 - `/walk/`: RealTrip scenes in `realtrip/`, using SuperSplat Viewer and PlayCanvas.
+- `/sky-soho/`: Sky SOHO day-trip planet, in `src/sky-soho/`.
+- `/route-3d/`: North Xinjiang planet, in `src/route-3d/`.
+
+The two planets share `src/atlas/` and Three.js. The walking menu links to Sky SOHO; both planets link back to `/walk/`. Keep this navigation inside the Pages project prefix.
 
 `realtrip/models/` contains canonical model files. Preparation scripts verify SHA-256 and assemble ignored model copies under `realtrip/public/`. The build copies these assets and bundles the viewers into `dist/walk/`. Presentation sources are bundled separately into `dist/presentation/`.
 
 ## Commands
 
-Use `npx --yes pnpm@10.11.0 install --frozen-lockfile` for reproducible dependencies. `npm run build` builds all three entry points. Run `npm run test:walk` and `npm run test:migration` after relevant changes. `npm run preview` serves the complete output; `npm run dev` only serves the itinerary app.
+Use `npx --yes pnpm@10.11.0 install --frozen-lockfile` for reproducible dependencies. `npm run build` builds all five entry points. Run `npm run test:walk`, `npm run test:atlas` and `npm run test:migration` after relevant changes. `npm run preview` serves the complete output; `npm run dev` only serves the itinerary app.
 
 ## Deployment
 

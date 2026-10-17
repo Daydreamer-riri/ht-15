@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "npm run build:itinerary && npm run build:walk && npm run build:presentation",
+    "build": "npm run build:itinerary && npm run build:walk && npm run build:presentation && npm run build:atlas",
     "lint": "eslint .",
     "preview": "vite preview",
     "build:itinerary": "vite build",
@@ -13,7 +13,9 @@
     "build:presentation": "node scripts/build-presentation.mjs",
     "dev:presentation": "npm run build:presentation && vite preview --host 127.0.0.1 --port 8845",
     "test:walk": "node --test realtrip/tests/*.test.mjs",
-    "test:migration": "node --test tests/migration.test.mjs"
+    "test:migration": "node --test tests/migration.test.mjs",
+    "build:atlas": "node scripts/build-atlas.mjs",
+    "test:atlas": "node --test tests/route-model.test.mjs tests/sky-soho-route.test.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.11",
@@ -27,7 +29,8 @@
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.11",
     "@playcanvas/supersplat-viewer": "1.37.0",
-    "playcanvas": "2.23.0"
+    "playcanvas": "2.23.0",
+    "three": "0.180.0"
   },
   "devDependencies": {
     "@ctrip/eslint-config-dingzhi": "^1.6.4",

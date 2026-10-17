@@ -1,0 +1,275 @@
+{
+  "id": "sky-soho",
+  "name": "凌空 SOHO 一日游",
+  "mode": "walk",
+  "mapMaxZoom": 18,
+  "cover": {
+    "headline": [
+      "Sky",
+      "SOHO"
+    ],
+    "issue": "No.08 · Workday",
+    "badge": "园区漫步",
+    "intro": "从淞虹路地铁站步行进园，在 8 号楼刷卡上楼：上午埋头工区，茶水间续杯，下午开会，下班去健身房出汗。",
+    "color": "#e8253f",
+    "hero": "8号楼",
+    "outro": [
+      "See you",
+      "at the desk"
+    ],
+    "note": "园区内点位为示意位置，楼层与开放时间以园区实际安排为准。"
+  },
+  "days": [
+    {
+      "index": 1,
+      "label": "10月16日",
+      "weekday": "周五",
+      "dateText": "10月16日",
+      "title": "凌空 SOHO",
+      "cities": [
+        {
+          "name": "凌空SOHO",
+          "position": [
+            31.22385,
+            121.34726
+          ]
+        }
+      ],
+      "items": [
+        {
+          "kind": "poi",
+          "id": "sky-soho-building-8",
+          "name": "8号楼",
+          "city": "凌空SOHO",
+          "playTime": "建议停留10分钟",
+          "openStatus": "刷工牌进入",
+          "price": "免费",
+          "position": [
+            31.2233,
+            121.34612
+          ],
+          "remark": "扎哈·哈迪德设计的流线型楼群，楼与楼之间由空中连廊相接。上楼前先在水景广场拍一张外立面。",
+          "leg": {
+            "duration": "16分钟",
+            "distance": "1.2公里",
+            "from": "淞虹路地铁站",
+            "points": [
+              [
+                31.21998,
+                121.35582
+              ],
+              [
+                31.22205,
+                121.35575
+              ],
+              [
+                31.2224,
+                121.3507
+              ],
+              [
+                31.22268,
+                121.348
+              ],
+              [
+                31.22288,
+                121.3464
+              ],
+              [
+                31.2233,
+                121.34612
+              ]
+            ]
+          }
+        },
+        {
+          "kind": "custom",
+          "id": "sky-soho-workspace",
+          "name": "工区",
+          "playTime": "建议停留3小时",
+          "openStatus": "09:30 开工",
+          "position": [
+            31.22354,
+            121.34586
+          ],
+          "remark": "靠窗工位能看到楼群弧线。先清掉早上的消息，再开始专注时段。",
+          "leg": {
+            "duration": "1分钟",
+            "distance": "40米",
+            "points": [
+              [
+                31.2233,
+                121.34612
+              ],
+              [
+                31.22342,
+                121.34598
+              ],
+              [
+                31.22354,
+                121.34586
+              ]
+            ]
+          }
+        },
+        {
+          "kind": "custom",
+          "id": "sky-soho-pantry",
+          "name": "茶水间",
+          "playTime": "建议停留15分钟",
+          "openStatus": "全天开放",
+          "position": [
+            31.22376,
+            121.34612
+          ],
+          "remark": "咖啡机前常有偶遇，顺手续一杯、聊两句，十分钟后回工位。",
+          "leg": {
+            "duration": "1分钟",
+            "distance": "40米",
+            "points": [
+              [
+                31.22354,
+                121.34586
+              ],
+              [
+                31.22368,
+                121.34592
+              ],
+              [
+                31.22376,
+                121.34612
+              ]
+            ]
+          }
+        },
+        {
+          "kind": "custom",
+          "id": "sky-soho-meeting-room",
+          "name": "会议室",
+          "playTime": "建议停留1小时",
+          "openStatus": "14:00 需提前预订",
+          "position": [
+            31.2236,
+            121.34644
+          ],
+          "remark": "提前五分钟到场连好投屏，议程贴在白板一角。",
+          "leg": {
+            "duration": "1分钟",
+            "distance": "40米",
+            "points": [
+              [
+                31.22376,
+                121.34612
+              ],
+              [
+                31.2237,
+                121.34632
+              ],
+              [
+                31.2236,
+                121.34644
+              ]
+            ]
+          }
+        },
+        {
+          "kind": "custom",
+          "id": "sky-soho-gym",
+          "name": "健身房",
+          "playTime": "建议停留1小时",
+          "openStatus": "18:30 下班后",
+          "position": [
+            31.22428,
+            121.3474
+          ],
+          "remark": "备好毛巾和换洗衣物，跑步机三十分钟加一组拉伸，结束一天。",
+          "leg": {
+            "duration": "2分钟",
+            "distance": "120米",
+            "points": [
+              [
+                31.2236,
+                121.34644
+              ],
+              [
+                31.22384,
+                121.34668
+              ],
+              [
+                31.22402,
+                121.34706
+              ],
+              [
+                31.22428,
+                121.3474
+              ]
+            ]
+          }
+        }
+      ],
+      "returnLeg": {
+        "duration": "15分钟",
+        "distance": "1.2公里",
+        "target": "淞虹路地铁站",
+        "points": [
+          [
+            31.22428,
+            121.3474
+          ],
+          [
+            31.2239,
+            121.34792
+          ],
+          [
+            31.223,
+            121.3483
+          ],
+          [
+            31.22268,
+            121.348
+          ],
+          [
+            31.2224,
+            121.3507
+          ],
+          [
+            31.22205,
+            121.35575
+          ],
+          [
+            31.21998,
+            121.35582
+          ]
+        ]
+      }
+    }
+  ],
+  "toBePlanned": [
+    {
+      "kind": "custom",
+      "id": "sky-soho-cafe",
+      "name": "携程旅行 Café",
+      "position": [
+        31.22449,
+        121.34597
+      ]
+    },
+    {
+      "kind": "custom",
+      "id": "sky-soho-park",
+      "name": "虹桥体育公园",
+      "position": [
+        31.22309,
+        121.34135
+      ]
+    }
+  ],
+  "provenance": {
+    "page": "https://pages.release.ctripcorp.com/ding.zhao/hackathon-15/#/route/sky-soho",
+    "repository": "ding.zhao/hackathon-15",
+    "path": "src/data/skySoho.ts",
+    "revision": "3dc124b8f3ba9938b657bc56dbb8c5c1a74a5706",
+    "sha256": "424ede10a82b81da150fb37e69d08b7d2814c14838ae6fb54911a80fe72402e0",
+    "coordinateOrder": "[latitude, longitude]",
+    "accuracy": "Source states building and indoor coordinates are illustrative, not surveyed. No floor plan or verified elevation is supplied."
+  }
+}

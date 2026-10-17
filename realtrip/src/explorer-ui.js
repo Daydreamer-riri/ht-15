@@ -1,6 +1,6 @@
 export const explorerScenes = [
  ['hackathon','Hackathon 主会场'],
- ['honor-corridor','荣誉连廊'], ['building2','2号楼'], ['terrace','露台'], ['cafeteria','食堂']
+ ['honor-corridor','荣誉连廊'], ['building2','2号楼'], ['terrace','露台'], ['cafeteria','食堂'], ['sky-soho','凌空一日']
 ];
 const standalone = new Set(['honor-corridor']);
 const sceneDetails = {
@@ -8,7 +8,8 @@ const sceneDetails = {
  'honor-corridor': {icon:'gallery', description:'荣誉展区与休闲连廊'},
  building2: {icon:'building', description:'会议室与窗边连廊'},
  terrace: {icon:'terrace', description:'户外露台与园区风景'},
- cafeteria: {icon:'building', description:'取餐通道与用餐空间'}
+ cafeteria: {icon:'building', description:'取餐通道与用餐空间'},
+ 'sky-soho': {icon:'gallery', description:'凌空 SOHO · 星球沙盘'}
 };
 const paths = {
  reset:'<path d="M4 10a8 8 0 1 1 1 8M4 4v6h6"/>',
@@ -23,6 +24,8 @@ const svg = icon => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
 export function explorerScenePath(id, base='/') {
  if(!explorerScenes.some(([key])=>key===id))throw new Error('Unknown scene');
  const root=base.endsWith('/')?base:base+'/';
+ // Planet pages live beside /walk/ under the same Pages project prefix.
+ if(id==='sky-soho')return `${root.replace(/[^/]+\/$/,'')}sky-soho/?view=planet`;
  return standalone.has(id)?`${root}${id}/?scene=${id}`:`${root}?scene=${id}`;
 }
 

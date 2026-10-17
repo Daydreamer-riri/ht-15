@@ -10,7 +10,7 @@ const data=JSON.parse(readFileSync(new URL('../public/alpine-lake/terrain.json',
 const surface=createTerrainSurface({...data,...scene.navigation});
 
 test('the independent scene stays out of every public scene menu',()=>{
- assert.deepEqual(explorerScenes.map(([key])=>key),['hackathon','honor-corridor','building2','terrace','cafeteria']);
+ assert.deepEqual(explorerScenes.map(([key])=>key),['hackathon','honor-corridor','building2','terrace','cafeteria','sky-soho']);
  assert(!explorerScenes.some(([key])=>key==='alpine-lake'));
  assert.deepEqual(scene.modelRotation,[0,0,0,1]);
  const [x,,z]=scene.settings.cameras[0].initial.position;

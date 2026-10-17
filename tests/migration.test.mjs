@@ -9,7 +9,7 @@ const pages = 'https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/';
 const walkBase = new URL('walk/', pages);
 
 test('all entry documents resolve their own assets under the Pages project prefix', () => {
-  for (const entry of ['index.html', 'presentation/index.html', 'walk/index.html', 'walk/honor-corridor/index.html']) {
+  for (const entry of ['index.html', 'presentation/index.html', 'walk/index.html', 'walk/honor-corridor/index.html', 'sky-soho/index.html', 'route-3d/index.html']) {
     const html = readFileSync(new URL(`dist/${entry}`, root), 'utf8');
     for (const match of html.matchAll(/(?:src|href)="([^"?#]+)(?:[?#][^"]*)?"/g)) {
       const target = match[1];
@@ -25,12 +25,29 @@ test('all entry documents resolve their own assets under the Pages project prefi
 test('scene switches and the presentation QR stay on the migrated site', () => {
   for (const [scene] of explorerScenes) {
     const target = new URL(explorerScenePath(scene, walkBase.pathname), pages);
-    assert.ok(target.href.startsWith(walkBase.href));
-    assert.equal(target.searchParams.get('scene'), scene);
+    assert.ok(target.href.startsWith(pages));
+    if (scene === 'sky-soho') {
+      assert.equal(target.href, new URL('sky-soho/?view=planet', pages).href);
+    } else {
+      assert.ok(target.href.startsWith(walkBase.href));
+      assert.equal(target.searchParams.get('scene'), scene);
+    }
   }
   assert.equal(EXPERIENCE_URL, new URL('?scene=cafeteria', walkBase).href);
   const scene = JSON.parse(readFileSync(new URL('dist/walk/honor-corridor/scene.json', root)));
   assert.ok(new URL(scene.homeUrl, new URL('honor-corridor/', walkBase)).href.startsWith(walkBase.href));
+});
+
+test('planet navigation connects both planets and the shared walking entrance', () => {
+  for (const planet of ['sky-soho', 'route-3d']) {
+    const url = new URL(`${planet}/`, pages);
+    const html = readFileSync(new URL(`dist/${planet}/index.html`, root), 'utf8');
+    const links = [...html.matchAll(/href="([^"]+)"/g)].map(match => new URL(match[1], url).href);
+    for (const path of ['sky-soho/', 'route-3d/', 'walk/']) {
+      assert.ok(links.includes(new URL(path, pages).href), `${planet}: missing ${path}`);
+    }
+  }
+  assert.equal(explorerScenePath('sky-soho', '/walk/'), '/sky-soho/?view=planet');
 });
 
 test('every scene model, supplement, terrain and screen texture is packaged locally', () => {

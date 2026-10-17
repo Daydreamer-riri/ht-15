@@ -2,7 +2,7 @@ import {createOfficeNavigation} from './office-navigation.js';
 import {createWalkSurface} from './walk-surface.js';
 import {createTerrainSurface} from './terrain-surface.js';
 import {applyModelTransform,loadSceneSupplements} from './scene-models.js';
-import {initExplorerUi,populateSceneMenu} from './explorer-ui.js';
+import {initExplorerUi,populateSceneMenu,explorerScenePath} from './explorer-ui.js';
 import './explorer-ui.css';
 import {createViewer} from '@playcanvas/supersplat-viewer/viewer';
 import '@playcanvas/supersplat-viewer/viewer.css';
@@ -34,16 +34,17 @@ const requestedScene=new URLSearchParams(location.search).get('scene');
 // Keep existing shared links working while new links use the building name.
 const legacyScenes={insta360:'building2','insta360-room':'building2','insta360-door':'building2-door','insta360-aisle':'building2-aisle','insta360-far':'building2-far','cafeteria-original':'cafeteria'};
 const requested=legacyScenes[requestedScene]??requestedScene;
-const standaloneScenes={'honor-corridor':'荣誉连廊'};
+const standaloneScenes={'honor-corridor':'荣誉连廊','sky-soho':'凌空一日'};
 if(Object.hasOwn(standaloneScenes,requested)){
- const target=new URL(base+requested+'/',location.origin);target.search=location.search;
+ const target=new URL(explorerScenePath(requested,base),location.origin);
+ for(const [name,value] of new URLSearchParams(location.search))if(name!=='scene')target.searchParams.set(name,value);
  location.replace(target.href);
 }else{
 const key=Object.hasOwn(scenes,requested)?requested:'hackathon';
 const current=scenes[key];let scene=structuredClone(current.data);
 const $=id=>document.getElementById(id);
 const sceneUrl=id=>{
- if(Object.hasOwn(standaloneScenes,id))return base+id+'/?scene='+encodeURIComponent(id);
+ if(Object.hasOwn(standaloneScenes,id))return explorerScenePath(id,base);
  const url=new URL(location.href);
  url.pathname=base;
  url.searchParams.set('scene',id);

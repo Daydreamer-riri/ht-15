@@ -6,6 +6,8 @@ pages:
     - test -f dist/presentation/index.html
     - test -f dist/walk/index.html
     - test -f dist/walk/hackathon/scene.sog
+    - test -f dist/sky-soho/index.html
+    - test -f dist/route-3d/index.html
     - rm -rf public
     - mv dist public
   artifacts:
