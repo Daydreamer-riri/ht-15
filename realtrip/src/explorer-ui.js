@@ -37,18 +37,16 @@ export function populateSceneMenu(select, current, base='/', entries=explorerSce
  // Keep the existing scene router while presenting the same picker on all devices.
  select.hidden=true;
  const picker=document.createElement('div');picker.className='scene-picker';picker.dataset.explorerUi='';
- const detail=sceneDetails[current]??{icon:'building'};
  const trigger=document.createElement('button');trigger.type='button';trigger.className='scene-trigger';
  trigger.setAttribute('aria-expanded','false');trigger.setAttribute('aria-controls','scene-panel');
  trigger.setAttribute('aria-label',`切换场景，当前${select.selectedOptions[0]?.textContent??'实景空间'}`);
- trigger.innerHTML=`<span class="scene-emblem">${svg(detail.icon)}</span><span class="scene-title"></span><span class="scene-chevron">${svg('chevron')}</span>`;
+ trigger.innerHTML=`<span class="scene-title"></span><span class="scene-chevron">${svg('chevron')}</span>`;
  trigger.querySelector('.scene-title').textContent=select.selectedOptions[0]?.textContent??'实景空间';
  const panel=document.createElement('nav');panel.id='scene-panel';panel.className='scene-panel';panel.hidden=true;panel.setAttribute('aria-label','选择探索空间');
- const caption=document.createElement('div');caption.className='scene-panel-caption';caption.textContent='选择探索空间';panel.append(caption);
  for(const [id,label] of entries){
   const item=document.createElement('a');item.className='scene-choice';
   item.href=explorerScenes.some(([key])=>key===id)?explorerScenePath(id,base):location.href;
-  const info=sceneDetails[id]??detail;
+  const info=sceneDetails[id]??{icon:'building'};
   item.innerHTML=`<span class="scene-choice-icon">${svg(info.icon)}</span><span class="scene-choice-copy"><strong></strong></span><span class="scene-check">${svg('check')}</span>`;
   item.querySelector('strong').textContent=label;
   if(id===current)item.setAttribute('aria-current','page');
@@ -86,8 +84,7 @@ export function setIconButton(button, icon, label, caption='') {
 export function initExplorerUi() {
  document.body.classList.add('minimal-ui');
  const dock=document.createElement('div');dock.className='walk-actions';dock.dataset.explorerUi='';dock.setAttribute('role','group');dock.setAttribute('aria-label','漫游操作');
- const reset=document.getElementById('reset');setIconButton(reset,'reset','回到起点','复位');
+ const reset=document.getElementById('reset');setIconButton(reset,'reset','回到起点');
  dock.append(reset);document.body.append(dock);
  document.getElementById('fullscreen')?.remove();document.getElementById('jump')?.remove();
- const label=document.createElement('span');label.className='joystick-caption';label.textContent='移动';document.getElementById('pad').append(label);
 }

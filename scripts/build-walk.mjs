@@ -14,7 +14,7 @@ await mkdir('dist', { recursive: true });
 await rm('dist/walk', { recursive: true, force: true });
 await cp('realtrip/public', 'dist/walk', { recursive: true });
 await build({
-  entryPoints: ['realtrip/src/walker.js'], bundle: true, format: 'esm',
+  entryPoints: ['realtrip/src/walker.js'], bundle: true, minify: true, legalComments: 'linked', format: 'esm',
   outfile: 'dist/walk/walker.bundle.js', external: ['node:worker_threads'],
   plugins: [viewerPhysicsPlugin],
 });
