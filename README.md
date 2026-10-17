@@ -3,10 +3,10 @@
 所有页面由同一个 GitLab Pages 站点发布：
 
 - [北疆行程首页](https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/)：保留原有七套行程风格。
-- [演讲演示](https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/presentation/)：点击或 ↓ 逐条推进，↑ 回退，R 重来，F 全屏；最后的二维码进入本站食堂。
+- [演讲演示](https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/presentation/)：点击或 ↓ 逐条推进，↑ 回退，R 重来，F 全屏；最后的二维码进入携程 Hackathon 一日游沙盘。
 - [实景漫游](https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/walk/)：默认Hackathon主会场；菜单仅包含Hackathon主会场、健身房、会议室、露台和食堂。前两个场景来自 junhaoqin/realtrip-walk-hackathon26，统一使用本站的界面和移动控制。
-- [凌空星球](https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/sky-soho/?view=planet)：凌空 SOHO 一日游，支持旋转、缩放、地点选择、俯瞰及日落光照。使用独立入口，不加入漫游场景菜单。
-- [北疆星球](https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/route-3d/?view=planet)：与凌空星球共用界面，可在顶部切换，也可返回实景漫游。
+- [凌空星球](https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/sky-soho/?view=planet)：携程 Hackathon 一日游，沙盘标记与下方卡片可直接进入主会场、健身房、会议室、露台、食堂五个实景。支持旋转、缩放、俯瞰和复位；其他页面收在右上角菜单。
+- [北疆星球](https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/route-3d/?view=planet)：保留七日行程界面，可在顶部切换到一日游，也可返回实景漫游。
 
 山湖保留独立入口 `/walk/?scene=alpine-lake`，不加入公开场景菜单。旧场景参数如 `building2` 和 `cafeteria-original` 在 `/walk/` 下仍可使用。
 
@@ -50,3 +50,7 @@ RealTrip 来自 `954545647/realtrip-walk` 的提交 `d38a1d58640ea502a8ab65f77dc
 场景导航、人物、碰撞、画质及模型字节保持原版本；此次仅调整发布结构、资源相对路径和演示入口。场景本身的扫描缺损、人物残影及尺度估算限制仍见各自 provenance 和说明。
 
 凌空星球与配套北疆星球于 2026-10-17 从 `haojiaxu/realtrip-city-explorer` 补充迁入。保留原星球视觉、5 个凌空地点及视角/地点链接参数；沙盘使用独立链接，漫游菜单保留原有五个场景。原始行程来源记录在两个数据快照的 `provenance` 中，场景为艺术化沙盘而非实景扫描。
+
+## Hackathon 扫码入口（2026-10-18）
+
+`/sky-soho/?view=planet` 使用独立的简洁页面（`src/sky-soho/index.html`、`style.css`、`main.js`），北疆页面继续使用 `src/atlas/`。五个实景入口在 `src/sky-soho/experience.js` 中维护，构建时生成静态卡片，WebGL 或脚本不可用时仍可直接进入实景。沙盘点位沿用原来的示意坐标及 POI ID，原行程数据不变；不再展示旧日期、地铁路线或步行里程。

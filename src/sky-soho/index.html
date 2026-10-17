@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#081f29">
+  <title>携程 Hackathon 一日游 · RealTrip</title>
+  <meta name="description" content="从一座小小星球出发，探索携程 Hackathon 主会场、健身房、会议室、露台和食堂。">
+  <link rel="stylesheet" href="./ENTRY.bundle.css">
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <a class="brand" href="../sky-soho/" aria-label="RealTrip 一日游首页"><span class="brand-mark" aria-hidden="true">↗</span>RealTrip</a>
+      <span class="event-label">携程 HACKATHON</span>
+      <details class="more">
+        <summary aria-label="更多页面">···</summary>
+        <nav aria-label="更多页面">
+          <a href="../presentation/">演示页面 <span>↗</span></a>
+          <a href="../">基础路线 <span>↗</span></a>
+          <a href="../walk/">实景漫游 <span>↗</span></a>
+          <a href="../route-3d/">北疆星球 <span>↗</span></a>
+        </nav>
+      </details>
+    </header>
+    <main>
+      <section class="intro" aria-labelledby="title">
+        <p class="eyebrow"><span></span> A LITTLE WORLD, A REAL JOURNEY</p>
+        <h1 id="title">携程 Hackathon<span>一日游。</span></h1>
+        <p class="intro-copy">5 个真实空间，点击场景就能走进去。</p>
+      </section>
+      <section class="planet" aria-label="互动园区沙盘">
+        <div id="scene"></div>
+        <p id="scene-status" role="status">正在打开你的小小世界…</p>
+        <div class="planet-tools" aria-label="沙盘视角">
+          <button id="view" aria-pressed="false">俯瞰视角</button>
+          <button id="reset" aria-label="复位沙盘视角" title="复位视角">↺</button>
+        </div>
+        <p class="gesture-hint">拖动旋转 <span>·</span> 双指 / 滚轮缩放</p>
+      </section>
+      <section class="destinations" aria-labelledby="destinations-title">
+        <div class="section-label"><h2 id="destinations-title">选一站，开始探索</h2><span>实景漫游 <b>↗</b></span></div>
+        <nav class="scene-grid" aria-label="选择实景空间">
+          <!-- SCENE_LINKS -->
+        </nav>
+      </section>
+    </main>
+    <footer><span>旅行，从身边开始。</span><span>沙盘为示意 · 场景为实景</span></footer>
+  </div>
+  <script type="module" src="./ENTRY.bundle.js"></script>
+</body>
+</html>

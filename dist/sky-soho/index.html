@@ -1,17 +1,56 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#071f2c"><title>旅行星球 · RealTrip</title><meta name="description" content="把旅途装进一座小小星球。旋转沙盘、点亮地点，看见完整行程。"><link rel="stylesheet" href="./sky-soho.bundle.css"></head>
-<body><main id="app"><div class="starfield" aria-hidden="true"></div><header><a class="brand" href="../walk/"><span class="brand-icon">↗</span><strong>RealTrip<small>旅行，有了形状</small></strong></a><nav class="trip-nav" aria-label="选择旅行星球"><a data-trip-link="xinjiang" href="../route-3d/">北疆七日<span>01</span></a><a data-trip-link="soho" href="../sky-soho/">凌空一日<span>02</span></a><a href="../walk/">实景漫游<span>↗</span></a></nav><div class="header-tools"><span class="edition">THE LITTLE ATLAS / VOL.01</span><button id="about" aria-label="查看场景与数据说明">i</button><button id="fullscreen" aria-label="全屏浏览">⛶</button></div></header>
-<section class="hero"><div class="eyebrow" id="hero-kicker">THE WORLD IN MINIATURE</div><h1 id="hero-title">旅行<span>星球。</span></h1><p id="hero-copy">把旅途装进一座小小星球。</p><div class="hero-rule"></div><div class="trip-stats"><div><b id="metric-days">01</b><small>DAYS</small></div><div><b id="metric-distance">2.6</b><small id="distance-label">KM</small></div><div><b id="metric-stops">05</b><small>PLACES</small></div></div><div class="coordinates" id="coordinate"></div></section>
-<div id="scene"></div>
-<nav class="view-switch" aria-label="切换沙盘视角"><button data-view="planet" aria-pressed="true"><span>◉</span> 星球视角</button><button data-view="top" aria-pressed="false"><span>⌘</span> 沙盘俯瞰</button></nav>
-<div class="scene-toolbar"><button id="rotate" aria-pressed="false"><span>↻</span><span id="rotate-label">自动旋转</span></button><i></i><button id="zoom-in" aria-label="放大沙盘">＋</button><button id="zoom-out" aria-label="缩小沙盘">−</button><button id="reset" aria-label="回到全程沙盘" title="全程沙盘">⌂</button><button id="light" aria-label="切换日落光照" aria-pressed="false">☼</button><button id="snapshot" aria-label="保存沙盘图片">▣</button></div>
-<div class="stage-caption"><span>拖动旋转 · 滚轮 / 双指缩放 · 点击地点</span><small id="scene-footnote">艺术化微缩场景</small></div>
-<aside class="detail" id="detail" aria-live="polite"><div class="detail-top"><span id="detail-kicker">YOUR LITTLE WORLD</span><b id="detail-index">↗</b></div><h2 id="detail-title">日常，也有风景</h2><p id="detail-copy"></p><div id="detail-meta"></div><small id="detail-coords"></small><button id="place-details" class="place-details">地点详情 ↗</button></aside>
-<aside class="route-panel" id="route-panel"><div class="route-heading"><span>THE ROUTE</span><b id="route-selected">全部路线</b></div><svg id="route-map" viewBox="0 0 250 152" role="img" aria-label="原行程完整路线图"></svg><p id="route-meta"></p></aside>
-<button id="route-toggle" aria-expanded="false" aria-controls="route-panel">⌁ 全程线路</button>
-<section class="journey-rail" aria-label="行程地点"><div class="rail-heading"><div><span class="status-dot"></span><h2 id="rail-caption">一天的节奏</h2><small id="stop-count">5 个地点</small></div><nav id="day-tabs" aria-label="选择行程日期"></nav><button id="extras" hidden>＋ 待安排 & 返程</button></div><nav id="stops" aria-label="选择行程地点"></nav></section>
-<footer><span>SMALL WORLD. GRAND JOURNEY.</span><button id="source">原始路线 / 艺术化场景 ↗</button></footer>
-<div id="loading" role="status"><span class="loading-orbit"></span>正在收藏一座星球…</div><div id="toast" role="status" hidden></div><noscript>请启用 JavaScript 以体验三维沙盘。</noscript></main>
-<dialog id="place-dialog"><button data-close aria-label="关闭地点详情">×</button><span class="eyebrow">A PLACE IN YOUR JOURNEY</span><h2 id="place-dialog-title"></h2><p id="place-dialog-copy"></p><p id="place-dialog-meta"></p><p id="place-dialog-coords"></p></dialog>
-<dialog id="about-dialog"><button data-close aria-label="关闭场景说明">×</button><span class="eyebrow">ABOUT THIS LITTLE ATLAS</span><h2>路线有据，风景有想象。</h2><p id="source-copy"></p><p>点选地点仅高亮位置和行程信息。可旋转、缩放、切换俯瞰和日落光照；开启系统减少动态效果时，停用自动旋转与镜头过渡。</p><a id="source-link" target="_blank" rel="noopener">查看原行程 ↗</a></dialog>
-<dialog id="extras-dialog"><button data-close aria-label="关闭待安排地点">×</button><span class="eyebrow">ONE DAY, A LITTLE MORE</span><h2>日程之外，还可以…</h2><div class="extra-item"><strong>携程旅行 Café</strong><small>原行程待安排 · 未接入当前路线</small></div><div class="extra-item"><strong>虹桥体育公园</strong><small>原行程待安排 · 未接入当前路线</small></div><button id="return-stop" class="return-button" data-close>↩ 查看返回淞虹路地铁站的路线 · 15 分钟</button></dialog>
-<script type="module" src="./sky-soho.bundle.js"></script></body></html>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#081f29">
+  <title>携程 Hackathon 一日游 · RealTrip</title>
+  <meta name="description" content="从一座小小星球出发，探索携程 Hackathon 主会场、健身房、会议室、露台和食堂。">
+  <link rel="stylesheet" href="./sky-soho.bundle.css?v=924c1e21e950">
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <a class="brand" href="../sky-soho/" aria-label="RealTrip 一日游首页"><span class="brand-mark" aria-hidden="true">↗</span>RealTrip</a>
+      <span class="event-label">携程 HACKATHON</span>
+      <details class="more">
+        <summary aria-label="更多页面">···</summary>
+        <nav aria-label="更多页面">
+          <a href="../presentation/">演示页面 <span>↗</span></a>
+          <a href="../">基础路线 <span>↗</span></a>
+          <a href="../walk/">实景漫游 <span>↗</span></a>
+          <a href="../route-3d/">北疆星球 <span>↗</span></a>
+        </nav>
+      </details>
+    </header>
+    <main>
+      <section class="intro" aria-labelledby="title">
+        <p class="eyebrow"><span></span> A LITTLE WORLD, A REAL JOURNEY</p>
+        <h1 id="title">携程 Hackathon<span>一日游。</span></h1>
+        <p class="intro-copy">5 个真实空间，点击场景就能走进去。</p>
+      </section>
+      <section class="planet" aria-label="互动园区沙盘">
+        <div id="scene"></div>
+        <p id="scene-status" role="status">正在打开你的小小世界…</p>
+        <div class="planet-tools" aria-label="沙盘视角">
+          <button id="view" aria-pressed="false">俯瞰视角</button>
+          <button id="reset" aria-label="复位沙盘视角" title="复位视角">↺</button>
+        </div>
+        <p class="gesture-hint">拖动旋转 <span>·</span> 双指 / 滚轮缩放</p>
+      </section>
+      <section class="destinations" aria-labelledby="destinations-title">
+        <div class="section-label"><h2 id="destinations-title">选一站，开始探索</h2><span>实景漫游 <b>↗</b></span></div>
+        <nav class="scene-grid" aria-label="选择实景空间">
+          <a class="scene-card" href="../walk/?scene=hackathon" aria-label="进入主会场实景探索"><span class="scene-number">01</span><span class="scene-copy"><strong>主会场</strong><small>灵感在这里发生</small></span><span class="scene-arrow" aria-hidden="true">↗</span></a>
+          <a class="scene-card" href="../walk/?scene=two-floor" aria-label="进入健身房实景探索"><span class="scene-number">02</span><span class="scene-copy"><strong>健身房</strong><small>换个节奏，动起来</small></span><span class="scene-arrow" aria-hidden="true">↗</span></a>
+          <a class="scene-card" href="../walk/?scene=building2" aria-label="进入会议室实景探索"><span class="scene-number">03</span><span class="scene-copy"><strong>会议室</strong><small>走进想法碰撞的地方</small></span><span class="scene-arrow" aria-hidden="true">↗</span></a>
+          <a class="scene-card" href="../walk/?scene=terrace" aria-label="进入露台实景探索"><span class="scene-number">04</span><span class="scene-copy"><strong>露台</strong><small>到户外，透一口气</small></span><span class="scene-arrow" aria-hidden="true">↗</span></a>
+          <a class="scene-card" href="../walk/?scene=cafeteria" aria-label="进入食堂实景探索"><span class="scene-number">05</span><span class="scene-copy"><strong>食堂</strong><small>一起补充一点能量</small></span><span class="scene-arrow" aria-hidden="true">↗</span></a>
+        </nav>
+      </section>
+    </main>
+    <footer><span>旅行，从身边开始。</span><span>沙盘为示意 · 场景为实景</span></footer>
+  </div>
+  <script type="module" src="./sky-soho.bundle.js?v=a73346008db7"></script>
+</body>
+</html>

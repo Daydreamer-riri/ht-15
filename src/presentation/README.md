@@ -6,7 +6,7 @@
 
 深色投屏主题使用青紫色光晕、半透明消息气泡、当前消息高亮和入场动效。底部不展示操作栏，顶部不展示 LIVE 标签。系统启用「减少动态效果」时关闭动画。
 
-行程从今天的携程 Hackathon 开始：D01 为参加比赛、项目展示和实景体验；原仓库的北疆 7 天顺延为 D02–D08。因此页面是「1 天 Hackathon + 7 天北疆」，原始七天数据快照保持不变。图文先显示 Hackathon，再展示假期景点；白哈巴为 D03、喀纳斯为 D04、赛里木湖为 D05–D06。最后一条回应回扣 Hackathon 当天的食堂实景演示。
+行程从今天的携程 Hackathon 开始：D01 为参加比赛、项目展示和实景体验；原仓库的北疆 7 天顺延为 D02–D08。因此页面是「1 天 Hackathon + 7 天北疆」，原始七天数据快照保持不变。图文先显示 Hackathon，再展示假期景点；白哈巴为 D03、喀纳斯为 D04、赛里木湖为 D05–D06。最后一条回应提供 Hackathon 一日游沙盘入口，扫码后可进入五个实景空间。
 
 ```sh
 npm run dev:presentation
@@ -34,7 +34,7 @@ npm run dev:presentation
 
 - 默认视频：`config.js` 中的 `DEFAULT_VIDEO_URL`。当前为用户提供的 `BV1ZBpX6iEw6`。
 - 临时换视频：右上角「演示设置」，支持完整 B 站视频链接或 BV 号，保存在当前浏览器的 localStorage。分 P 链接保留 `p` 参数。
-- 二维码目标：`config.js` 中的 `EXPERIENCE_URL`。构建时用 qrcode 生成静态 SVG，与页面链接共用同一常量。当前严格指向 `https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/walk/?scene=cafeteria`。
-- 文案和图文内容：`main.js`。文字与图文采用 `haojiaxu/hackathon-15` 的「七天六晚北疆」，快照在 `data/itinerary.json`，记录源文件提交与 SHA-256。保留 7 天顺序及景点，省略原行程的固定日期、航班时刻、价格；不把旧行程误表示为明日实际预订。图文使用原行程对应的赛里木湖、白哈巴与喀纳斯图片，来源见 `assets/README.md`。第三代仍为用户指定的临时 B 站视频，第四代仍进入食堂体验。
+- 二维码目标：`config.js` 中的 `EXPERIENCE_URL`。构建时用 qrcode 生成静态 SVG，与页面链接共用同一常量。当前严格指向 `https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/sky-soho/?view=planet`。
+- 文案和图文内容：`main.js`。文字与图文采用 `haojiaxu/hackathon-15` 的「七天六晚北疆」，快照在 `data/itinerary.json`，记录源文件提交与 SHA-256。保留 7 天顺序及景点，省略原行程的固定日期、航班时刻、价格；不把旧行程误表示为明日实际预订。图文使用原行程对应的赛里木湖、白哈巴与喀纳斯图片，来源见 `assets/README.md`。第三代仍为用户指定的临时 B 站视频，第四代进入 Hackathon 一日游沙盘，再选择实景空间。
 
 B 站官方播放器仅在点击后加载，不下载视频。若外部服务限制内嵌、要求登录或浏览器拒绝自动播放，可在播放器中操作，或点击下方「在 B 站打开」。

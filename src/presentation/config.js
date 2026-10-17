@@ -1,4 +1,4 @@
-export const EXPERIENCE_URL = 'https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/walk/?scene=cafeteria';
+export const EXPERIENCE_URL = 'https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/sky-soho/?view=planet';
 export const DEFAULT_VIDEO_URL = 'https://www.bilibili.com/video/BV1ZBpX6iEw6/';
 
 export const STEPS = [

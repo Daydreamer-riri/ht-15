@@ -29,7 +29,7 @@ test('scene switches and the presentation QR stay on the migrated site', () => {
     assert.ok(target.href.startsWith(walkBase.href));
     assert.equal(target.searchParams.get('scene'), scene);
   }
-  assert.equal(EXPERIENCE_URL, new URL('?scene=cafeteria', walkBase).href);
+  assert.equal(EXPERIENCE_URL, new URL('sky-soho/?view=planet', pages).href);
   const scene = JSON.parse(readFileSync(new URL('dist/walk/honor-corridor/scene.json', root)));
   assert.ok(new URL(scene.homeUrl, new URL('honor-corridor/', walkBase)).href.startsWith(walkBase.href));
 });

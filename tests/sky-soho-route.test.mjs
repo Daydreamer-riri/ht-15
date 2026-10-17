@@ -2,8 +2,41 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { buildDayTrip, distanceMeters, project, samplePath, tailPath, resolveSelection, pageUrl, makePath, clipPathToCampus } from '../src/sky-soho/model.js';
+import { buildExperience, experiences, sceneHref, placeLabel } from '../src/sky-soho/experience.js';
+import { explorerScenes } from '../realtrip/src/explorer-ui.js';
 const data=JSON.parse(readFileSync(new URL('../src/sky-soho/data/itinerary.json',import.meta.url)));
 const model=buildDayTrip(data);
+
+test('Hackathon entrances cover the five walk scenes without changing source itinerary or legacy POIs', () => {
+ const before = JSON.stringify(data), experience = buildExperience(data);
+ assert.equal(JSON.stringify(data), before);
+ assert.deepEqual(experiences.map(item => item.sceneId), explorerScenes.map(([id]) => id));
+ assert.deepEqual(new Set(experience.stops.map(stop => stop.id)), new Set(model.stops.map(stop => stop.id)));
+ const html = readFileSync(new URL('../dist/sky-soho/index.html', import.meta.url), 'utf8');
+ for (const stop of experience.stops) {
+  const target = new URL(sceneHref(stop.sceneId), 'https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/sky-soho/');
+  assert.equal(target.pathname, '/haojiaxu/hackathon-15/walk/');
+  assert.equal(target.searchParams.get('scene'), stop.sceneId);
+  assert.ok(html.includes(`href="${sceneHref(stop.sceneId)}"`), `${stop.name} must work without WebGL or JavaScript`);
+  assert.deepEqual(stop.position, model.stops.find(item => item.id === stop.id).position);
+ }
+ assert.throws(() => sceneHref('missing'));
+});
+
+test('five named markers stay separate and on screen even at a shared projected point', () => {
+ for (const width of [320, 390, 600, 1144]) {
+  const viewport = { width, height: 260 };
+  for (const anchor of [{x: width / 2, y: 100}, {x: 0, y: 0}, {x: width, y: 260}]) {
+   const placed = [];
+   for (let i = 0; i < 5; i++) {
+    const box = placeLabel(anchor, {width: 105, height: 40}, viewport, placed);
+    assert.ok(box.x >= 0 && box.y >= 0 && box.x + box.width <= width && box.y + box.height <= viewport.height);
+    for (const p of placed) assert.ok(box.x + box.width <= p.x || box.x >= p.x + p.width || box.y + box.height <= p.y || box.y >= p.y + p.height);
+    placed.push(box);
+   }
+  }
+ }
+});
 
 test('Sky SOHO preserves five stops, all six original connections, return and unscheduled places',()=>{
  assert.deepEqual(model.stops.map(s=>s.name),['8号楼','工区','茶水间','会议室','健身房']);

@@ -2,10 +2,12 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { createCampus } from './world.js';
 import { CAMPUS_DISPLAY } from './model.js';
+import { placeLabel } from './experience.js';
 
 export class SkySohoScene {
-  constructor(container, model, {onSelect,onInteract}) {
+  constructor(container, model, {onSelect,onInteract,markerHref}) {
     this.container=container;this.model=model;this.onSelect=onSelect;
+    this.namedLinks=Boolean(markerHref);
     this.reducedMotion=matchMedia('(prefers-reduced-motion:reduce)').matches;
     this.scene=new THREE.Scene();
     this.renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});
@@ -27,9 +29,11 @@ export class SkySohoScene {
     this.campus=createCampus(model);this.scene.add(this.campus.root);
     this.labelLayer=document.createElement('div');this.labelLayer.className='map-labels';container.append(this.labelLayer);
     for(const marker of this.campus.markers){
-      const label=document.createElement('button');label.className='map-pin';label.type='button';label.setAttribute('aria-label',`查看${marker.stop.name}`);
+      const label=document.createElement(markerHref?'a':'button');label.className='map-pin';
+      if(markerHref){label.href=markerHref(marker.stop);label.setAttribute('aria-label',`进入${marker.stop.name}实景探索`);}
+      else{label.type='button';label.setAttribute('aria-label',`查看${marker.stop.name}`);label.addEventListener('click',()=>onSelect(marker.stop));}
       const number=document.createElement('span');number.textContent=String(marker.stop.index+1).padStart(2,'0');
-      const name=document.createElement('strong');name.textContent=marker.stop.name;label.append(number,name);label.addEventListener('click',()=>onSelect(marker.stop));
+      const name=document.createElement('strong');name.textContent=marker.stop.name;label.append(number,name);
       marker.label=label;this.labelLayer.append(label);
     }
     this.selectedId=null;this.time=0;this.view='planet';
@@ -48,7 +52,7 @@ export class SkySohoScene {
   flyTo(position,target,duration=1000){this.flight={from:this.camera.position.clone(),fromTarget:this.controls.target.clone(),position,target,start:performance.now(),duration:this.reducedMotion?0:duration};}
   select(stop){
     this.selectedId=stop?.id||null;
-    for(const marker of this.campus.markers){const active=marker.stop.id===this.selectedId;marker.label.classList.toggle('selected',active);marker.label.setAttribute('aria-pressed',String(active));marker.dot.scale.setScalar(active?1.6:1);}
+    for(const marker of this.campus.markers){const active=marker.stop.id===this.selectedId;marker.label.classList.toggle('selected',active);if(!this.namedLinks)marker.label.setAttribute('aria-pressed',String(active));marker.dot.scale.setScalar(active?1.6:1);}
     for(const route of this.campus.routes)route.group.traverse(mesh=>{if(mesh.material){mesh.material.color.set(route.stopId===this.selectedId?'#fff4bd':route.stopId==='sky-soho-return'?'#65d5d3':'#eab678');mesh.material.opacity=this.selectedId&&route.stopId!==this.selectedId?.45:1;mesh.material.transparent=true;}});
   }
   zoom(factor){this.flight=null;const offset=this.camera.position.clone().sub(this.controls.target);offset.setLength(Math.max(this.controls.minDistance,Math.min(this.controls.maxDistance,offset.length()*factor)));this.camera.position.copy(this.controls.target).add(offset);}
@@ -64,6 +68,10 @@ export class SkySohoScene {
       const p=marker.position.clone().project(this.camera);let x=(p.x+1)*w/2,y=(1-p.y)*h/2;
       const visible=p.z<1&&p.z>-1&&Math.abs(p.x)<1&&Math.abs(p.y)<1;
       marker.label.hidden=!visible;if(!visible)continue;
+      if(this.namedLinks){
+        const box=placeLabel({x,y},{width:marker.label.offsetWidth,height:marker.label.offsetHeight},{width:w,height:h},placed);
+        placed.push(box);marker.label.style.transform=`translate(${box.x}px,${box.y}px)`;continue;
+      }
       let shift=0;while(placed.some(q=>Math.abs(q.x-x)<(q.selected||marker.stop.id===this.selectedId?78:31)&&Math.abs(q.y-y)<29)){shift++;x=(p.x+1)*w/2+(shift%2?1:-1)*Math.ceil(shift/2)*32;if(shift>5){y-=32;shift=0;}}
       placed.push({x,y,selected:marker.stop.id===this.selectedId});marker.label.style.transform=`translate(${x}px,${y}px) translate(-50%,-100%)`;
     }
