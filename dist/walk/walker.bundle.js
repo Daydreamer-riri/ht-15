@@ -92352,7 +92352,7 @@ var init_npc_scene = __esm({
     init_venue();
     npcConfig = {
       name: "\u5C0F\u84DD",
-      modelUrl: "npc/blue-mascot.glb",
+      modelUrl: "npc/blue-mascot.glb?v=refined-20261018",
       configUrl: "npc/service.json",
       position: [1.25, -0.86, 1.4],
       scale: 0.46,
@@ -92384,20 +92384,27 @@ async function createNpcCharacter(viewer, config, base2) {
     materials.add(instance.material);
   }
   for (const material of materials) {
-    if (material.emissive.r + material.emissive.g + material.emissive.b < 0.01) {
-      material.emissive.copy(material.diffuse).mulScalar(0.4);
-      material.update();
+    if (!material.useLighting) {
+      material.diffuse.set(0, 0, 0);
+      material.useTonemap = false;
+    } else if (material.emissive.r + material.emissive.g + material.emissive.b < 0.01) material.emissive.copy(material.diffuse).mulScalar(0.24);
+    for (const language of ["glsl", "wgsl"]) {
+      const chunk = ShaderChunks.get(app2.graphicsDevice, language).get("endPS");
+      const output = language === "glsl" ? "gl_FragColor.rgb" : "finalRgb";
+      const vector = language === "glsl" ? "vec3" : "vec3f";
+      material.getShaderChunks(language).set("endPS", chunk.replace(`gammaCorrectOutput(${output})`, `pow(max(${output}, ${vector}(0.0)) + ${vector}(0.0000001), ${vector}(1.0 / 2.2))`));
     }
+    material.update();
   }
   const lights = [];
-  for (const [name, color, intensity, rotation5] of [["NPC key", [1, 0.94, 0.88], 1.1, [65, 180, 0]], ["NPC fill", [0.8, 0.9, 1], 0.65, [25, 95, 0]], ["NPC rim", [0.45, 0.8, 1], 0.8, [35, 0, 0]]]) {
+  for (const [name, color, intensity, rotation5] of [["NPC key", [1, 0.94, 0.88], 0.85, [65, 180, 0]], ["NPC fill", [0.8, 0.9, 1], 0.4, [25, 95, 0]], ["NPC rim", [0.45, 0.8, 1], 0.45, [35, 0, 0]]]) {
     const light = new Entity(name);
     light.addComponent("light", { type: "directional", color: new Color(...color), intensity, castShadows: false, mask: 2 });
     light.setEulerAngles(...rotation5);
     app2.root.addChild(light);
     lights.push(light);
   }
-  const body = model.findByName("Body"), head = model.findByName("Head"), arm = model.findByName("ArmL"), mouth = model.findByName("Mouth");
+  const body = model.findByName("Body"), head = model.findByName("Head"), arm = model.findByName("ArmL"), armR = model.findByName("ArmR"), mouth = model.findByName("Mouth"), eyes = [model.findByName("EyeL"), model.findByName("EyeR")];
   const reduced = matchMedia("(prefers-reduced-motion: reduce)");
   let elapsed = 0, near = false, speaking = false, thinking = false, waveUntil = 0, yaw = config.rotation;
   function update(dt) {
@@ -92411,9 +92418,12 @@ async function createNpcCharacter(viewer, config, base2) {
       root.setEulerAngles(0, yaw, 0);
     }
     if (body) body.setLocalPosition(0, 0.16 + (reduced.matches ? 0 : Math.sin(elapsed * 2) * 0.022), 0);
-    if (head) head.setLocalEulerAngles(thinking ? Math.sin(elapsed * 2) * 4 : 0, 0, reduced.matches ? 0 : Math.sin(elapsed * 1.4) * 2);
+    if (head) head.setLocalEulerAngles(reduced.matches ? 0 : thinking ? Math.sin(elapsed * 2) * 4 : speaking ? Math.sin(elapsed * 3.2) * 2 : 0, 0, reduced.matches ? 0 : 2 + Math.sin(elapsed * 1.4) * 2);
     if (arm) arm.setLocalEulerAngles(0, 0, elapsed < waveUntil && !reduced.matches ? -135 + Math.sin(elapsed * 9) * 16 : -19.5);
-    if (mouth) mouth.setLocalScale(1, speaking && !reduced.matches ? 0.65 + Math.abs(Math.sin(elapsed * 14)) * 1.6 : 1, 1);
+    if (armR) armR.setLocalEulerAngles(speaking && !reduced.matches ? Math.sin(elapsed * 2.8) * 9 : 0, 0, 27 + (speaking && !reduced.matches ? Math.sin(elapsed * 3) * 6 : 0));
+    if (mouth) mouth.setLocalScale(1, speaking && !reduced.matches ? 0.55 + Math.abs(Math.sin(elapsed * 12)) * 0.85 : 1, 1);
+    const blink = elapsed % 4.7, blinkScale = reduced.matches ? 1 : blink < 0.18 ? Math.max(0.06, Math.abs(blink - 0.09) / 0.09) : 1;
+    for (const eye of eyes) eye?.setLocalScale(1, blinkScale, 1);
     app2.renderNextFrame = true;
   }
   app2.on("update", update);
@@ -92481,6 +92491,123 @@ var init_npc_client = __esm({
   }
 });
 
+// realtrip/src/npc-session.js
+function createNpcSession({ request, onThinking, onReply, onError }) {
+  let generation = 0, pending = null, history2 = [];
+  function cancel() {
+    generation++;
+    pending?.abort();
+    pending = null;
+    onThinking(false);
+  }
+  async function submit(text) {
+    text = text.trim().slice(0, 1200);
+    if (!text) return;
+    cancel();
+    const id15 = generation, controller = new AbortController();
+    pending = controller;
+    onThinking(true);
+    try {
+      const reply = await request(history2, text, controller.signal);
+      if (id15 !== generation || controller.signal.aborted) return;
+      history2 = [...history2, { role: "user", content: text }, { role: "assistant", content: reply }].slice(-10);
+      pending = null;
+      onThinking(false);
+      onReply(reply);
+    } catch (error) {
+      if (id15 === generation && !controller.signal.aborted) {
+        pending = null;
+        onThinking(false);
+        onError(error, text);
+      }
+    }
+  }
+  return { submit, cancel, get pending() {
+    return pending !== null;
+  } };
+}
+function speechChunks(text) {
+  const sentences = String(text).replace(/[*#`]/g, "").match(/[^。！？!?；;\n]+[。！？!?；;\n]?/g) || [];
+  return sentences.flatMap((sentence) => {
+    const out2 = [];
+    while (sentence.length > 70) {
+      let cut = sentence.lastIndexOf("\uFF0C", 65) + 1;
+      if (cut < 20) cut = 60;
+      out2.push(sentence.slice(0, cut));
+      sentence = sentence.slice(cut);
+    }
+    if (sentence.trim()) out2.push(sentence.trim());
+    return out2;
+  });
+}
+function createNpcSpeech({ synth, Utterance, onQueued = () => {
+}, onStart, onEnd, onCaption, onError }) {
+  let generation = 0, timer;
+  function stop() {
+    generation++;
+    clearTimeout(timer);
+    synth?.cancel();
+    onEnd();
+  }
+  function speak(text) {
+    stop();
+    if (!synth || !Utterance) {
+      onError("\u5F53\u524D\u6D4F\u89C8\u5668\u4E0D\u80FD\u6717\u8BFB\uFF0C\u53EF\u4EE5\u9605\u8BFB\u89D2\u8272\u5B57\u5E55\u3002");
+      return;
+    }
+    const id15 = generation, chunks = speechChunks(text);
+    let index = 0;
+    onQueued();
+    function next() {
+      if (id15 !== generation) return;
+      if (index >= chunks.length) {
+        onCaption(text);
+        onEnd();
+        return;
+      }
+      const part = chunks[index++], utterance = new Utterance(part);
+      utterance.lang = "zh-CN";
+      utterance.rate = 1.03;
+      utterance.pitch = 1.13;
+      const voices = synth.getVoices();
+      utterance.voice = voices.find((v2) => v2.lang === "zh-CN" && /Ting|晓|Xiao|婷婷/.test(v2.name)) || voices.find((v2) => v2.lang === "zh-CN") || voices.find((v2) => v2.lang.startsWith("zh")) || null;
+      const failure = () => {
+        if (id15 !== generation) return;
+        stop();
+        onCaption(text);
+        onError("\u58F0\u97F3\u6CA1\u6709\u64AD\u653E\u51FA\u6765\uFF0C\u70B9\u626C\u58F0\u5668\u53EF\u4EE5\u91CD\u64AD\u3002");
+      };
+      timer = setTimeout(failure, 12e3);
+      utterance.onstart = () => {
+        if (id15 === generation) {
+          clearTimeout(timer);
+          timer = setTimeout(failure, 45e3);
+          onStart();
+          onCaption(part);
+        }
+      };
+      utterance.onend = () => {
+        if (id15 === generation) {
+          clearTimeout(timer);
+          next();
+        }
+      };
+      utterance.onerror = failure;
+      try {
+        synth.speak(utterance);
+      } catch {
+        failure();
+      }
+    }
+    next();
+  }
+  return { speak, stop };
+}
+var init_npc_session = __esm({
+  "realtrip/src/npc-session.js"() {
+  }
+});
+
 // realtrip/src/npc.css
 var init_npc = __esm({
   "realtrip/src/npc.css"() {
@@ -92497,174 +92624,161 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
   const host = document.createElement("div");
   host.id = "npc-ui";
   host.dataset.explorerUi = "";
-  host.innerHTML = `<div class="npc-experience"><span class="npc-dot"></span> NPC \u72EC\u7ACB\u4F53\u9A8C</div>
-    <button class="npc-world-label" aria-label="\u4E0E\u821E\u53F0\u4E0A\u7684\u5C0F\u84DD\u5BF9\u8BDD"><span>\u5C0F\u84DD <i>AI</i></span><small>\u8D70\u8FD1\u6253\u4E2A\u62DB\u547C</small></button>
-    <button class="npc-invite" aria-label="\u4E0E\u5C0F\u84DD\u5BF9\u8BDD"><span class="npc-orb">\u2726</span><span><strong>\u5C0F\u84DD\u5728\u821E\u53F0\u7B49\u4F60</strong><small>\u8D70\u8FD1\u540E\u53EF\u4EE5\u8BED\u97F3\u804A\u5929</small></span><kbd>E</kbd></button>
-    <dialog class="npc-dialog" aria-labelledby="npc-title">
-      <header class="npc-header"><span class="npc-orb">\u2726</span><div><h2 id="npc-title">\u5C0F\u84DD <span>AI \u5411\u5BFC</span></h2><p class="npc-connection">\u6B63\u5728\u8FDE\u63A5 DeepSeek\u2026</p></div><button class="npc-close" aria-label="\u7ED3\u675F\u5BF9\u8BDD">\xD7</button></header>
-      <div class="npc-messages" role="log" aria-live="polite" aria-label="\u4E0E\u5C0F\u84DD\u7684\u804A\u5929\u8BB0\u5F55"></div>
-      <div class="npc-suggestions"><button>\u4ECB\u7ECD\u4E00\u4E0B\u4F60\u81EA\u5DF1</button><button>\u5E2E\u6211\u60F3\u4E2A Hackathon \u70B9\u5B50</button><button>\u8FD9\u91CC\u8FD8\u80FD\u53BB\u54EA\u513F\uFF1F</button></div>
-      <div class="npc-status" role="status"></div>
-      <form class="npc-form"><label class="npc-sr" for="npc-input">\u5BF9\u5C0F\u84DD\u8BF4\u70B9\u4EC0\u4E48</label><textarea id="npc-input" rows="1" maxlength="1200" placeholder="\u5BF9\u5C0F\u84DD\u8BF4\u70B9\u4EC0\u4E48\u2026"></textarea><button class="npc-send" type="submit" aria-label="\u53D1\u9001\u6D88\u606F">\u2191</button></form>
-      <div class="npc-voice"><button class="npc-mic">${micIcon}<span>\u70B9\u51FB\u8BF4\u8BDD</span></button><button class="npc-audio" aria-pressed="true">\u6717\u8BFB\uFF1A\u5F00</button></div>
-      <p class="npc-note">DeepSeek \u751F\u6210\u56DE\u7B54 \xB7 \u8BED\u97F3\u7531\u6D4F\u89C8\u5668\u5904\u7406</p>
-    </dialog>`;
+  host.innerHTML = `<div class="npc-experience"><span></span> NPC \u72EC\u7ACB\u4F53\u9A8C</div>
+  <button class="npc-world-label" aria-label="\u548C\u5C0F\u84DD\u8BF4\u8BDD"><span>\u5C0F\u84DD <i>AI</i></span><small>\u8D70\u8FD1\u804A\u804A</small></button>
+  <div class="npc-bottom">
+   <div class="npc-caption" role="status" aria-live="polite" hidden><span class="npc-caption-name">\u5C0F\u84DD</span><p></p></div>
+   <div class="npc-status" role="status" aria-live="polite">\u6B63\u5728\u51C6\u5907\u5C0F\u84DD\u2026</div>
+   <form class="npc-form" hidden><label class="npc-sr" for="npc-input">\u5BF9\u5C0F\u84DD\u8BF4\u70B9\u4EC0\u4E48</label><input id="npc-input" maxlength="1200" autocomplete="off" placeholder="\u5BF9\u5C0F\u84DD\u8BF4\u70B9\u4EC0\u4E48\u2026"><button class="npc-send" type="submit" aria-label="\u53D1\u9001\u7ED9\u5C0F\u84DD">${svg2("send")}</button><button class="npc-fold" type="button" aria-label="\u6536\u8D77\u8F93\u5165\u6846">\xD7</button></form>
+   <div class="npc-controls" aria-label="\u4E0E\u5C0F\u84DD\u4EA4\u6D41">
+    <button class="npc-mic" aria-label="\u70B9\u51FB\u548C\u5C0F\u84DD\u8BF4\u8BDD" title="\u8BED\u97F3 \xB7 E">${svg2("mic")}<span>\u8BF4\u8BDD</span></button>
+    <button class="npc-keyboard" aria-label="\u6253\u5F00\u952E\u76D8\u8F93\u5165" aria-expanded="false" title="\u6253\u5B57 \xB7 T">${svg2("keyboard")}<span>\u6253\u5B57</span></button>
+    <button class="npc-audio" aria-label="\u91CD\u64AD\u5C0F\u84DD\u7684\u56DE\u7B54" title="\u91CD\u64AD\u56DE\u7B54" disabled>${svg2("audio")}</button>
+    <button class="npc-stop" aria-label="\u6253\u65AD\u5C0F\u84DD" title="\u505C\u6B62\u56DE\u7B54" hidden>${svg2("stop")}</button>
+   </div>
+  </div>`;
   document.body.append(host);
-  const $ = (s) => host.querySelector(s), dialog = $(".npc-dialog"), invite = $(".npc-invite"), label = $(".npc-world-label"), input = $("#npc-input"), send = $(".npc-send"), mic = $(".npc-mic"), status = $(".npc-status"), log = $(".npc-messages"), audioButton = $(".npc-audio");
-  let config = {}, near = false, active = null, history2 = [], disposed = false, recognition = null, listening = false, audioEnabled = true, speechSerial = 0;
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const synth = window.speechSynthesis;
-  function message(role, text) {
-    const item = document.createElement("div");
-    item.className = `npc-message ${role}`;
-    const name = document.createElement("small");
-    name.textContent = role === "user" ? "\u4F60" : "\u5C0F\u84DD";
-    const p2 = document.createElement("p");
-    p2.textContent = text;
-    item.append(name, p2);
-    log.append(item);
-    while (log.childElementCount > 40) log.firstElementChild.remove();
-    log.scrollTop = log.scrollHeight;
+  const $ = (s) => host.querySelector(s), label = $(".npc-world-label"), mic = $(".npc-mic"), keyboard = $(".npc-keyboard"), form = $(".npc-form"), input = $("#npc-input"), status = $(".npc-status"), caption = $(".npc-caption"), speaker = $(".npc-audio"), stopButton = $(".npc-stop");
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition, synth = window.speechSynthesis;
+  let config = {}, near = false, keyboardOpen = false, listening = false, thinking = false, speaking = false, playbackPending = false, disposed = false, recognition = null, lastReply = "", note = "", configError = "";
+  function setCaption(text) {
+    caption.querySelector("p").textContent = text;
+    caption.hidden = !text;
   }
-  message("assistant", "\u55E8\uFF0C\u6211\u662F\u5C0F\u84DD\uFF01\u4ECE\u6D77\u62A5\u91CC\u6E9C\u51FA\u6765\uFF0C\u6B63\u5728\u821E\u53F0\u4E0A\u7B49\u4F60\u3002\u60F3\u804A\u804A\u521B\u610F\uFF0C\u8FD8\u662F\u4E00\u8D77\u63A2\u7D22\u4F1A\u573A\uFF1F");
-  function stopSpeech() {
-    speechSerial++;
-    synth?.cancel();
-    character.setSpeaking(false);
-  }
-  function speak(text) {
-    stopSpeech();
-    if (!audioEnabled || !synth || !dialog.open) return;
-    const id15 = speechSerial, utterance = new SpeechSynthesisUtterance(text.replace(/[*#`]/g, ""));
-    utterance.lang = "zh-CN";
-    utterance.rate = 1.06;
-    const voices = synth.getVoices();
-    utterance.voice = voices.find((v2) => v2.lang === "zh-CN") || voices.find((v2) => v2.lang.startsWith("zh")) || null;
-    utterance.onstart = () => {
-      if (id15 === speechSerial) character.setSpeaking(true);
-    };
-    utterance.onend = () => {
-      if (id15 === speechSerial) character.setSpeaking(false);
-    };
-    utterance.onerror = () => {
-      if (id15 === speechSerial) {
-        character.setSpeaking(false);
-        status.textContent = "\u6717\u8BFB\u672A\u80FD\u64AD\u653E\uFF0C\u56DE\u7B54\u4ECD\u53EF\u9605\u8BFB\u3002";
-      }
-    };
-    synth.speak(utterance);
-  }
-  function sync() {
-    send.disabled = Boolean(active) || listening || !config.apiKey;
-    mic.disabled = Boolean(active) || !SpeechRecognition || !config.apiKey;
-    input.disabled = Boolean(active);
-    $(".npc-suggestions").querySelectorAll("button").forEach((b) => b.disabled = Boolean(active) || listening || !config.apiKey);
-  }
-  function stopRecognition() {
-    if (recognition) {
-      recognition.onend = null;
-      recognition.abort();
-      recognition = null;
-    }
-    listening = false;
-    mic.classList.remove("listening");
-    mic.querySelector("span").textContent = SpeechRecognition ? "\u70B9\u51FB\u8BF4\u8BDD" : "\u8BF7\u7528\u6587\u5B57\u4EA4\u6D41";
+  function showNote(text) {
+    note = text;
     sync();
   }
-  function close() {
-    active?.abort();
-    active = null;
-    stopRecognition();
-    stopSpeech();
-    character.setThinking(false);
-    status.textContent = "";
-    navigation.setEnabled(!document.getElementById("about").open);
+  function pauseMovement() {
+    navigation.setEnabled(!keyboardOpen && !listening && !document.getElementById("about")?.open);
     stop();
   }
-  function open() {
-    if (!near || dialog.open) return;
+  function releasePointer() {
     stop();
     if (document.pointerLockElement) document.exitPointerLock();
-    navigation.setEnabled(false);
-    dialog.showModal();
-    character.wave();
-    if (matchMedia("(pointer:fine)").matches) input.focus();
-    else $(".npc-close").focus();
   }
-  invite.onclick = label.onclick = open;
-  $(".npc-close").onclick = () => dialog.close();
-  dialog.addEventListener("close", close);
-  dialog.addEventListener("cancel", () => {
-    stopRecognition();
-    stopSpeech();
-    active?.abort();
+  function blurControls() {
+    if (host.contains(document.activeElement)) document.activeElement.blur();
+  }
+  function sync() {
+    const available = near && Boolean(config.apiKey);
+    mic.disabled = !available || !SpeechRecognition;
+    keyboard.disabled = !available;
+    label.disabled = !available;
+    $(".npc-send").disabled = !available;
+    input.disabled = !available;
+    mic.classList.toggle("listening", listening);
+    mic.querySelector("span").textContent = listening ? "\u7ED3\u675F" : "\u8BF4\u8BDD";
+    mic.setAttribute("aria-label", listening ? "\u7ED3\u675F\u5F55\u97F3" : "\u70B9\u51FB\u548C\u5C0F\u84DD\u8BF4\u8BDD");
+    keyboard.setAttribute("aria-expanded", String(keyboardOpen));
+    keyboard.classList.toggle("active", keyboardOpen);
+    form.hidden = !keyboardOpen;
+    stopButton.hidden = !(listening || thinking || speaking || playbackPending);
+    speaker.disabled = !lastReply || !near || listening || thinking;
+    status.textContent = configError || (!near ? "\u8D70\u8FD1\u821E\u53F0\u4E0A\u7684\u5C0F\u84DD" : note || (listening ? "\u6B63\u5728\u542C\uFF0C\u8BF4\u5B8C\u540E\u81EA\u52A8\u53D1\u9001" : thinking ? "\u5C0F\u84DD\u6B63\u5728\u60F3\u2026" : speaking || playbackPending ? "\u5C0F\u84DD\u6B63\u5728\u56DE\u7B54" : !config.apiKey ? "\u6B63\u5728\u8FDE\u63A5 DeepSeek\u2026" : SpeechRecognition ? "\u70B9\u51FB\u8BF4\u8BDD\uFF0C\u6216\u6253\u5B57\u804A\u804A" : "\u70B9\u952E\u76D8\uFF0C\u548C\u5C0F\u84DD\u804A\u804A"));
+    label.querySelector("small").textContent = listening ? "\u6211\u5728\u542C" : thinking ? "\u8BA9\u6211\u60F3\u60F3" : speaking ? "\u6B63\u5728\u56DE\u7B54" : near ? "\u548C\u6211\u8BF4\u8BDD" : "\u8D70\u8FD1\u804A\u804A";
+    host.dataset.phase = listening ? "listening" : thinking ? "thinking" : speaking || playbackPending ? "speaking" : "idle";
+  }
+  const speech = createNpcSpeech({
+    synth,
+    Utterance: window.SpeechSynthesisUtterance,
+    onQueued() {
+      playbackPending = true;
+      sync();
+    },
+    onStart() {
+      playbackPending = false;
+      speaking = true;
+      character.setSpeaking(true);
+      sync();
+    },
+    onEnd() {
+      playbackPending = false;
+      speaking = false;
+      character.setSpeaking(false);
+      sync();
+    },
+    onCaption: setCaption,
+    onError: showNote
   });
-  async function submit(text) {
-    text = text.trim();
-    if (!text || active || !config.apiKey) return;
-    stopRecognition();
-    stopSpeech();
-    input.value = "";
-    message("user", text);
-    status.textContent = "\u5C0F\u84DD\u6B63\u5728\u60F3\u2026";
-    character.setThinking(true);
-    const request = new AbortController();
-    active = request;
+  function playReply(text) {
+    speech.speak(text);
+  }
+  const session = createNpcSession({
+    request: (history2, text, signal) => askNpc(config, history2, text, { signal }),
+    onThinking(value) {
+      thinking = value;
+      character.setThinking(value);
+      sync();
+    },
+    onReply(reply) {
+      if (disposed || !near) return;
+      lastReply = reply;
+      setCaption(reply);
+      note = "";
+      playReply(reply);
+    },
+    onError(error, text) {
+      input.value = text;
+      showNote(error.message);
+    }
+  });
+  function stopRecognition() {
+    const rec = recognition;
+    recognition = null;
+    if (rec) {
+      rec.onend = null;
+      rec.abort();
+    }
+    listening = false;
+    pauseMovement();
     sync();
-    try {
-      const reply = await askNpc(config, history2, text, { signal: request.signal });
-      if (request.signal.aborted || disposed) return;
-      history2 = [...history2, { role: "user", content: text }, { role: "assistant", content: reply }].slice(-10);
-      message("assistant", reply);
-      status.textContent = "";
-      speak(reply);
-    } catch (error) {
-      if (!request.signal.aborted && !disposed) {
-        status.textContent = error.message;
-        input.value = text;
-      }
-    } finally {
-      if (active === request) {
-        active = null;
-        character.setThinking(false);
-        sync();
-      }
-    }
   }
-  $(".npc-form").onsubmit = (e) => {
-    e.preventDefault();
-    submit(input.value);
-  };
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && !e.shiftKey && !e.isComposing) {
-      e.preventDefault();
-      submit(input.value);
-    }
-  });
-  $(".npc-suggestions").querySelectorAll("button").forEach((b) => b.onclick = () => submit(b.textContent));
-  audioButton.onclick = () => {
-    audioEnabled = !audioEnabled;
-    audioButton.setAttribute("aria-pressed", String(audioEnabled));
-    audioButton.textContent = `\u6717\u8BFB\uFF1A${audioEnabled ? "\u5F00" : "\u5173"}`;
-    if (!audioEnabled) stopSpeech();
-  };
-  if (!synth) {
-    audioEnabled = false;
-    audioButton.disabled = true;
-    audioButton.textContent = "\u5F53\u524D\u6D4F\u89C8\u5668\u4E0D\u652F\u6301\u6717\u8BFB";
+  function interrupt({ clear = false } = {}) {
+    session.cancel();
+    stopRecognition();
+    speech.stop();
+    if (clear) setCaption("");
+    note = "";
+    sync();
   }
-  if (!SpeechRecognition) {
-    mic.disabled = true;
-    mic.title = "\u5F53\u524D\u6D4F\u89C8\u5668\u4E0D\u652F\u6301\u8BED\u97F3\u8BC6\u522B\uFF0C\u8BF7\u6253\u5B57\u4EA4\u6D41";
-    mic.querySelector("span").textContent = "\u8BF7\u7528\u6587\u5B57\u4EA4\u6D41";
+  function setKeyboard(open) {
+    if (open && !near) return;
+    keyboardOpen = open;
+    releasePointer();
+    pauseMovement();
+    sync();
+    if (open) {
+      stopRecognition();
+      input.focus();
+    } else blurControls();
   }
-  mic.onclick = () => {
+  function submit(text) {
+    text = text.trim();
+    if (!text || !near || !config.apiKey) return;
+    interrupt();
+    setKeyboard(false);
+    input.value = "";
+    setCaption("");
+    synth?.resume();
+    session.submit(text);
+  }
+  function listen() {
+    if (!near || !config.apiKey) return;
     if (listening) {
       recognition?.stop();
       return;
     }
-    if (!SpeechRecognition || active) return;
-    stopSpeech();
+    if (!SpeechRecognition) {
+      setKeyboard(true);
+      showNote("\u5F53\u524D\u6D4F\u89C8\u5668\u4E0D\u652F\u6301\u8BED\u97F3\u8BC6\u522B\uFF0C\u53EF\u4EE5\u6253\u5B57\u4EA4\u6D41\u3002");
+      return;
+    }
+    interrupt();
+    setKeyboard(false);
+    releasePointer();
+    setCaption("");
+    synth?.resume();
     const rec = new SpeechRecognition();
     recognition = rec;
     rec.lang = "zh-CN";
@@ -92672,70 +92786,110 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
     rec.continuous = false;
     let transcript = "", failed = false;
     listening = true;
-    status.textContent = "\u6B63\u5728\u542C\u2026 \u8BF4\u5B8C\u540E\u4F1A\u81EA\u52A8\u53D1\u9001";
-    mic.classList.add("listening");
-    mic.querySelector("span").textContent = "\u7ED3\u675F\u5F55\u97F3";
+    pauseMovement();
     sync();
     rec.onresult = (event) => {
       if (rec !== recognition) return;
       let interim = "";
       for (let i = 0; i < event.results.length; i++) interim += event.results[i][0].transcript;
+      note = interim ? `\u542C\u5230\uFF1A${interim}` : "";
       input.value = interim;
       transcript = Array.from(event.results).filter((r) => r.isFinal).map((r) => r[0].transcript).join("");
+      sync();
     };
     rec.onerror = (event) => {
       if (rec !== recognition) return;
       failed = true;
-      const errors = { "not-allowed": "\u6CA1\u6709\u83B7\u5F97\u9EA6\u514B\u98CE\u6743\u9650\uFF0C\u53EF\u4EE5\u6253\u5B57\u4EA4\u6D41\u3002", "audio-capture": "\u672A\u627E\u5230\u53EF\u7528\u9EA6\u514B\u98CE\uFF0C\u53EF\u4EE5\u6253\u5B57\u4EA4\u6D41\u3002", "no-speech": "\u6CA1\u6709\u542C\u6E05\uFF0C\u518D\u8BD5\u4E00\u6B21\u5427\u3002", "network": "\u6D4F\u89C8\u5668\u8BED\u97F3\u670D\u52A1\u6682\u4E0D\u53EF\u7528\uFF0C\u8BF7\u6253\u5B57\u4EA4\u6D41\u3002", "service-not-allowed": "\u6D4F\u89C8\u5668\u672A\u5F00\u653E\u8BED\u97F3\u8BC6\u522B\uFF0C\u8BF7\u6253\u5B57\u4EA4\u6D41\u3002" };
-      status.textContent = errors[event.error] || "\u8BED\u97F3\u8BC6\u522B\u4E2D\u65AD\uFF0C\u8BF7\u91CD\u8BD5\u6216\u6253\u5B57\u4EA4\u6D41\u3002";
+      const errors = { "not-allowed": "\u6CA1\u6709\u9EA6\u514B\u98CE\u6743\u9650\uFF0C\u70B9\u952E\u76D8\u4E5F\u80FD\u804A\u5929\u3002", "audio-capture": "\u6CA1\u6709\u627E\u5230\u9EA6\u514B\u98CE\uFF0C\u70B9\u952E\u76D8\u8BD5\u8BD5\u3002", "no-speech": "\u6CA1\u6709\u542C\u6E05\uFF0C\u518D\u8BF4\u4E00\u6B21\u5427\u3002", "network": "\u8BED\u97F3\u670D\u52A1\u6682\u65F6\u8FDE\u4E0D\u4E0A\uFF0C\u53EF\u4EE5\u6253\u5B57\u4EA4\u6D41\u3002", "service-not-allowed": "\u6D4F\u89C8\u5668\u672A\u5F00\u653E\u8BED\u97F3\u8BC6\u522B\uFF0C\u53EF\u4EE5\u6253\u5B57\u4EA4\u6D41\u3002" };
+      showNote(errors[event.error] || "\u5F55\u97F3\u4E2D\u65AD\u4E86\uFF0C\u8BF7\u518D\u8BD5\u4E00\u6B21\u3002");
     };
     rec.onend = () => {
       if (rec !== recognition) return;
       recognition = null;
       listening = false;
-      mic.classList.remove("listening");
-      mic.querySelector("span").textContent = "\u70B9\u51FB\u8BF4\u8BDD";
+      pauseMovement();
       sync();
-      if (!failed && transcript && dialog.open) submit(transcript);
-      else if (!failed) status.textContent = "\u6CA1\u6709\u542C\u6E05\uFF0C\u518D\u8BD5\u4E00\u6B21\u5427\u3002";
+      if (!failed && transcript && near) submit(transcript);
+      else if (!failed) showNote("\u6CA1\u6709\u542C\u6E05\uFF0C\u518D\u8BF4\u4E00\u6B21\u5427\u3002");
     };
     try {
       rec.start();
     } catch {
       stopRecognition();
-      status.textContent = "\u65E0\u6CD5\u5F00\u59CB\u5F55\u97F3\uFF0C\u8BF7\u6253\u5B57\u4EA4\u6D41\u3002";
+      showNote("\u65E0\u6CD5\u5F00\u59CB\u5F55\u97F3\uFF0C\u53EF\u4EE5\u6253\u5B57\u4EA4\u6D41\u3002");
+    }
+  }
+  mic.onclick = () => {
+    listen();
+    blurControls();
+  };
+  label.onclick = () => {
+    listen();
+    blurControls();
+  };
+  keyboard.onclick = () => {
+    if (!keyboardOpen) interrupt();
+    setKeyboard(!keyboardOpen);
+  };
+  $(".npc-fold").onclick = () => setKeyboard(false);
+  form.onsubmit = (event) => {
+    event.preventDefault();
+    if (!event.isComposing) submit(input.value);
+  };
+  input.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && event.isComposing) event.preventDefault();
+  });
+  speaker.onclick = () => {
+    if (near && lastReply) {
+      interrupt();
+      playReply(lastReply);
+      blurControls();
     }
   };
-  const onKey = (e) => {
-    if (e.code === "KeyE" && !e.repeat && !e.target.closest?.("input,textarea,dialog,button,select")) {
-      e.preventDefault();
-      open();
+  stopButton.onclick = () => {
+    interrupt();
+    blurControls();
+  };
+  if (!SpeechRecognition) mic.title = "\u5F53\u524D\u6D4F\u89C8\u5668\u4E0D\u652F\u6301\u8BED\u97F3\u8BC6\u522B\uFF0C\u8BF7\u4F7F\u7528\u952E\u76D8";
+  function leave() {
+    interrupt({ clear: true });
+    setKeyboard(false);
+  }
+  const onKey = (event) => {
+    if (event.key === "Escape") {
+      leave();
+      return;
+    }
+    if (event.repeat || event.ctrlKey || event.metaKey || event.altKey || event.target.closest?.("input,textarea,dialog,button,select")) return;
+    if (event.code === "KeyE") {
+      event.preventDefault();
+      listen();
+    }
+    if (event.code === "KeyT") {
+      event.preventDefault();
+      interrupt();
+      setKeyboard(!keyboardOpen);
     }
   };
   window.addEventListener("keydown", onKey);
   const visibility = () => {
-    if (document.hidden) {
-      stopRecognition();
-      stopSpeech();
-      active?.abort();
-    }
+    if (document.hidden) leave();
   };
   document.addEventListener("visibilitychange", visibility);
-  const projected = new Vec3();
+  const menuOpen = () => leave();
+  document.addEventListener("explorer-menu-open", menuOpen);
+  const projected = new Vec3(), direction = new Vec3();
   function update() {
-    const camera = viewer.app.root.findComponents("camera")[0], p2 = camera.entity.getPosition();
+    const camera = viewer.app.root.findComponents("camera")[0], p2 = camera.entity.getPosition(), wasNear = near;
     near = isNearNpc([p2.x, p2.y, p2.z], near);
     character.setNear(near);
-    invite.disabled = label.disabled = !near;
-    invite.querySelector("strong").textContent = near ? "\u548C\u5C0F\u84DD\u804A\u4E00\u804A" : "\u5C0F\u84DD\u5728\u821E\u53F0\u7B49\u4F60";
-    invite.querySelector("small").textContent = near ? "\u70B9\u51FB\u6216\u6309 E \xB7 \u652F\u6301\u8BED\u97F3\u5BF9\u8BDD" : "\u8D70\u8FD1\u821E\u53F0\u4E0A\u7684\u84DD\u767D\u5C0F\u4F19\u4F34";
-    label.querySelector("small").textContent = near ? "\u70B9\u51FB\u804A\u5929" : "\u8D70\u8FD1\u6253\u4E2A\u62DB\u547C";
+    if (wasNear && !near) leave();
+    if (wasNear !== near) sync();
     const rect = document.getElementById("world").getBoundingClientRect();
     camera.worldToScreen(character.anchor, projected);
-    const direction = character.anchor.clone().sub(p2);
-    label.hidden = dialog.open || direction.dot(camera.entity.forward) < 0 || projected.x < 30 || projected.x > rect.width - 30 || projected.y < 80 || projected.y > rect.height - 60;
-    label.style.transform = `translate(${projected.x}px,${Math.max(160, projected.y)}px) translate(-50%,-100%)`;
-    invite.hidden = dialog.open;
+    direction.copy(character.anchor).sub(p2);
+    label.hidden = direction.dot(camera.entity.forward) < 0 || projected.x < 30 || projected.x > rect.width - 30 || projected.y < 80 || projected.y > rect.height - 60;
+    label.style.transform = `translate(${projected.x}px,${Math.max(155, projected.y)}px) translate(-50%,-100%)`;
     host.dataset.near = String(near);
   }
   viewer.app.on("update", update);
@@ -92743,40 +92897,41 @@ async function initNpc({ viewer, navigation, base: base2, stop }) {
     const response = await fetch(base2 + npcConfig.configUrl, { cache: "no-store" });
     if (!response.ok) throw Error();
     config = await response.json();
-    $(".npc-connection").textContent = config.apiKey ? "DeepSeek \xB7 \u53EF\u4EE5\u5F00\u59CB\u804A\u5929" : "DeepSeek \u5C1A\u672A\u914D\u7F6E";
+    if (!config.apiKey) configError = "DeepSeek \u8FD8\u672A\u914D\u7F6E\u3002";
   } catch {
-    $(".npc-connection").textContent = "\u5BF9\u8BDD\u914D\u7F6E\u52A0\u8F7D\u5931\u8D25";
-    status.textContent = "\u8BF7\u5237\u65B0\u9875\u9762\u91CD\u8BD5\u3002";
+    configError = "\u5BF9\u8BDD\u914D\u7F6E\u52A0\u8F7D\u5931\u8D25\uFF0C\u8BF7\u5237\u65B0\u91CD\u8BD5\u3002";
   }
   sync();
-  const destroy = () => {
+  function destroy() {
     disposed = true;
-    active?.abort();
-    stopRecognition();
-    stopSpeech();
+    leave();
     viewer.app.off("update", update);
     window.removeEventListener("keydown", onKey);
     document.removeEventListener("visibilitychange", visibility);
+    document.removeEventListener("explorer-menu-open", menuOpen);
     character.destroy();
     host.remove();
-  };
-  window.addEventListener("pagehide", (event) => {
-    if (event.persisted) {
-      if (dialog.open) dialog.close();
-      visibility();
-    } else destroy();
-  });
+  }
+  window.addEventListener("pagehide", (event) => event.persisted ? leave() : destroy());
   return { destroy };
 }
-var micIcon;
+var icons2, svg2;
 var init_npc_interaction = __esm({
   "realtrip/src/npc-interaction.js"() {
     init_src();
     init_npc_scene();
     init_npc_character();
     init_npc_client();
+    init_npc_session();
     init_npc();
-    micIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3M8 22h8"/></svg>';
+    icons2 = {
+      mic: '<rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3M8 22h8"/>',
+      keyboard: '<rect x="2" y="5" width="20" height="14" rx="3"/><path d="M5 9h2m2 0h2m2 0h2m2 0h2M5 12h2m2 0h2m2 0h2m2 0h2M7 16h10"/>',
+      audio: '<path d="m11 4-6 5H2v6h3l6 5V4ZM15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/>',
+      stop: '<rect x="6" y="6" width="12" height="12" rx="2"/>',
+      send: '<path d="M12 20V4m-6 6 6-6 6 6"/>'
+    };
+    svg2 = (name) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons2[name]}</svg>`;
   }
 });
 
@@ -103645,8 +103800,8 @@ var CursorRing = class {
   outerY = new Float64Array(NUM_SAMPLES);
   innerX = new Float64Array(NUM_SAMPLES);
   innerY = new Float64Array(NUM_SAMPLES);
-  constructor(svg2, canvas, camera, smoothing) {
-    this.svg = svg2;
+  constructor(svg3, canvas, camera, smoothing) {
+    this.svg = svg3;
     this.canvas = canvas;
     this.camera = camera;
     this.smoothing = smoothing;
@@ -103656,7 +103811,7 @@ var CursorRing = class {
     this.path.setAttribute("fill-rule", "evenodd");
     this.path.setAttribute("stroke", "none");
     this.path.style.display = "none";
-    svg2.appendChild(this.path);
+    svg3.appendChild(this.path);
   }
   projectCircle(px, py, pz, nx, ny, nz, radius, outX, outY) {
     const normal = tmpV.set(nx, ny, nz);

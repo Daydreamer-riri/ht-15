@@ -1,7 +1,7 @@
 import venue from './venue.json' with {type:'json'};
 
 export const npcConfig = {
-  name:'小蓝', modelUrl:'npc/blue-mascot.glb', configUrl:'npc/service.json',
+  name:'小蓝', modelUrl:'npc/blue-mascot.glb?v=refined-20261018', configUrl:'npc/service.json',
   position:[1.25,-.86,1.4], scale:.46, rotation:180,
   approachRadius:2.4, leaveRadius:2.8, maxVerticalDistance:1.1,
 };
