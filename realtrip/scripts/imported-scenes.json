@@ -5,20 +5,20 @@
     {
       "upstream": "dist/two-floor/scene.sog",
       "local": "models/two-floor.sog",
-      "bytes": 39439346,
-      "sha256": "da511fcffcf41c876a05f950b3484a1c35b7b2966f649c45a8f479ed5fb74459",
+      "bytes": 39553722,
+      "sha256": "14a1db52b172ad6047b374c148f0a329e3ebb7efe5c784f5ac0343ace5227a32",
       "upstreamSha256": "d8695775cdace8a84e05b1c9f9154bd104e449c33e7f23e050ef4a94ee15d7c8",
       "upstreamBytes": 39431738,
-      "adaptation": "Gym naming, local stair DC-color refinement and rendering settings. See public/two-floor/quality.json. Geometry and collision preserved."
+      "adaptation": "Gym upper-floor DC-color and bounded-scale refinement from real footage. Point centers and collision preserved. See public/two-floor/quality.json."
     },
     {
       "upstream": "dist/two-floor/scene.json",
       "local": "public/two-floor/scene.json",
       "bytes": 2929,
-      "sha256": "5139135cd23b15d0fdad67c217216ed153b7bb31a66426c9f9cfaa7d112bd6e1",
+      "sha256": "bd619971b101ed30498cbba49f90b137736d40b6496cf8c84518621cd657ce72",
       "upstreamSha256": "167204ee9d1209dded815b7e6f5e98ad29f4b01a369b3004a12f304e82b3558c",
       "upstreamBytes": 2778,
-      "adaptation": "Gym naming, local stair DC-color refinement and rendering settings. See public/two-floor/quality.json. Geometry and collision preserved."
+      "adaptation": "Gym upper-floor DC-color and bounded-scale refinement from real footage. Point centers and collision preserved. See public/two-floor/quality.json."
     },
     {
       "upstream": "dist/two-floor/solids.json",
@@ -35,20 +35,20 @@
     {
       "upstream": "dist/two-floor/README.md",
       "local": "public/two-floor/README.md",
-      "bytes": 1907,
-      "sha256": "a65deb6a0df9a666ec1e3dc8dbd55fe2176173abb15ec3aad4649f86a95596dd",
+      "bytes": 2148,
+      "sha256": "95b63dba19dd8170eb2498ad1a301b1baceba5b180ff1c60a2aa3dff17477cd3",
       "upstreamSha256": "d6bd635e8d9418ec869c3dc2a5dd5a818393e51126d7a15e3c3e878c7ea73e2a",
       "upstreamBytes": 3760,
-      "adaptation": "Gym naming, local stair DC-color refinement and rendering settings. See public/two-floor/quality.json. Geometry and collision preserved."
+      "adaptation": "Gym upper-floor DC-color and bounded-scale refinement from real footage. Point centers and collision preserved. See public/two-floor/quality.json."
     },
     {
       "upstream": "dist/two-floor/release.json",
       "local": "public/two-floor/release.json",
-      "bytes": 813,
-      "sha256": "ae3ace29057db5afc1e26f47f3fda1fda0bcca81c16994b70743ae6863233f66",
+      "bytes": 816,
+      "sha256": "150deb863bbdd3378292c5b20cc9c3a20d84ec32b684c5611f901adbed1e042f",
       "upstreamSha256": "53d57ac279f4950b75b80ce0a5a0a495f2042fd2b0f4ecc032a49c7a627f6a53",
       "upstreamBytes": 1815,
-      "adaptation": "Gym naming, local stair DC-color refinement and rendering settings. See public/two-floor/quality.json. Geometry and collision preserved."
+      "adaptation": "Gym upper-floor DC-color and bounded-scale refinement from real footage. Point centers and collision preserved. See public/two-floor/quality.json."
     },
     {
       "local": "models/venue.sog",
