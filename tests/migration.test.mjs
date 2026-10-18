@@ -9,7 +9,7 @@ const pages = 'https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/';
 const walkBase = new URL('walk/', pages);
 
 test('all entry documents resolve their own assets under the Pages project prefix', () => {
-  for (const entry of ['index.html', 'presentation/index.html', 'walk/index.html', 'walk/honor-corridor/index.html', 'sky-soho/index.html', 'route-3d/index.html']) {
+  for (const entry of ['index.html', 'presentation/index.html', 'walk/index.html', 'walk-me/index.html', 'walk/honor-corridor/index.html', 'sky-soho/index.html', 'route-3d/index.html']) {
     const html = readFileSync(new URL(`dist/${entry}`, root), 'utf8');
     for (const match of html.matchAll(/(?:src|href)="([^"?#]+)(?:[?#][^"]*)?"/g)) {
       const target = match[1];
