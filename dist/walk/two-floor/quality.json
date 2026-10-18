@@ -1,0 +1,161 @@
+{
+  "splats": 2749156,
+  "editedColors": 618516,
+  "editedScales": 639564,
+  "unchangedOutsideSplats": 1600797,
+  "centersRotationsOpacityDirectionalColorsAndMetadataByteIdentical": true,
+  "maxLogScaleChange": 0.12,
+  "maxDcCoefficientChange": 0.7,
+  "maxChromaCoefficientDeltaBeforeQuantization": 0.15,
+  "changedArchiveMembers": [
+    "sh0.webp",
+    "scales.webp"
+  ],
+  "title": "健身房",
+  "date": "2026-10-18",
+  "baselineSha256": "da511fcffcf41c876a05f950b3484a1c35b7b2966f649c45a8f479ed5fb74459",
+  "modelSha256": "14a1db52b172ad6047b374c148f0a329e3ebb7efe5c784f5ac0343ace5227a32",
+  "upstreamCommit": "16c3cd93c766bcd890c71ad395cc59b883e1e684",
+  "upstreamProvenanceSha256": "79542550ab7d6fdddfa4c7104b4a10911465dfa906febbcc32d2393b4ddc42de",
+  "sources": [
+    {
+      "file": "双层.mp4",
+      "sha256": "ca010cc80bb93b5aeeaa356fbd906a507c06e43bfaa6a5ac9f9f8dffef722451",
+      "durationSeconds": 59.86,
+      "alreadyInUpstream": true
+    },
+    {
+      "file": "上台阶.mp4",
+      "sha256": "55527642340d4b32e2999d86f586ee6191f0d02b6e3b730b536a6d8da869ad10",
+      "durationSeconds": 15.27,
+      "alreadyInUpstream": false
+    },
+    {
+      "file": "下台阶.mp4",
+      "sha256": "5e6709615cad18f9268258a45ca703f401e2f9c2064d29f09e85083298723a93",
+      "durationSeconds": 58.4,
+      "alreadyInUpstream": true
+    }
+  ],
+  "previousRefinement": {
+    "modelSha256": "da511fcffcf41c876a05f950b3484a1c35b7b2966f649c45a8f479ed5fb74459",
+    "region": "opaque lower-flight stairs",
+    "trainingSteps": 600,
+    "editedColors": 42324
+  },
+  "additionalTrainingSteps": 800,
+  "acceptedViews": 12,
+  "trainingViews": 9,
+  "comparisonViews": 3,
+  "method": "Fixed-center upper-floor refinement from native-resolution source video frames. Bidirectional flow with less than 8 half-resolution pixels displacement and 1 pixel consistency error masks uncertain pixels. Patch only bounded DC colors and log scales with the original codebooks; preserve point centers, rotations, opacity and directional colors.",
+  "comparison": [
+    {
+      "name": "0002.png",
+      "role": "training",
+      "maskedPSNRBefore": 25.3026708446634,
+      "maskedPSNRAfter": 29.32192009124439,
+      "maskPixels": 452520
+    },
+    {
+      "name": "0003.png",
+      "role": "comparison",
+      "maskedPSNRBefore": 25.473232050575806,
+      "maskedPSNRAfter": 27.307070927147837,
+      "maskPixels": 431680
+    },
+    {
+      "name": "0004.png",
+      "role": "training",
+      "maskedPSNRBefore": 25.42169996953506,
+      "maskedPSNRAfter": 27.73041723408573,
+      "maskPixels": 389880
+    },
+    {
+      "name": "0005.png",
+      "role": "training",
+      "maskedPSNRBefore": 21.2455630454319,
+      "maskedPSNRAfter": 22.770723508192418,
+      "maskPixels": 223548
+    },
+    {
+      "name": "0006.png",
+      "role": "training",
+      "maskedPSNRBefore": 20.71602978417463,
+      "maskedPSNRAfter": 22.725096438804293,
+      "maskPixels": 180180
+    },
+    {
+      "name": "0014.png",
+      "role": "training",
+      "maskedPSNRBefore": 22.350446349686543,
+      "maskedPSNRAfter": 24.195733535205648,
+      "maskPixels": 200792
+    },
+    {
+      "name": "0017.png",
+      "role": "training",
+      "maskedPSNRBefore": 26.115292015469084,
+      "maskedPSNRAfter": 27.592355603872196,
+      "maskPixels": 677648
+    },
+    {
+      "name": "0018.png",
+      "role": "comparison",
+      "maskedPSNRBefore": 26.049541883612257,
+      "maskedPSNRAfter": 26.540217503577978,
+      "maskPixels": 751788
+    },
+    {
+      "name": "0019.png",
+      "role": "training",
+      "maskedPSNRBefore": 24.374050912467325,
+      "maskedPSNRAfter": 26.715559115993777,
+      "maskPixels": 629836
+    },
+    {
+      "name": "0022.png",
+      "role": "training",
+      "maskedPSNRBefore": 25.62246292534118,
+      "maskedPSNRAfter": 28.196957311759867,
+      "maskPixels": 684292
+    },
+    {
+      "name": "0023.png",
+      "role": "comparison",
+      "maskedPSNRBefore": 25.849394619288404,
+      "maskedPSNRAfter": 27.878994639778576,
+      "maskPixels": 691092
+    },
+    {
+      "name": "0024.png",
+      "role": "training",
+      "maskedPSNRBefore": 25.933566639870165,
+      "maskedPSNRAfter": 28.634568951227386,
+      "maskPixels": 704612
+    }
+  ],
+  "comparisonMeanBefore": 25.790722851158822,
+  "comparisonMeanAfter": 27.242094356834798,
+  "comparisonNote": "Masked aligned reference views from the original source video. Three frames are excluded from this refinement but are adjacent to training frames and were available to the upstream reconstruction. Used for checkpoint comparison, not independent full-scene accuracy.",
+  "postprocessing": {
+    "sharpness": 0.3,
+    "contrast": 1.04,
+    "saturation": 1.03
+  },
+  "limitations": [
+    "Local appearance refinement of the upper equipment room, not a full reconstruction.",
+    "Reflective railing ghosting, thin equipment parts, ceiling geometry and poorly observed regions remain soft.",
+    "No new point centers, invented image pixels or generated frames."
+  ],
+  "collisionSha256": "068a40fc0f69e16904ce190802f27c39a1a572a994dcf0087e57b1d11e9b0960",
+  "checkpointSelection": {
+    "experimentalSteps": 1600,
+    "selectedSteps": 800,
+    "reason": "Later checkpoint offered negligible comparison gain; select earlier result with capped chroma changes to reduce wall tint artifacts."
+  },
+  "maxMeanDcDeltaBeforeQuantization": 0.5,
+  "preservedViews": [
+    "original downstairs entrance",
+    "lower-flight stairs"
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "settings": {
+    "version": 2,
+    "tonemapping": "none",
+    "highPrecisionRendering": true,
+    "background": {
+      "color": [
+        0.42,
+        0.43,
+        0.44
+      ]
+    },
+    "postEffectSettings": {
+      "sharpness": {
+        "enabled": true,
+        "amount": 0.08
+      },
+      "bloom": {
+        "enabled": false
+      },
+      "grading": {
+        "enabled": false
+      },
+      "vignette": {
+        "enabled": false
+      },
+      "fringing": {
+        "enabled": false
+      }
+    },
+    "animTracks": [],
+    "annotations": [],
+    "cameras": [
+      {
+        "initial": {
+          "position": [
+            -1.12,
+            0.31,
+            -1.85
+          ],
+          "target": [
+            0.5,
+            0.05,
+            2.105
+          ],
+          "fov": 68,
+          "landscapeFov": 88
+        }
+      }
+    ],
+    "startMode": "default"
+  },
+  "contentUrl": "hackathon/scene.sog?v=7193f9f7fc94",
+  "modelRotation": [
+    0.0,
+    -0.002402664307431682,
+    0.9999966343604376,
+    -0.0009790158441880608
+  ],
+  "navigation": {
+    "kind": "reviewed-heightfield",
+    "url": "hackathon/terrain.json",
+    "eyeHeight": 0.88,
+    "radius": 0.075,
+    "speed": 0.72,
+    "jumpSpeed": 1.6,
+    "maxSlope": 1.7
+  },
+  "screens": {
+    "textureUrl": "hackathon/screen.webp",
+    "aspect": 1.7777777777777777,
+    "panels": [
+      {
+        "name": "main screen",
+        "bounds": [
+          -1.23,
+          2.07,
+          -0.75,
+          1.14
+        ],
+        "z": 2.105
+      },
+      {
+        "name": "left screen",
+        "bounds": [
+          -4.48,
+          -1.9,
+          -0.82,
+          0.34
+        ],
+        "z": 1.885
+      },
+      {
+        "name": "right screen",
+        "bounds": [
+          2.92,
+          5.36,
+          -0.77,
+          0.32
+        ],
+        "z": 1.89
+      }
+    ]
+  }
+}

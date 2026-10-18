@@ -1,0 +1,54 @@
+{
+  "name": "露台",
+  "retrieved": "2026-10-17",
+  "generator": "Remy",
+  "splats": 1000000,
+  "model": {
+    "file": "scene.sog",
+    "bytes": 16222873,
+    "sha256": "b2fcad5b76f236a8a39d19dd0c2fa7896409857b37ae3f4cb07a5a06fa50b647"
+  },
+  "modelUnmodified": true,
+  "leveling": {
+    "floorCoefficients": [
+      -0.09279000531938868,
+      0.10420018656229109,
+      -0.786336461818846
+    ],
+    "levelRotation": [
+      [
+        0.9957568609206178,
+        -0.09189978006853869,
+        0.004764908485127418
+      ],
+      [
+        0.09189978006853869,
+        0.9904060222026597,
+        -0.10320049228593299
+      ],
+      [
+        0.004764908485127418,
+        0.10320049228593299,
+        0.9946491612820418
+      ]
+    ],
+    "modelRotation": [
+      0.0,
+      -0.05172445610133603,
+      0.9975986222430993,
+      -0.046060498691298385
+    ],
+    "floorY": -0.776,
+    "floorEvidence": 37480,
+    "floorResidual": 0.016861172796965616
+  },
+  "navigation": {
+    "config": "src/terrace.json",
+    "floorY": -0.776,
+    "eyeHeight": 0.79,
+    "kind": "reviewed-level-floor",
+    "limitations": "Approximate terrace outline, grouped table/chair and planter obstacles. No surveyed metric scale. Remote buildings and interiors are visual background only."
+  },
+  "inputNote": "Downloaded MP4 files are platform effect videos, not original panoramic footage.",
+  "captureId": "GS3DC10601a25a50d455d8a18e2773e368879"
+}

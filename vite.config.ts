@@ -6,7 +6,8 @@ import { defineConfig } from 'vite';
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: '/ding.zhao/hackathon-15/',
+  // 相对路径：同一份 dist 部署在 pages.release.ctripcorp.com/<任意命名空间>/hackathon-15/ 下都能用
+  base: './',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

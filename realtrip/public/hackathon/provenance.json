@@ -1,0 +1,111 @@
+{
+  "name": "venue",
+  "sourceSHA256": "e4dfc6b5cf56f90546e7cab08dc6f1982c4c0a7360eef52530c3defcf137e106",
+  "modelSHA256": "7193f9f7fc94898bd65160d5894f157f08e366c8e29ba75b06736385735b214c",
+  "bytes": 15172775,
+  "sourceCount": 1000000,
+  "count": 918310,
+  "partition": [
+    [
+      -1.23,
+      2.07,
+      -0.75,
+      1.14,
+      1.95,
+      2.5
+    ],
+    [
+      -4.48,
+      -1.9,
+      -0.82,
+      0.34,
+      1.65,
+      2.25
+    ],
+    [
+      2.92,
+      5.36,
+      -0.77,
+      0.32,
+      1.72,
+      2.22
+    ]
+  ],
+  "retainedAttributesLossless": true,
+  "peopleRemoval": false,
+  "screenMethod": {
+    "sourceCapture": 2,
+    "source": "GS3DCa6009cf1b35f47b2b7026998eeb9b0a6",
+    "sourceView": {
+      "position": [
+        0.5,
+        -0.05,
+        -0.65
+      ],
+      "target": [
+        0.5,
+        0.05,
+        2.1
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "fov": 60
+    },
+    "sourceResolution": [
+      2880,
+      1920
+    ],
+    "corners": [
+      [
+        654.0,
+        484.0
+      ],
+      [
+        2174.0,
+        478.0
+      ],
+      [
+        2188.0,
+        1338.0
+      ],
+      [
+        650.0,
+        1344.0
+      ]
+    ],
+    "outputResolution": [
+      1536,
+      864
+    ],
+    "method": "Perspective rectification of the actual captured main-screen artwork; no AI generation, text recreation or invented detail. Screen content is fitted to the three physical panels, with black pillarboxing on the wider side displays."
+  },
+  "sources": [
+    {
+      "id": "GS3DC3182cabb5b344d06933e3dc9635c7e56",
+      "order": 1,
+      "used": false
+    },
+    {
+      "id": "GS3DCa6009cf1b35f47b2b7026998eeb9b0a6",
+      "order": 2,
+      "used": true
+    },
+    {
+      "id": "GS3DC5a49fb69a98946ea97ee48585d5e11a6",
+      "order": 3,
+      "used": false
+    },
+    {
+      "id": "GS3DC5bfe2359b4f24163a38f5d9314f2e94e",
+      "order": 4,
+      "used": true
+    }
+  ],
+  "navigation": "Reviewed capture 4 point-cloud footprints and tread heights; smoothed step transitions, not a surveyed collision mesh.",
+  "screenSHA256": "330dfb5093a318445298bcca90b79de21d89729ec38efd8fb14c38ec363e7064",
+  "modelCount": 918310,
+  "screensAreWorldSpace": true
+}

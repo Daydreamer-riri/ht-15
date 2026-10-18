@@ -1,0 +1,117 @@
+{
+  "name": "食堂",
+  "peopleRetained": true,
+  "hiddenHumanSplats": 0,
+  "modelSHA256": "38159cfd020b74ccf88fb7b501bf79f5a5c4d2180f458928f37fa68324d95a1a",
+  "modelBytes": 11897617,
+  "gaussians": 1312985,
+  "parts": [
+    {
+      "name": "counter",
+      "sourceSHA256": "79930154e6f2306642058935509fbbfd7f59747994eefe80f63faab09afea38f",
+      "modelSHA256": "38159cfd020b74ccf88fb7b501bf79f5a5c4d2180f458928f37fa68324d95a1a",
+      "bytes": 11897617,
+      "sourceCount": 932688,
+      "count": 687387,
+      "partition": "Dining if x < -2.68 or (x < -1.6 and z < -0.95), except original foreground benches/floor (-5.65<x<-3.25, y<0.5, z+0.3*x>-2.06) excluding companion (-4.02<x<-3.36,-.98<z<-.4,y>-.76); original seated diner (-4.07<x<-3.48,-1.4<z<-.87,-.32<y<.4). Counter otherwise",
+      "retainedAttributesLossless": true,
+      "peopleRemoval": false
+    },
+    {
+      "name": "dining",
+      "sourceSHA256": "96afd1a717c17c4827d126338780ca48c2138b8781a5395f2d62ab4fe3c03683",
+      "modelSHA256": "3f086f5eb92fb51bb444c8ee6c8fc468c10e781d5c8273dd2857f266a6d383c2",
+      "bytes": 11142175,
+      "sourceCount": 1000000,
+      "count": 625598,
+      "partition": "Dining if x < -2.68 or (x < -1.6 and z < -0.95), except original foreground benches/floor (-5.65<x<-3.25, y<0.5, z+0.3*x>-2.06) excluding companion (-4.02<x<-3.36,-.98<z<-.4,y>-.76); original seated diner (-4.07<x<-3.48,-1.4<z<-.87,-.32<y<.4). Counter otherwise",
+      "retainedAttributesLossless": true,
+      "peopleRemoval": false
+    }
+  ],
+  "registration": {
+    "scale": 0.5774343555862138,
+    "yawMatrix": [
+      [
+        0.9998968357329014,
+        0.0,
+        -0.014363770094630673
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.014363770094630815,
+        0.0,
+        0.9998968357329014
+      ]
+    ],
+    "translation": [
+      -3.1469628807507264,
+      -0.019961806013026218,
+      -1.4688011041797087
+    ],
+    "trimmedMean": 0.018600275929064755,
+    "matchedFraction": 0.9447760647453034,
+    "quantiles": [
+      0.015247098578426063,
+      0.025643189598677667,
+      0.04505236547018813,
+      0.07632352921246609
+    ],
+    "levelRotation": [
+      [
+        0.9999994078297665,
+        0.0010882223680690319,
+        1.0592181746223929e-05
+      ],
+      [
+        -0.0010882223680690319,
+        0.9998099448885963,
+        0.01946509373056956
+      ],
+      [
+        1.0592181746223929e-05,
+        -0.01946509373056956,
+        0.9998105370588299
+      ]
+    ],
+    "sourceToOldRotation": [
+      [
+        0.9998960914800953,
+        0.0013677022336223278,
+        -0.014350457603490697
+      ],
+      [
+        -0.0010882223680690319,
+        0.9998099448885963,
+        0.01946509373056956
+      ],
+      [
+        0.014374352677845282,
+        -0.01944745465253406,
+        0.9997075444812002
+      ]
+    ]
+  },
+  "navigationAddedArea": 3.802609936319179,
+  "limitations": [
+    "Approximate alignment and collision, not a surveyed building model.",
+    "People and original motion ghosts retained. No generated background.",
+    "Unscanned far dining rows remain outside the walking boundary."
+  ],
+  "refinement": {
+    "date": "2026-10-17",
+    "method": "Complementary object-region source selection: original entrance benches and floor; original white-shirt diner head/shoulders; supplemental companion, tabletop, seated lower body, rear dining area. No camera-dependent source swapping.",
+    "reviewViews": 7,
+    "generatedDetails": false,
+    "attributeRecompression": false,
+    "limitations": "Source motion/extrapolation blur remains at some side/back views; no invented face detail."
+  },
+  "captureIds": [
+    "GS3DC1ec046bfbacc4d3c9e43a26763aa410e",
+    "GS3DC9401fd20afb548cd8bfa6f5b31b8458a"
+  ]
+}

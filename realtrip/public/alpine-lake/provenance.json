@@ -1,0 +1,69 @@
+{
+  "sourceSHA256": "a6a573daab5b0611adaf66f1a811dfe57fe93f2bd87263a6d3cddedb4c6eeb99",
+  "vertices": 151148,
+  "triangles": 278025,
+  "cellSize": 0.1,
+  "supportedSamples": 13917,
+  "shoreline": [
+    [
+      -9.6,
+      -3.1
+    ],
+    [
+      -8,
+      -3
+    ],
+    [
+      -6,
+      -2.7
+    ],
+    [
+      -4,
+      -2.3
+    ],
+    [
+      -2,
+      -1.5
+    ],
+    [
+      -1,
+      -0.7
+    ],
+    [
+      0,
+      -0.3
+    ],
+    [
+      1,
+      -0.6
+    ],
+    [
+      2,
+      -1
+    ],
+    [
+      4,
+      -0.9
+    ],
+    [
+      6,
+      -0.4
+    ],
+    [
+      8,
+      0.7
+    ],
+    [
+      10.3,
+      2
+    ]
+  ],
+  "coordinates": "+Y up, original model units; no surveyed scale",
+  "modelSHA256": "6d1ca04697ecbf79160e603ed316eda4dc7a63500de357951b2c14f6d5e1c61e",
+  "modelBytes": 14126530,
+  "sourceSPZSHA256": "2111cb48e148b2c28295e3184b6bfea7be849919027aa22e506d434099cc6d04",
+  "gaussians": 1189993,
+  "conversion": "SPZ v3 to SOG; all source points retained; quantized web compression",
+  "listing": "Direct link only; omitted from public scene menus",
+  "date": "2026-10-17"
+}

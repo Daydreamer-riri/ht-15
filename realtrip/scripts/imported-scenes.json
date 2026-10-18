@@ -1,0 +1,108 @@
+{
+  "repository": "https://git.dev.sh.ctripcorp.com/junhaoqin/realtrip-walk-hackathon26",
+  "commit": "16c3cd93c766bcd890c71ad395cc59b883e1e684",
+  "files": [
+    {
+      "upstream": "dist/two-floor/scene.sog",
+      "local": "models/two-floor.sog",
+      "bytes": 39553722,
+      "sha256": "14a1db52b172ad6047b374c148f0a329e3ebb7efe5c784f5ac0343ace5227a32",
+      "upstreamSha256": "d8695775cdace8a84e05b1c9f9154bd104e449c33e7f23e050ef4a94ee15d7c8",
+      "upstreamBytes": 39431738,
+      "adaptation": "Gym upper-floor DC-color and bounded-scale refinement from real footage. Point centers and collision preserved. See public/two-floor/quality.json."
+    },
+    {
+      "upstream": "dist/two-floor/scene.json",
+      "local": "public/two-floor/scene.json",
+      "bytes": 2929,
+      "sha256": "bd619971b101ed30498cbba49f90b137736d40b6496cf8c84518621cd657ce72",
+      "upstreamSha256": "167204ee9d1209dded815b7e6f5e98ad29f4b01a369b3004a12f304e82b3558c",
+      "upstreamBytes": 2778,
+      "adaptation": "Gym upper-floor DC-color and bounded-scale refinement from real footage. Point centers and collision preserved. See public/two-floor/quality.json."
+    },
+    {
+      "upstream": "dist/two-floor/solids.json",
+      "local": "public/two-floor/solids.json",
+      "bytes": 63318,
+      "sha256": "068a40fc0f69e16904ce190802f27c39a1a572a994dcf0087e57b1d11e9b0960"
+    },
+    {
+      "upstream": "dist/two-floor/navigation-checks.json",
+      "local": "public/two-floor/navigation-checks.json",
+      "bytes": 2894,
+      "sha256": "61a9fb62215213d3e696cb017548dbd812b388e3667e31145bbad3af18b16bcb"
+    },
+    {
+      "upstream": "dist/two-floor/README.md",
+      "local": "public/two-floor/README.md",
+      "bytes": 2148,
+      "sha256": "95b63dba19dd8170eb2498ad1a301b1baceba5b180ff1c60a2aa3dff17477cd3",
+      "upstreamSha256": "d6bd635e8d9418ec869c3dc2a5dd5a818393e51126d7a15e3c3e878c7ea73e2a",
+      "upstreamBytes": 3760,
+      "adaptation": "Gym upper-floor DC-color and bounded-scale refinement from real footage. Point centers and collision preserved. See public/two-floor/quality.json."
+    },
+    {
+      "upstream": "dist/two-floor/release.json",
+      "local": "public/two-floor/release.json",
+      "bytes": 816,
+      "sha256": "150deb863bbdd3378292c5b20cc9c3a20d84ec32b684c5611f901adbed1e042f",
+      "upstreamSha256": "53d57ac279f4950b75b80ce0a5a0a495f2042fd2b0f4ecc032a49c7a627f6a53",
+      "upstreamBytes": 1815,
+      "adaptation": "Gym upper-floor DC-color and bounded-scale refinement from real footage. Point centers and collision preserved. See public/two-floor/quality.json."
+    },
+    {
+      "local": "models/venue.sog",
+      "bytes": 16328425,
+      "sha256": "e4dfc6b5cf56f90546e7cab08dc6f1982c4c0a7360eef52530c3defcf137e106",
+      "upstreamBlob": "f7f6fc058e46ce02ff42f5ed696c609d7e2771cd"
+    },
+    {
+      "local": "public/venue/scene.json",
+      "bytes": 2051,
+      "sha256": "879fc2d5fb8c2366330c13aaeb1b939ea282ad8f17442a39a283efe351f07d93",
+      "upstreamBlob": "8269f9a44aedc29b03d2cc8fb04d048ab389a07e",
+      "upstreamSha256": "64b101914dc455f838260a1ad419ee175c0438138263763d9307fd2919010ecb",
+      "upstreamBytes": 2060,
+      "adaptation": "Local naming and documentation only; model and collision bytes unchanged."
+    },
+    {
+      "local": "public/venue/scene.voxel.json",
+      "bytes": 640,
+      "sha256": "8c71104aa96211f597e2ad3b17250b61a499cfd8b8dd68ece9a440a14483a092",
+      "upstreamBlob": "9b804c2d4e4a9ec60604f2c7188b3d6f7ff55e01"
+    },
+    {
+      "local": "public/venue/scene.voxel.bin",
+      "bytes": 606740,
+      "sha256": "03a6739d0aab7f90c2ae02d857981751f32e8d6f44bd269e8ede0f59445233b7",
+      "upstreamBlob": "61f01df1baca1643750602c482b222ff04071f13"
+    },
+    {
+      "local": "public/venue/screens.json",
+      "bytes": 3369,
+      "sha256": "2787d5bc8107f19e1ce44a8733486cfb1e5a2357cf05260381a7f622d07bda54",
+      "upstreamBlob": "038d8dcf24c21b087dd53bf84fa3ebeb8105335e"
+    },
+    {
+      "local": "public/venue/hackathon-screen.jpeg",
+      "bytes": 293425,
+      "sha256": "5c226dfb7a6021155871387ffb9c9cf12a61b5c963b401507d4b01f4c9a2f873",
+      "upstreamBlob": "8433e840e321da429751f765a27413065309697f"
+    },
+    {
+      "local": "public/venue/README.md",
+      "bytes": 1319,
+      "sha256": "aef7bea80792ba2161c5d96655f9c390b7cc69a43df647f7a1c97498e324ef96",
+      "upstreamBlob": "707a09f20a58a052fb8e6dadb826d69a30294068",
+      "upstreamSha256": "bea5a513991b15de1e5d7ee021d98e2bb370e8975c96d216fc9856eacd054eaa",
+      "upstreamBytes": 3167,
+      "adaptation": "Local naming and documentation only; model and collision bytes unchanged."
+    },
+    {
+      "upstream": "src/solid-physics.js",
+      "local": "src/solid-physics.js",
+      "bytes": 3922,
+      "sha256": "21dcf63a8aa8d37fcbfa0712f698944da95598025be3f8165dd67b570d0ad829"
+    }
+  ]
+}

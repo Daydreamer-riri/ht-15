@@ -1,0 +1,6 @@
+{
+  "provider": "DeepSeek",
+  "model": "deepseek-flash",
+  "apiKey": "sk-8db8ca7fcb9d4cb89ec1d6f77ef5204f",
+  "mode": "public-demo"
+}

@@ -3,7 +3,7 @@ import type { Itinerary } from './types';
 
 export const itinerary: Itinerary = {
   id: 'north-xinjiang',
-  name: '七天六晚疆北',
+  name: '七天六晚北疆',
   mode: 'drive',
   cover: {
     headline: ['North', 'Xinjiang'],

@@ -1,0 +1,21 @@
+{
+  "bytes": 44828667,
+  "sha256": "45a87f0fc30689e3a228abf80584728b1ade2a97f965ee9f06752a677cf7c5d8",
+  "parts": [
+    {
+      "name": "honor-corridor-20261017-return-feedback.sog.part001",
+      "bytes": 20971520,
+      "sha256": "2acdf9b1ed9355725d9554bd72d0aa2c64f4b63bb47134db567d34974ae669b4"
+    },
+    {
+      "name": "honor-corridor-20261017-return-feedback.sog.part002",
+      "bytes": 20971520,
+      "sha256": "d5c0cbf5d70da865627605bba9bcdbcfbb893dbbf8b371e8b0e9bcd28c44bf25"
+    },
+    {
+      "name": "honor-corridor-20261017-return-feedback.sog.part003",
+      "bytes": 2885627,
+      "sha256": "74881491edfbe1eb8ebf20849e0800fadb8dab1c4b2a377f06396e764e993bcc"
+    }
+  ]
+}

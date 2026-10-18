@@ -1,0 +1,14 @@
+[
+  {
+    "name": "cafeteria-counter-detail-20261017.sog",
+    "target": "scene.sog",
+    "bytes": 11897617,
+    "sha256": "38159cfd020b74ccf88fb7b501bf79f5a5c4d2180f458928f37fa68324d95a1a"
+  },
+  {
+    "name": "cafeteria-dining-detail-20261017.sog",
+    "target": "dining.sog",
+    "bytes": 11142175,
+    "sha256": "3f086f5eb92fb51bb444c8ee6c8fc468c10e781d5c8273dd2857f266a6d383c2"
+  }
+]

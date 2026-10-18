@@ -5,9 +5,21 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run build:itinerary && npm run build:walk && npm run build:presentation && npm run build:atlas",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:itinerary": "vite build",
+    "build:walk": "npm run build:npc && node scripts/build-walk.mjs",
+    "build:npc": "node scripts/build-npc-model.mjs",
+    "build:presentation": "node scripts/build-presentation.mjs",
+    "dev:presentation": "npm run build:presentation && vite preview --host 127.0.0.1 --port 8845",
+    "test:walk": "node --test realtrip/tests/*.test.mjs",
+    "test:migration": "node --test tests/migration.test.mjs",
+    "build:atlas": "node scripts/build-atlas.mjs",
+    "test:atlas": "node --test tests/route-model.test.mjs tests/sky-soho-route.test.mjs",
+    "test:voice": "node --test voice-server/tests/*.test.mjs",
+    "dev:voice": "node --env-file=.env.npc-voice.local voice-server/server.mjs",
+    "package:voice": "node scripts/package-npc-voice.mjs"
   },
   "dependencies": {
     "@fontsource/anton": "5.2.7",
@@ -21,7 +33,10 @@
     "react-dom": "^19.1.0",
     "sonner": "^2.0.5",
     "tailwind-merge": "^3.3.1",
-    "tailwindcss": "^4.1.11"
+    "tailwindcss": "^4.1.11",
+    "@playcanvas/supersplat-viewer": "1.37.0",
+    "playcanvas": "2.23.0",
+    "three": "0.180.0"
   },
   "devDependencies": {
     "@ctrip/eslint-config-dingzhi": "^1.6.4",
@@ -38,6 +53,9 @@
     "tw-animate-css": "^1.3.4",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.34.1",
-    "vite": "^6.3.5"
-  }
+    "vite": "^6.3.5",
+    "esbuild": "0.25.12",
+    "qrcode": "1.5.4"
+  },
+  "packageManager": "pnpm@10.11.0"
 }

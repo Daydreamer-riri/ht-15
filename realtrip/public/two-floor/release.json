@@ -1,0 +1,16 @@
+{
+  "title": "健身房",
+  "modelType": "Gaussian Splatting",
+  "actualSplats": 2749156,
+  "upstreamCommit": "16c3cd93c766bcd890c71ad395cc59b883e1e684",
+  "qualityStatus": "upper-equipment-appearance-refined-reflections-unresolved",
+  "qualityReport": "quality.json",
+  "files": {
+    "scene.sog": "14a1db52b172ad6047b374c148f0a329e3ebb7efe5c784f5ac0343ace5227a32",
+    "scene.json": "bd619971b101ed30498cbba49f90b137736d40b6496cf8c84518621cd657ce72",
+    "README.md": "95b63dba19dd8170eb2498ad1a301b1baceba5b180ff1c60a2aa3dff17477cd3",
+    "solids.json": "068a40fc0f69e16904ce190802f27c39a1a572a994dcf0087e57b1d11e9b0960",
+    "navigation-checks.json": "61a9fb62215213d3e696cb017548dbd812b388e3667e31145bbad3af18b16bcb",
+    "quality.json": "c22a8ebd6087fd67b15c1d1e988dbf2229fe41db103b14f1ee2d832bb2ecb351"
+  }
+}

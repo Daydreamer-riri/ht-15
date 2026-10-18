@@ -1,0 +1,110 @@
+{
+  "title": "Hackathon主会场",
+  "settings": {
+    "version": 2,
+    "tonemapping": "none",
+    "highPrecisionRendering": true,
+    "background": {
+      "color": [
+        0.22,
+        0.25,
+        0.28
+      ]
+    },
+    "postEffectSettings": {
+      "sharpness": {
+        "enabled": true,
+        "amount": 0.12
+      },
+      "bloom": {
+        "enabled": false
+      },
+      "grading": {
+        "enabled": false
+      },
+      "vignette": {
+        "enabled": false
+      },
+      "fringing": {
+        "enabled": false
+      }
+    },
+    "animTracks": [],
+    "annotations": [],
+    "cameras": [
+      {
+        "initial": {
+          "position": [
+            -4.152087,
+            -0.3,
+            0.377977
+          ],
+          "target": [
+            -2.153218,
+            -0.3,
+            0.445243
+          ],
+          "captureFrame": "frame_000086_cam1_center",
+          "fov": 90
+        }
+      }
+    ],
+    "startMode": "default",
+    "realtripWalk": {
+      "eyeHeight": 0.68,
+      "hoverHeight": 0.12,
+      "capsuleHeight": 0.85,
+      "capsuleRadius": 0.14,
+      "moveGroundSpeed": 2,
+      "jumpSpeed": 2.4
+    }
+  },
+  "contentUrl": "scene.sog",
+  "collisionUrl": "scene.voxel.json",
+  "waypoints": {
+    "start": {
+      "position": [
+        -4.152087,
+        -0.3,
+        0.377977
+      ],
+      "target": [
+        -2.153218,
+        -0.3,
+        0.445243
+      ],
+      "captureFrame": "frame_000086_cam1_center",
+      "fov": 90
+    },
+    "middle": {
+      "position": [
+        1.410157,
+        -0.2,
+        0.640267
+      ],
+      "target": [
+        3.283631,
+        -0.2,
+        1.340337
+      ],
+      "captureFrame": "frame_000021_cam1_center",
+      "fov": 90
+    },
+    "end": {
+      "position": [
+        3.49075,
+        -0.25,
+        0.574752
+      ],
+      "target": [
+        5.378826,
+        -0.25,
+        -0.08492
+      ],
+      "captureFrame": "frame_000029_cam1_center",
+      "fov": 90
+    }
+  },
+  "collisionMeshUrl": "scene.collision.glb",
+  "screensUrl": "screens.json"
+}
