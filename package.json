@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "npm run build:itinerary && npm run build:walk && npm run build:presentation && npm run build:atlas",
+    "build": "npm run build:itinerary && npm run build:walk && npm run build:presentation && npm run build:atlas && npm run build:companion",
     "lint": "eslint .",
     "preview": "vite preview",
     "build:itinerary": "vite build",
@@ -19,7 +19,8 @@
     "test:atlas": "node --test tests/route-model.test.mjs tests/sky-soho-route.test.mjs",
     "test:voice": "node --test voice-server/tests/*.test.mjs",
     "dev:voice": "node --env-file=.env.npc-voice.local voice-server/server.mjs",
-    "package:voice": "node scripts/package-npc-voice.mjs"
+    "package:voice": "node scripts/package-npc-voice.mjs",
+    "build:companion": "node scripts/build-player-model.mjs && node scripts/build-companion.mjs"
   },
   "dependencies": {
     "@fontsource/anton": "5.2.7",
