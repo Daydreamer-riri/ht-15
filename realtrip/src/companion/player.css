@@ -4,6 +4,7 @@
 .player-photo{background:#c2e8dd!important;color:#183c40!important}
 .photo-hud{position:fixed;z-index:50;bottom:max(28px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);text-align:center;color:#f3fffc;font-family:inherit;min-width:260px;padding:14px 20px;border:1px solid #c5ffe940;border-radius:20px;background:#102330df;backdrop-filter:blur(14px)}
 .photo-hud[hidden]{display:none}.photo-hud p{font-size:13px;margin:0 0 10px}.photo-hud strong{display:block;font-size:52px;font-weight:500;line-height:1.1;text-shadow:0 0 30px #55eadb}.photo-hud strong:empty{display:none}
+.photo-hud small{display:block;font-size:11px;color:#b4d5d7}.photo-hud small[hidden]{display:none}
 .photo-hud button,.photo-result button{font:inherit;cursor:pointer;touch-action:manipulation}.photo-hud button{border:0;border-radius:99px;color:#c9e3e8;background:#ffffff12;padding:10px 20px;margin-top:10px;font-size:12px}
 .photo-result{box-sizing:border-box;width:min(570px,calc(100vw - 24px));height:min(930px,calc(100dvh - 28px));max-height:none;max-width:none;padding:22px;border:1px solid #adf7ec44;border-radius:24px;background:#102330;color:#ebfffa;font-family:Inter,-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;overflow:auto}
 .photo-result[open]{display:flex;flex-direction:column;align-items:center;gap:12px}.photo-result::backdrop{background:#05101bea;backdrop-filter:blur(8px)}

@@ -41,7 +41,13 @@ const bundle=await build({entryPoints:['realtrip/src/companion/third-person-navi
 const {loadCompanionSurface,createThirdPersonNavigation}=await import('data:text/javascript;base64,'+Buffer.from(bundle.outputFiles[0].contents).toString('base64'));
 test('perspective changes keep the player anchored; photo lock survives speech state changes and restores first person',()=>{
  const originalWindow=globalThis.window,originalDocument=globalThis.document;
- class Events{addEventListener(){}removeEventListener(){}}
+ class Events{
+  callbacks=new Map();
+  addEventListener(type,fn){if(!this.callbacks.has(type))this.callbacks.set(type,new Set());this.callbacks.get(type).add(fn);}
+  removeEventListener(type,fn){this.callbacks.get(type)?.delete(fn);}
+  send(type,props={}){for(const fn of this.callbacks.get(type)??[])fn({target:{closest:()=>null},preventDefault(){},...props});}
+  setPointerCapture(){}
+ }
  globalThis.window=new Events();window.matchMedia=()=>({matches:false});globalThis.document=new Events();
  const canvas=new Events(),world={querySelector:()=>canvas,clientWidth:390,clientHeight:844,dataset:{}},callbacks=new Set();
  const camera={camera:{},setPosition(p){this.position=[p.x,p.y,p.z];},setEulerAngles(){},lookAt(){}};
@@ -51,6 +57,26 @@ test('perspective changes keep the player anchored; photo lock survives speech s
  const tick=()=>{for(const fn of callbacks)fn(1/60);};
  try{
   const before=navigation.getPose();navigation.setPerspective('first');tick();assert.deepEqual(navigation.getPose(),before);assert(camera.position.every((v,i)=>Math.abs(v-before.position[i])<1e-6));
+  for(const mode of ['third','first']){
+   navigation.setPerspective(mode);navigation.setInteractionLocked(true,{allowLook:true});navigation.setEnabled(true);
+   const held=navigation.getPose();
+   // Mouse drag and phone swipe both remain available while the photo spot is held.
+   for(const pointerType of ['mouse','touch']){
+    const previous=navigation.getPose();
+    canvas.send('pointerdown',{pointerType,pointerId:1,clientX:200,clientY:200});
+    canvas.send('pointermove',{pointerId:1,clientX:300,clientY:240});canvas.send('pointerup',{pointerId:1});tick();
+    assert.notEqual(navigation.getPose().yaw,previous.yaw);assert.notEqual(navigation.getPose().pitch,previous.pitch);
+   }
+   window.send('keydown',{code:'KeyW'});window.send('keydown',{code:'Space'});navigation.setMoveInput(1,1);navigation.jump();
+   canvas.send('pointerdown',{pointerType:'touch',pointerId:2,clientX:200,clientY:200});canvas.send('pointerup',{pointerId:2});
+   for(let i=0;i<60;i++)tick();assert.deepEqual(navigation.getPose().position,held.position,'WASD, joystick and tap/Space cannot change the photo spot');
+   const turned=navigation.getPose();
+   navigation.setEnabled(false);canvas.send('pointerdown',{pointerType:'mouse',pointerId:3,clientX:0,clientY:0});canvas.send('pointermove',{pointerId:3,clientX:80,clientY:40});tick();assert.deepEqual(navigation.getPose(),turned,'Opening another dialog suspends looking too');
+   navigation.setEnabled(true);navigation.setInteractionLocked(true);
+   canvas.send('pointerdown',{pointerType:'touch',pointerId:4,clientX:0,clientY:0});canvas.send('pointermove',{pointerId:4,clientX:80,clientY:40});tick();assert.deepEqual(navigation.getPose(),turned,'Countdown freezes the composed view');
+   navigation.setInteractionLocked(false);for(let i=0;i<60;i++)tick();assert.deepEqual(navigation.getPose().position,held.position,'Blocked inputs must not leak into movement on cancel');
+  }
+  navigation.reset();
   navigation.setInteractionLocked(true);navigation.setEnabled(true);navigation.setMoveInput(1,0);for(let i=0;i<60;i++)tick();assert.deepEqual(navigation.getPose(),before);
   navigation.setPhotoView({target:[0,.4,0],position:[0,.6,2]});tick();assert.equal(world.dataset.perspective,'photo');
   navigation.setPhotoView(null);navigation.setInteractionLocked(false);tick();assert.equal(navigation.getPerspective(),'first');assert(camera.position.every((v,i)=>Math.abs(v-before.position[i])<1e-6));

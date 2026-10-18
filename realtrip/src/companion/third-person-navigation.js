@@ -26,8 +26,10 @@ export function createThirdPersonNavigation(viewer,_route,initial,world,surface)
  const driver=new Entity('Player navigation anchor');driver.camera={fov:initial.fov};
  const navigationViewer={state:viewer.state,app:{root:{findComponents:()=>[{entity:driver}]},on:app.on.bind(app),off:app.off.bind(app)}};
  const navigation=createOfficeNavigation(navigationViewer,null,initial,world,surface);
- const smooth=new Vec3();let initialized=false,lastRender=[],perspective='third',photo=null,interactionLocked=false,externalEnabled=true;
- const applyEnabled=()=>navigation.setEnabled(externalEnabled&&!interactionLocked);
+ const smooth=new Vec3();let initialized=false,lastRender=[],perspective='third',photo=null,interactionLocked=false,lookWhileLocked=false,externalEnabled=true;
+ // Hold the player's photo spot while allowing them to watch Xiaolan arrive.
+ // Menus and countdowns still disable both kinds of input.
+ const applyEnabled=()=>navigation.setEnabled(externalEnabled&&!interactionLocked,{allowLook:externalEnabled&&interactionLocked&&lookWhileLocked});
  function update(dt){
   const pose=navigation.getPose();
   if(perspective==='first'&&!photo){
@@ -55,7 +57,7 @@ export function createThirdPersonNavigation(viewer,_route,initial,world,surface)
   setPerspective(mode){if(!['first','third'].includes(mode)||interactionLocked)return;perspective=mode;initialized=false;lastRender=[];navigation.stop();update(0);app.renderNextFrame=true;},
   setEnabled(value){externalEnabled=value;applyEnabled();},
   setMoveInput(x,z){if(externalEnabled&&!interactionLocked)navigation.setMoveInput(x,z);},
-  setInteractionLocked(value){interactionLocked=value;applyEnabled();},
+  setInteractionLocked(value,{allowLook=false}={}){interactionLocked=value;lookWhileLocked=allowLook;applyEnabled();},
   setPhotoView(view){photo=view;initialized=false;lastRender=[];update(0);app.renderNextFrame=true;},
   reset(){navigation.reset();initialized=false;update(0);},destroy(){app.off('update',update);navigation.destroy();driver.destroy();}};
 }
