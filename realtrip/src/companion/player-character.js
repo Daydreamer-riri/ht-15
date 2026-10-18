@@ -33,7 +33,7 @@ export async function initPlayer({viewer,navigation,surface,modelUrl,stop}){
  const hintTimer=setTimeout(()=>hint.remove(),11000);
  const dialog=document.getElementById('about'),closeButton=document.getElementById('close-about');dialog.classList.add('avatar-view');
  const panel=document.createElement('section');panel.className='avatar-panel';
- panel.innerHTML='<div class="avatar-heading"><small>YOUR AVATAR</small><h2>在这里，也做自己。</h2><p>眼镜、分缝黑发、深灰 T 恤，还有左手的手表。</p></div><div class="avatar-canvas" aria-label="你的三维人物模型，拖动旋转"><p class="avatar-load" role="status">正在准备你的形象…</p></div><div class="avatar-view-controls"><button data-view="full" aria-pressed="true">全身</button><button data-view="face" aria-pressed="false">看脸</button><button data-view="wave">挥挥手</button></div><p class="avatar-footnote">拖动旋转 · 双指缩放</p><button class="avatar-return">回到漫游</button>';
+ panel.innerHTML='<div class="avatar-heading"><small>YOUR AVATAR</small><h2>在这里，也做自己。</h2><p>眼镜、黑色印花 T 恤，还有左手的手表。</p></div><div class="avatar-canvas" aria-label="你的三维人物模型，拖动旋转"><p class="avatar-load" role="status">正在准备你的形象…</p></div><div class="avatar-view-controls"><button data-view="full" aria-pressed="true">全身</button><button data-view="back" aria-pressed="false">背面</button><button data-view="face" aria-pressed="false">看脸</button><button data-view="wave">挥挥手</button></div><p class="avatar-footnote">拖动旋转 · 双指缩放</p><button class="avatar-return">回到漫游</button>';
  dialog.append(panel);
  const viewContainer=panel.querySelector('.avatar-canvas'),wave=controls.querySelector('.player-wave');
  let preview=null,opening=0,disposed=false;

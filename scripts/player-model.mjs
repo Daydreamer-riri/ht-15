@@ -6,9 +6,9 @@ import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js'
 export const PLAYER_EYE_HEIGHT=1.64;
 export function createPlayerModel(){
  const root=new THREE.Group();root.name='PersonalAvatar';
- root.userData={description:'Stylized personal avatar: parted black hair, metal glasses, charcoal tee and left wrist watch',eyeHeight:PLAYER_EYE_HEIGHT,version:1};
+ root.userData={description:'Stylized personal avatar: parted black hair, metal glasses, black printed tee and left wrist watch',eyeHeight:PLAYER_EYE_HEIGHT,version:2};
  const mat=(color,extra={})=>new THREE.MeshStandardMaterial({color,roughness:.86,...extra});
- const m={shirt:mat('#3d3f44'),seam:mat('#33353b'),fold:mat('#494b50'),pants:mat('#171c23'),pantFold:mat('#212730'),sole:mat('#323a45'),shoe:mat('#202732'),metal:mat('#9b9c92',{metalness:.64,roughness:.3}),black:mat('#11151b'),watch:mat('#26333e',{metalness:.25}),badge:mat('#30343c'),stitch:mat('#a6aab3'),eye:new THREE.MeshBasicMaterial({color:'#e6d9c8'}),iris:new THREE.MeshBasicMaterial({color:'#362d2b'}),pupil:new THREE.MeshBasicMaterial({color:'#151b22'}),lip:new THREE.MeshBasicMaterial({color:'#a66e60'}),brow:new THREE.MeshBasicMaterial({color:'#252931'}),skin:new THREE.MeshBasicMaterial({color:0xffffff,vertexColors:true}),hair:mat('#171d27',{roughness:.68}),hairRidge:mat('#29303b',{roughness:.73}),lens:new THREE.MeshStandardMaterial({color:'#cadce1',transparent:true,opacity:.045,depthWrite:false,roughness:.15,side:THREE.DoubleSide})};
+ const m={shirt:mat('#111316'),seam:mat('#0d0f12'),fold:mat('#1c1f23'),pants:mat('#171c23'),pantFold:mat('#212730'),sole:mat('#323a45'),shoe:mat('#202732'),metal:mat('#9b9c92',{metalness:.64,roughness:.3}),black:mat('#11151b'),watch:mat('#26333e',{metalness:.25}),stitch:mat('#a6aab3'),eye:new THREE.MeshBasicMaterial({color:'#e6d9c8'}),iris:new THREE.MeshBasicMaterial({color:'#362d2b'}),pupil:new THREE.MeshBasicMaterial({color:'#151b22'}),lip:new THREE.MeshBasicMaterial({color:'#a66e60'}),brow:new THREE.MeshBasicMaterial({color:'#252931'}),skin:new THREE.MeshBasicMaterial({color:0xffffff,vertexColors:true}),hair:mat('#171d27',{roughness:.68}),hairRidge:mat('#29303b',{roughness:.73}),lens:new THREE.MeshStandardMaterial({color:'#cadce1',transparent:true,opacity:.045,depthWrite:false,roughness:.15,side:THREE.DoubleSide})};
  const sphere=new THREE.SphereGeometry(1,28,20);
  function group(name,parent=root,pos=[0,0,0]){const g=new THREE.Group();g.name=name;g.position.set(...pos);parent.add(g);return g;}
  function mesh(name,g,material,pos=[0,0,0],scale=[1,1,1],parent=root){const o=new THREE.Mesh(g,material);o.name=name;o.position.set(...pos);o.scale.set(...scale);parent.add(o);return o;}
@@ -20,16 +20,34 @@ export function createPlayerModel(){
  const body=group('Body');
  // Softly tapered tee instead of a primitive sphere torso.
  function loft(name,rings,material,parent=body){const a=[],ids=[],n=40;for(const [y,rx,rz,z=0] of rings)for(let j=0;j<=n;j++){const theta=j/n*Math.PI*2;a.push(Math.cos(theta)*rx,y,Math.sin(theta)*rz+z);}for(let i=0;i<rings.length-1;i++)for(let j=0;j<n;j++){const k=i*(n+1)+j;ids.push(k,k+1,k+n+1,k+1,k+n+2,k+n+1);}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(a,3));if(rings[1][0]>rings[0][0])for(let i=0;i<ids.length;i+=3)[ids[i+1],ids[i+2]]=[ids[i+2],ids[i+1]];g.setIndex(ids);g.computeVertexNormals();return mesh(name,g,material,[0,0,0],[1,1,1],parent);}
- loft('Charcoal T-shirt',[[.88,.16,.105],[.91,.19,.12],[1.03,.185,.118],[1.17,.19,.125],[1.32,.224,.12],[1.39,.20,.096],[1.435,.075,.07]],m.shirt);
+ const shirtRings=[[.88,.16,.105],[.91,.19,.12],[1.03,.185,.118],[1.17,.19,.125],[1.32,.224,.12],[1.39,.20,.096],[1.435,.075,.07]];
+ loft('Black T-shirt',shirtRings,m.shirt);
  loft('T-shirt hem',[[.885,.161,.106],[.905,.19,.122],[.919,.19,.123]],m.seam);
  const collar=[];for(let i=0;i<32;i++){const a=i/32*Math.PI*2;collar.push([.078*Math.cos(a),1.435+.008*Math.sin(a),.073*Math.sin(a)]);}line('Ribbed crew neck',collar,.012,m.seam,body,true);
  for(const side of [-1,1]){
   line('Side seam',[[side*.186,.93,.002],[side*.183,1.12,.004],[side*.218,1.31,.002]],.0016,m.seam,body);
   for(let i=0;i<3;i++)line('Tee fabric fold',[[side*(.11+i*.022),.94+i*.045,.094],[side*(.12+i*.02),.97+i*.045,.098],[side*(.165+i*.004),1+i*.045,.077]],.002,m.fold,body);
  }
- const badge=box('Small chest patch',m.badge,[.111,1.273,.121],[.058,.066,.007],body,.03);
- for(let i=0;i<6;i++)line('Patch diagonal',[[.092+i*.007,1.294,.127],[.11+i*.005,1.271,.128]],.0008,m.stitch,body);
- badge.rotation.z=.02;
+ // Printed ink follows the tee's elliptical surface and the animated Body node.
+ // The builder embeds the two PNGs in these named materials without a DOM canvas.
+ function print(name,cx,cy,width,height,side){
+  const positions=[],uv=[],indices=[],columns=24,rows=30;
+  for(let row=0;row<=rows;row++)for(let col=0;col<=columns;col++){
+   const u=col/columns,v=row/rows,x=cx+side*(u-.5)*width,y=cy+(v-.5)*height;
+   const upper=shirtRings.findIndex(r=>r[0]>=y),a=shirtRings[Math.max(0,upper-1)],b=shirtRings[upper];
+   const t=(y-a[0])/(b[0]-a[0]),rx=THREE.MathUtils.lerp(a[1],b[1],t),rz=THREE.MathUtils.lerp(a[2],b[2],t);
+   positions.push(x,y,side*(rz*Math.sqrt(1-(x/rx)**2)+.0015));
+   // Embedded glTF images use top-left UV origin. Reversing x on the back keeps text readable.
+   uv.push(u,1-v);
+  }
+  for(let row=0;row<rows;row++)for(let col=0;col<columns;col++){const k=row*(columns+1)+col;indices.push(k,k+1,k+columns+1,k+1,k+columns+2,k+columns+1);}
+  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geometry.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));geometry.setIndex(indices);geometry.computeVertexNormals();
+  const ink=new THREE.MeshBasicMaterial({color:0xffffff,alphaTest:.25});ink.name=name;
+  mesh(name,geometry,ink,[0,0,0],[1,1,1],body);
+ }
+ print('Front tag print',0,1.263,.25,.25*1305/1205,1);
+ // Wearer's right is -X; viewed from behind this is the lower-right shirt corner.
+ print('Back loading print',-.10,1.005,.15,.15*1155/1362,-1);
  const neck=group('Neck',body);skin('Neck skin',[0,1.46,0],[.066,.065,.06],neck);
  // Hip and separate knees allow a modest walking stride without stretching meshes.
  box('Trouser waist',m.pants,[0,.855,0],[.327,.15,.21],body,.18);

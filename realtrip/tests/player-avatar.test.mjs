@@ -38,9 +38,27 @@ test('model is articulated, human-scale, finite and self-contained with glasses 
  for(const name of ['Head','Neck','LegL','LegR','KneeL','KneeR','ArmL','ArmR','ElbowL','ElbowR','LeftWristWatch','Metal glasses frame','Parted black hair'])assert(model.getObjectByName(name),name);
  model.traverse(o=>{if(o.geometry){const a=o.geometry.attributes.position.array;assert(a.every(Number.isFinite),o.name);}});
  const glb=readFileSync(new URL('../models/player/personal-avatar.glb',import.meta.url));
- assert.equal(glb.subarray(0,4).toString(),'glTF');assert(glb.length<3*1024*1024);
+ assert.equal(glb.subarray(0,4).toString(),'glTF');assert(glb.length<5*1024*1024);
+ assert.equal(glb.readUInt32LE(8),glb.length);
  const json=JSON.parse(glb.subarray(20,20+glb.readUInt32LE(12)));
- assert(!json.images?.length);assert(!json.buffers.some(b=>b.uri));
+ assert(!json.buffers.some(b=>b.uri));assert.equal(json.images.length,2);
+ const binary=glb.subarray(28+glb.readUInt32LE(12));
+ for(const image of json.images){
+  assert(!image.uri);assert.equal(image.mimeType,'image/png');
+  const view=json.bufferViews[image.bufferView];assert.equal(view.byteOffset%4,0);
+  assert(view.byteOffset+view.byteLength<=binary.length);
+  const embedded=binary.subarray(view.byteOffset,view.byteOffset+view.byteLength);
+  assert.equal(embedded.subarray(0,8).toString('hex'),'89504e470d0a1a0a');
+  assert.deepEqual(embedded,readFileSync(new URL(`../models/player/prints/${image.name}`,import.meta.url)));
+ }
+ for(const [name,side] of [['Front tag print',1],['Back loading print',-1]]){
+  const print=model.getObjectByName(name);assert.equal(print.parent.name,'Body');
+  const positions=print.geometry.attributes.position,uv=print.geometry.attributes.uv;
+  assert.equal(uv.count,positions.count);
+  assert(positions.getZ(0)*side>0);assert((positions.getX(1)-positions.getX(0))*side>0,'text is readable from its side');
+  if(side<0)assert(new Box3().setFromObject(print).max.x<0,'back print stays on wearer’s right');
+  assert(json.materials.find(m=>m.name===name)?.pbrMetallicRoughness.baseColorTexture);
+ }
 });
 
 test('third-person camera stays behind and above the complete avatar, with wall clearance',async()=>{
