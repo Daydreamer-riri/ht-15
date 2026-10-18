@@ -1,6 +1,7 @@
 import http from 'node:http';
 import {pathToFileURL} from 'node:url';
 import {createVoiceProvider} from './provider.mjs';
+import {createChatProvider} from './chat-provider.mjs';
 import {createVoiceHandler} from './app.mjs';
 export {validateRecording} from './app.mjs';
 
@@ -20,7 +21,8 @@ export function createVoiceServer(options){
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){
  const provider=createVoiceProvider({apiKey:process.env.DASHSCOPE_API_KEY,workspaceId:process.env.DASHSCOPE_WORKSPACE_ID,voice:process.env.NPC_VOICE||'Ethan'});
  const origins=process.env.NPC_ALLOWED_ORIGINS?.split(',').map(s=>s.trim()).filter(Boolean);
- const server=createVoiceServer({provider,...(origins?.length?{origins}:{})});
+ const chatProvider=createChatProvider({apiKey:process.env.DASHSCOPE_API_KEY,workspaceId:process.env.DASHSCOPE_WORKSPACE_ID,model:process.env.NPC_CHAT_MODEL||'qwen-plus'});
+ const server=createVoiceServer({provider,chatProvider,...(origins?.length?{origins}:{})});
  const port=Number(process.env.PORT||process.env.FC_CUSTOM_LISTEN_PORT||8849);
  server.listen(port,'0.0.0.0',()=>console.log(`NPC voice server listening on ${port}; provider configured: ${provider.ready}`));
 }

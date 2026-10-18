@@ -62,7 +62,7 @@ export function createCompanionActions({viewer,navigation,character,surface,comp
  dialog.addEventListener('close',()=>{if(state==='result')cancel();});
  dialog.querySelector('.photo-retake').onclick=()=>{transition('countdown');dialog.close();countdown(generation);};
  dialog.querySelector('.photo-save').onclick=()=>{
-  if(!url||!captured)return;const link=document.createElement('a');link.href=url;link.download=captured.filename;link.click();note.textContent='已发起保存。如果微信或飞书没有下载提示，请长按上方图片保存到相册。';
+  if(!url||!captured)return;const link=document.createElement('a');link.href=url;link.download=captured.filename;link.hidden=true;document.body.append(link);link.click();link.remove();note.textContent='已发起保存。如果微信或飞书没有下载提示，请长按上方图片保存到相册。';
  };
  dialog.querySelector('.photo-share').onclick=async()=>{
   if(!captured)return;try{await navigator.share({files:[new File([captured.blob],captured.filename,{type:'image/png'})],title:'我和小蓝的 Hackathon 合照'});}catch(error){if(error.name!=='AbortError')note.textContent='当前应用暂不支持分享，请长按图片保存后发朋友圈。';}

@@ -1,5 +1,6 @@
 import {createVoiceHandler} from './app.mjs';
 import {createVoiceProvider} from './provider.mjs';
+import {createChatProvider} from './chat-provider.mjs';
 
 export function createFcHandler(options){
  const handle=createVoiceHandler(options);
@@ -17,4 +18,4 @@ export function createFcHandler(options){
  };
 }
 const origins=process.env.NPC_ALLOWED_ORIGINS?.split(',').map(s=>s.trim()).filter(Boolean);
-export const handler=createFcHandler({provider:createVoiceProvider({apiKey:process.env.DASHSCOPE_API_KEY,workspaceId:process.env.DASHSCOPE_WORKSPACE_ID,voice:process.env.NPC_VOICE||'Ethan'}),...(origins?.length?{origins}:{})});
+export const handler=createFcHandler({provider:createVoiceProvider({apiKey:process.env.DASHSCOPE_API_KEY,workspaceId:process.env.DASHSCOPE_WORKSPACE_ID,voice:process.env.NPC_VOICE||'Ethan'}),chatProvider:createChatProvider({apiKey:process.env.DASHSCOPE_API_KEY,workspaceId:process.env.DASHSCOPE_WORKSPACE_ID,model:process.env.NPC_CHAT_MODEL||'qwen-plus'}),...(origins?.length?{origins}:{})});

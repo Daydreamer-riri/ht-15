@@ -7,16 +7,12 @@ import {planApproach,createApproachMotion} from '../src/companion/approach-motio
 import {photoView,captureTimestamp} from '../src/companion/photo-composition.js';
 import {npcConfig,npcScene} from '../src/npc-scene.js';
 import {viewerPhysicsPlugin} from '../../scripts/viewer-physics-plugin.mjs';
-import {conversationMessages,NPC_SYSTEM_PROMPT} from '../src/npc-client.js';
 
 test('spoken and typed action phrases are explicit; questions and negations do not trigger photos or movement',()=>{
  for(const t of ['小蓝，过来一下','来我旁边吧','小兰到我身边来','你可以过来互动吗'])assert.equal(companionCommand(t),'come',t);
  for(const t of ['一起拍个合照吧','我们合个影','咱们合个照吧','帮我拍张照','可以和我一起拍照吗'])assert.equal(companionCommand(t),'photo',t);
  for(const t of ['你好','今天的天气怎么样','怎么让小蓝过来','不要拍合照','如果我说过来会怎样','“过来”是什么意思'])assert([null,'cancel'].includes(companionCommand(t)),t);
  for(const t of ['取消拍照','别过来','小蓝不要拍照'])assert.equal(companionCommand(t),'cancel',t);
- assert.equal(conversationMessages([],'你好')[0].content,NPC_SYSTEM_PROMPT,'original NPC keeps its capabilities');
- assert.equal(conversationMessages([{role:'system',content:'untrusted'}],'你好','Companion capabilities')[0].content,'Companion capabilities');
- assert.equal(conversationMessages([{role:'system',content:'untrusted'}],'你好','Companion capabilities').length,2);
 });
 test('approach plans around walls, checks diagonal gaps, rejects cliffs and unreachable goals',()=>{
  const project=p=>(Math.abs(p[0])<.15&&Math.abs(p[2])<.6)?null:[p[0],0,p[2]];
