@@ -6,8 +6,10 @@ import { assetVersion, versionAssets } from './version-assets.mjs';
 
 await rm('dist/presentation', { recursive: true, force: true });
 await mkdir('dist/presentation/assets', { recursive: true });
-for (const asset of ['mark.svg', 'sayram.jpg', 'baihaba.jpg', 'kanas.jpg']) {
-  await copyFile(`src/presentation/assets/${asset}`, `dist/presentation/assets/${asset}`);
+await copyFile('src/presentation/assets/mark.svg', 'dist/presentation/assets/mark.svg');
+// 图文版使用一日游星球卡片同一组实景截图
+for (const scene of ['hackathon', 'terrace', 'cafeteria', 'building2', 'two-floor']) {
+  await copyFile(`src/sky-soho/assets/scenes/${scene}.jpg`, `dist/presentation/assets/${scene}.jpg`);
 }
 const html = await readFile('src/presentation/index.html', 'utf8');
 await copyFile('src/presentation/style.css', 'dist/presentation/presentation.css');

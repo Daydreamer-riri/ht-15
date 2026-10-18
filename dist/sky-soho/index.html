@@ -3,54 +3,63 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#081f29">
+  <meta name="theme-color" content="#0b1f27">
   <title>携程 Hackathon 一日游 · RealTrip</title>
   <meta name="description" content="从一座小小星球出发，探索携程 Hackathon 主会场、健身房、会议室、露台和食堂。">
-  <link rel="stylesheet" href="./sky-soho.bundle.css?v=924c1e21e950">
+  <meta property="og:title" content="携程 Hackathon 一日游 · RealTrip">
+  <meta property="og:description" content="五个真实空间，点一个就能走进去。">
+  <meta property="og:image" content="./assets/scenes/hackathon.jpg">
+  <link rel="icon" type="image/svg+xml" href="./assets/mark.svg?v=7f776c02666a">
+  <link rel="preload" as="image" href="./assets/scenes/hackathon.jpg">
+  <link rel="stylesheet" href="./sky-soho.bundle.css?v=b569782b8409">
 </head>
-<body>
+<body data-trip="soho">
   <div class="page">
-    <header class="header">
-      <a class="brand" href="../sky-soho/" aria-label="RealTrip 一日游首页"><span class="brand-mark" aria-hidden="true">↗</span>RealTrip</a>
-      <span class="event-label">携程 HACKATHON</span>
+    <header class="header" data-rise style="--d:150">
+      <a class="brand" href="../sky-soho/" aria-label="RealTrip 一日游首页">RealTrip</a>
+      <a class="header-link" href="../route-3d/">北疆星球</a>
       <details class="more">
-        <summary aria-label="更多页面">···</summary>
+        <summary aria-label="更多页面"><i data-icon="more"></i></summary>
         <nav aria-label="更多页面">
-          <a href="../presentation/">演示页面 <span>↗</span></a>
-          <a href="../">基础路线 <span>↗</span></a>
-          <a href="../walk/">实景漫游 <span>↗</span></a>
-          <a href="../route-3d/">北疆星球 <span>↗</span></a>
+          <a href="../presentation/">演示页面</a>
+          <a href="../">基础路线</a>
+          <a href="../walk/">实景漫游</a>
+          <a href="../route-3d/">北疆星球</a>
         </nav>
       </details>
     </header>
-    <main>
+    <main class="layout">
       <section class="intro" aria-labelledby="title">
-        <p class="eyebrow"><span></span> A LITTLE WORLD, A REAL JOURNEY</p>
-        <h1 id="title">携程 Hackathon<span>一日游。</span></h1>
-        <p class="intro-copy">5 个真实空间，点击场景就能走进去。</p>
+        <h1 id="title" class="display" data-rise style="--d:350">携程 Hackathon<br>一日游</h1>
+        <p class="lead" data-rise style="--d:550">五个真实空间，点一个就能走进去。</p>
+        <p class="route-line small" data-rise style="--d:4200"><span class="route-swatch" aria-hidden="true"></span><span id="route-line" aria-live="polite"></span></p>
       </section>
       <section class="planet" aria-label="互动园区沙盘">
-        <div id="scene"></div>
-        <p id="scene-status" role="status">正在打开你的小小世界…</p>
-        <div class="planet-tools" aria-label="沙盘视角">
-          <button id="view" aria-pressed="false">俯瞰视角</button>
-          <button id="reset" aria-label="复位沙盘视角" title="复位视角">↺</button>
+        <div id="scene" class="scene-host"></div>
+        <p id="scene-status" class="small" role="status">正在打开你的小小世界…</p>
+        <a class="btn btn-primary planet-cta" data-rise style="--d:2500" href="../walk/?scene=hackathon">走进主会场<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <div class="planet-tools" data-rise style="--d:2600">
+          <div class="segmented" role="group" aria-label="沙盘视角">
+            <button id="view-planet" data-view="planet" aria-pressed="true">星球</button>
+            <button id="view" data-view="top" aria-pressed="false">俯瞰</button>
+          </div>
+          <button id="reset" class="icon-btn" aria-label="复位沙盘视角" title="复位视角"><i data-icon="rotate"></i></button>
+          <p class="gesture-hint small" id="gesture-hint">拖动旋转，双指缩放</p>
         </div>
-        <p class="gesture-hint">拖动旋转 <span>·</span> 双指 / 滚轮缩放</p>
       </section>
       <section class="destinations" aria-labelledby="destinations-title">
-        <div class="section-label"><h2 id="destinations-title">选一站，开始探索</h2><span>实景漫游 <b>↗</b></span></div>
+        <h2 id="destinations-title" class="sr-only">选一站，开始探索</h2>
         <nav class="scene-grid" aria-label="选择实景空间">
-          <a class="scene-card" href="../walk/?scene=hackathon" aria-label="进入主会场实景探索"><span class="scene-number">01</span><span class="scene-copy"><strong>主会场</strong><small>灵感在这里发生</small></span><span class="scene-arrow" aria-hidden="true">↗</span></a>
-          <a class="scene-card" href="../walk/?scene=two-floor" aria-label="进入健身房实景探索"><span class="scene-number">02</span><span class="scene-copy"><strong>健身房</strong><small>换个节奏，动起来</small></span><span class="scene-arrow" aria-hidden="true">↗</span></a>
-          <a class="scene-card" href="../walk/?scene=building2" aria-label="进入会议室实景探索"><span class="scene-number">03</span><span class="scene-copy"><strong>会议室</strong><small>走进想法碰撞的地方</small></span><span class="scene-arrow" aria-hidden="true">↗</span></a>
-          <a class="scene-card" href="../walk/?scene=terrace" aria-label="进入露台实景探索"><span class="scene-number">04</span><span class="scene-copy"><strong>露台</strong><small>到户外，透一口气</small></span><span class="scene-arrow" aria-hidden="true">↗</span></a>
-          <a class="scene-card" href="../walk/?scene=cafeteria" aria-label="进入食堂实景探索"><span class="scene-number">05</span><span class="scene-copy"><strong>食堂</strong><small>一起补充一点能量</small></span><span class="scene-arrow" aria-hidden="true">↗</span></a>
+          <a class="scene-card" style="--i:0" data-scene="hackathon" href="../walk/?scene=hackathon" aria-label="进入主会场实景探索"><img class="scene-photo" src="./assets/scenes/hackathon.jpg" alt="主会场的实景画面" width="960" height="720" fetchpriority="high" decoding="async"><span class="scene-copy"><strong>主会场</strong><small>灵感在这里发生</small></span><span class="scene-arrow"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+          <a class="scene-card" style="--i:1" data-scene="two-floor" href="../walk/?scene=two-floor" aria-label="进入健身房实景探索"><img class="scene-photo" src="./assets/scenes/two-floor-s.jpg" alt="健身房的实景画面" width="480" height="360" loading="lazy" decoding="async"><span class="scene-copy"><strong>健身房</strong><small>换个节奏，动起来</small></span><span class="scene-arrow"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+          <a class="scene-card" style="--i:2" data-scene="building2" href="../walk/?scene=building2" aria-label="进入会议室实景探索"><img class="scene-photo" src="./assets/scenes/building2-s.jpg" alt="会议室的实景画面" width="480" height="360" loading="lazy" decoding="async"><span class="scene-copy"><strong>会议室</strong><small>走进想法碰撞的地方</small></span><span class="scene-arrow"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+          <a class="scene-card" style="--i:3" data-scene="terrace" href="../walk/?scene=terrace" aria-label="进入露台实景探索"><img class="scene-photo" src="./assets/scenes/terrace-s.jpg" alt="露台的实景画面" width="480" height="360" loading="lazy" decoding="async"><span class="scene-copy"><strong>露台</strong><small>到户外，透一口气</small></span><span class="scene-arrow"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+          <a class="scene-card" style="--i:4" data-scene="cafeteria" href="../walk/?scene=cafeteria" aria-label="进入食堂实景探索"><img class="scene-photo" src="./assets/scenes/cafeteria-s.jpg" alt="食堂的实景画面" width="480" height="360" loading="lazy" decoding="async"><span class="scene-copy"><strong>食堂</strong><small>一起补充一点能量</small></span><span class="scene-arrow"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
         </nav>
       </section>
     </main>
-    <footer><span>旅行，从身边开始。</span><span>沙盘为示意 · 场景为实景</span></footer>
+    <footer class="small" data-rise style="--d:3000">沙盘为示意，场景为实景采集。</footer>
   </div>
-  <script type="module" src="./sky-soho.bundle.js?v=a73346008db7"></script>
+  <script type="module" src="./sky-soho.bundle.js?v=db5d807b2885"></script>
 </body>
 </html>

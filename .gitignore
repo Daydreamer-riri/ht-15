@@ -28,3 +28,6 @@ dist-ssr
 realtrip/public/**/*.sog
 realtrip/public/**/*.bundle.*
 target/
+
+# taste skill 检查产物
+.taste-skill/

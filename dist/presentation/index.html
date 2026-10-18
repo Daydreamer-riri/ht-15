@@ -2,33 +2,54 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0a101c">
-  <meta name="description" content="一段关于旅行的对话。">
-  <title>携程 Hackathon · RealTrip</title>
-  <link rel="stylesheet" href="./presentation.css?v=7321715617e7">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#212121">
+  <meta name="description" content="一段关于凌空 SOHO 一日游的对话。">
+  <title>凌空 SOHO 一日游 · RealTrip</title>
+  <link rel="stylesheet" href="./presentation.css?v=eaab11ee7e26">
   <link rel="icon" type="image/svg+xml" href="./assets/mark.svg?v=51019d661724">
-  <link rel="preload" as="image" href="./assets/sayram.jpg">
-  <link rel="preload" as="image" href="./assets/baihaba.jpg">
-  <link rel="preload" as="image" href="./assets/kanas.jpg">
+  <link rel="preload" as="image" href="./assets/hackathon.jpg">
+  <link rel="preload" as="image" href="./assets/terrace.jpg">
+  <link rel="preload" as="image" href="./assets/cafeteria.jpg">
   <link rel="preload" as="image" href="./assets/experience-qr.svg?v=b03fd2334893">
 </head>
 <body>
-  <div class="chat-app">
+  <div class="chat-app is-empty">
     <header class="topbar">
-      <div class="chat-title"><span class="title-dot"></span><h1>携程 Hackathon</h1></div>
+      <div class="model-chip" id="model-chip" aria-live="polite">
+        <span class="model-name">大模型</span>
+        <span class="model-gen" id="model-gen">第 1 代</span>
+        <span class="model-badge" id="model-badge" aria-hidden="true">已升级</span>
+        <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
+      </div>
+      <h1 class="chat-title">凌空 SOHO 一日游</h1>
       <div class="tools">
         <button id="restart" class="icon-button" title="重新开始（R）" aria-label="重新开始"><svg viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 2 8M4 4v6h6"/></svg></button>
         <button id="settings-button" class="icon-button" title="演示设置" aria-label="演示设置"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3"/><circle cx="15" cy="17" r="3"/></svg></button>
         <button id="fullscreen-button" class="icon-button" title="全屏（F）" aria-label="全屏"><svg viewBox="0 0 24 24"><path d="M8 4H4v4m12-4h4v4M4 16v4h4m12-4v4h-4"/></svg></button>
       </div>
     </header>
-    <main id="conversation" class="conversation" aria-label="旅行对话" tabindex="0">
+    <main id="conversation" class="conversation" aria-label="一日游对话" tabindex="0">
       <div class="conversation-inner">
-        <div id="empty-state" class="empty-state"><span class="empty-spark" aria-hidden="true">✦</span><p>点击，开始对话。</p></div>
         <div id="messages" role="log" aria-label="聊天记录" aria-live="polite" aria-relevant="additions"></div>
       </div>
     </main>
+    <div class="dock">
+      <p class="greeting" id="greeting">有什么可以帮你的？</p>
+      <!-- 演示用输入框：只展示「正在输入」，不接受键盘输入 -->
+      <div class="composer" id="composer" aria-hidden="true">
+        <div class="composer-field">
+          <span class="composer-text" id="composer-text"></span><span class="caret"></span>
+          <span class="composer-placeholder">点击，开始对话</span>
+        </div>
+        <div class="composer-bar">
+          <span class="composer-tool"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+          <span class="composer-tool composer-pill"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.4 2.3 3.6 5.1 3.6 8.5s-1.2 6.2-3.6 8.5c-2.4-2.3-3.6-5.1-3.6-8.5s1.2-6.2 3.6-8.5Z"/></svg>行程规划</span>
+          <span class="send-button" id="send-button"><svg viewBox="0 0 24 24"><path d="M12 19V5m-6 6 6-6 6 6"/></svg></span>
+        </div>
+      </div>
+      <p class="disclaimer">大模型也可能会犯错，出行前请核对重要信息。</p>
+    </div>
   </div>
   <dialog id="settings-dialog" aria-labelledby="settings-title">
     <form id="settings-form">
@@ -36,10 +57,10 @@
       <p>替换演示中使用的视频，设置保存在当前浏览器。</p>
       <label for="video-url">B 站视频链接或 BV 号</label><input id="video-url" name="videoUrl" type="text" autocomplete="off" spellcheck="false" required>
       <p id="settings-error" class="error-message" role="alert"></p>
-      <div class="dialog-actions"><button type="button" id="reset-video" class="quiet-button">恢复默认视频</button><button type="submit" class="next-button">保存</button></div>
+      <div class="dialog-actions"><button type="button" id="reset-video" class="quiet-button">恢复默认视频</button><button type="submit" class="primary-button">保存</button></div>
     </form>
   </dialog>
   <p id="toast" class="toast" role="status" hidden></p>
-  <script defer src="./presentation.js?v=f134a4e2928d"></script>
+  <script defer src="./presentation.js?v=16cde5603d6d"></script>
 </body>
 </html>

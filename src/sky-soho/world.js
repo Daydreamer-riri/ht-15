@@ -84,6 +84,21 @@ export function pathRibbon(parent,path,color=C.coral,width=.65,y=.13,opacity=1) 
   const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geo.setIndex(indices);geo.computeVertexNormals();
   const mesh=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color,side:THREE.DoubleSide,transparent:opacity<1,opacity,depthWrite:opacity===1}));parent.add(mesh);return mesh;
 }
+// 路线管线：一根实体管（会被楼体遮挡）+ 一根不做深度测试的半透明管（被遮住的部分也能看见）
+const ROUTE = { gold: '#f2c566', glow: '#e9b44c', back: '#9fb4af', radius: 2.2, lift: 4 };
+function routeTube(path, isReturn) {
+  if (path.total < 1) return null;
+  const pts = [];
+  const steps = Math.max(2, Math.ceil(path.total / 6));
+  for (let i = 0; i <= steps; i++) { const p = samplePath(path, i / steps * path.total); pts.push(new THREE.Vector3(p.x, ROUTE.lift, p.z)); }
+  const curve = new THREE.CatmullRomCurve3(pts, false, 'centripetal', 0);
+  const geometry = new THREE.TubeGeometry(curve, Math.max(8, steps * 3), ROUTE.radius, 8, false);
+  const color = isReturn ? ROUTE.back : ROUTE.gold;
+  const mesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color, emissive: isReturn ? '#5f7470' : ROUTE.glow, emissiveIntensity: .7, roughness: .45, transparent: true }));
+  const ghost = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color, transparent: true, opacity: .28, depthTest: false, depthWrite: false }));
+  ghost.renderOrder = 2;
+  return { mesh, ghost, length: path.total, indexCount: geometry.index.count, isReturn };
+}
 export function createCampus(model) {
   const root = new THREE.Group(), buildings = new THREE.Group(), routes = [], markers = [];
   root.add(buildings);
@@ -125,10 +140,12 @@ export function createCampus(model) {
   const ringPoints=Array.from({length:129},(_,i)=>new THREE.Vector3(cx+Math.cos(i/128*Math.PI*2)*324,1,cz+Math.sin(i/128*Math.PI*2)*324));
   const ringRoad = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(ringPoints),128,3,5,false),standard('#658278'));
   root.add(ringRoad);
+  // 原行程的步行路线：每一段是一根发光管线，裁到星球表面以内；返程用暗一档的颜色
   for(const chapter of model.chapters){
     const group=new THREE.Group();root.add(group);
-    for(const path of clipPathToCampus(chapter.path))pathRibbon(group,path,chapter.stop.index===5?'#61d6ce':'#ffd08d',1.3,2.1);
-    routes.push({stopId:chapter.stop.id,group});
+    const tubes=[];
+    for(const path of clipPathToCampus(chapter.path)){const tube=routeTube(path,chapter.stop.id==='sky-soho-return');if(tube){group.add(tube.mesh,tube.ghost);tubes.push(tube);}}
+    routes.push({stopId:chapter.stop.id,group,tubes,length:tubes.reduce((s,t)=>s+t.length,0)});
   }
   for(const stop of model.stops){
     const anchor=new THREE.Vector3(stop.point.x,78,stop.point.z);
@@ -142,10 +159,10 @@ export function createCampus(model) {
   if(boundary){
     box(gate,17,1.4,10,boundary.x,1.8,boundary.z,'#e7d6b0');
     cylinder(gate,.6,22,boundary.x,11,boundary.z,'#b7dbce');
-    const board=label(gate,'METRO ↗',boundary.x,24,boundary.z,26,'#e8f4e8','#204954');board.rotation.y=-.4;
+    const board=label(gate,'淞虹路地铁站',boundary.x,24,boundary.z,30,'#e8eee6','#14303a');board.rotation.y=-.4;
   }
   const orbit=new THREE.Group();orbit.position.set(cx,-75,cz);root.add(orbit);
-  for(const [r,tilt,alpha] of [[406,.14,.36],[450,-.12,.12]]){
+  for(const [r,tilt,alpha] of [[406,.14,.16]]){
     const mesh=new THREE.Mesh(new THREE.TorusGeometry(r,.45,4,160),new THREE.MeshBasicMaterial({color:'#a9c6bd',transparent:true,opacity:alpha}));mesh.rotation.set(Math.PI/2+tilt,0,.13);orbit.add(mesh);
   }
   return { root, markers, routes, buildings, orbit };

@@ -3,7 +3,7 @@ import {createWalkSurface} from './walk-surface.js';
 import {createTerrainSurface} from './terrain-surface.js';
 import {loadDynamicNavigation} from './dynamic-navigation.js';
 import {applyModelTransform,loadSceneSupplements} from './scene-models.js';
-import {initExplorerUi,populateSceneMenu,explorerScenePath} from './explorer-ui.js';
+import {initExplorerUi,populateSceneMenu,explorerScenePath,addPlanetLink} from './explorer-ui.js';
 import './explorer-ui.css';
 import {createViewer} from '@playcanvas/supersplat-viewer/viewer';
 import '@playcanvas/supersplat-viewer/viewer.css';
@@ -61,6 +61,7 @@ const sceneUrl=id=>{
 history.replaceState(history.state,'',sceneUrl(key));
 initExplorerUi();
 populateSceneMenu($('destination'),current.destination,base);
+addPlanetLink(document.querySelector('header'),key,base);
 if(current.hidden){
  document.querySelector('.scene-title').textContent=current.label;
  document.querySelector('.scene-trigger').setAttribute('aria-label',`切换场景，当前${current.label}`);

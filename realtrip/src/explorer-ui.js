@@ -15,6 +15,7 @@ const paths = {
  gallery:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M8 4v16M8 15l5-5 5 5"/>',
  terrace:'<path d="M3 14h18M5 14v6m7-6v6m7-6v6M3 20h18M7 9l5-6 5 6H7Zm5 0v5"/>',
  chevron:'<path d="m8 10 4 4 4-4"/>',
+ back:'<path d="M15 18l-6-6 6-6"/>',
  check:'<path d="m5 12 4 4L19 6"/>'
 };
 const svg = icon => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[icon]??paths.building}</svg>`;
@@ -74,6 +75,18 @@ export function populateSceneMenu(select, current, base='/', entries=explorerSce
  document.addEventListener('pointerdown',event=>{if(!picker.contains(event.target))close();});
  picker.addEventListener('focusout',event=>{if(!picker.contains(event.relatedTarget))close();});
  picker.append(trigger,panel);select.after(picker);
+}
+
+/** 左上角的返回按钮：回到一日游星球，并点亮刚才所在的场景 */
+export function addPlanetLink(header, current, base='/') {
+ const url=new URL(explorerScenePath('sky-soho',base),location.origin);
+ if(explorerScenes.some(([key])=>key===current))url.searchParams.set('poi',current);
+ const link=document.createElement('a');link.className='planet-back';link.dataset.explorerUi='';
+ link.href=url.pathname+url.search;link.setAttribute('aria-label','返回一日游星球');
+ link.innerHTML=`${svg('back')}<span>星球</span>`;
+ link.addEventListener('click',()=>document.exitPointerLock?.());
+ header.prepend(link);
+ return link;
 }
 
 export function setIconButton(button, icon, label, caption='') {

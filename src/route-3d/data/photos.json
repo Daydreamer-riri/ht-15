@@ -1,0 +1,20 @@
+{
+ "source": "src/data/itinerary.ts image fields (Ctrip CDN, original itinerary photos)",
+ "photos": {
+  "124432742950912052": "https://dimg04.c-ctrip.com/images/1lo1612000nu7vmckAFAC",
+  "128993616560455691": "https://dimg04.c-ctrip.com/images/0105w120009cehaav1157",
+  "128993211223113846": "https://dimg04.c-ctrip.com/images/1mc1l12000slq20wt9575",
+  "129565862729400370": "https://dimg04.c-ctrip.com/images/1mc5w12000stgq6k21E61",
+  "131100200214249555": "https://dimg04.c-ctrip.com/images/350m160000010kn9y1F27",
+  "124435476423344147": "https://dimg04.c-ctrip.com/images/0102512000rw5341cEB50",
+  "124429830405210138": "https://dimg04.c-ctrip.com/images/100t0z000000mqgft13FF",
+  "129000588859637821": "https://dimg04.c-ctrip.com/images/1mc0p12000sxma59g7A9C",
+  "124436820067926108": "https://dimg04.c-ctrip.com/images/0103s120009l4pao7B7A6",
+  "129004222787846175": "https://dimg04.c-ctrip.com/images/0105212000a2cvssuAE2B",
+  "129566065949720684": "https://dimg04.c-ctrip.com/images/1mc4312000qrbxplo6F0C",
+  "124435905565179927": "https://dimg04.c-ctrip.com/images/0105212000a2cvssuAE2B",
+  "129566535101710460": "https://dimg04.c-ctrip.com/images/1mc4312000qrbxplo6F0C",
+  "124436337360355372": "https://dimg04.c-ctrip.com/images/0100e1200085kcifv469A",
+  "129003155761070157": "https://dimg04.c-ctrip.com/images/0206p12000qgdjcd5FAD4"
+ }
+}
