@@ -2,13 +2,15 @@
 import {Vec3} from 'playcanvas';
 import {npcConfig,isNearNpc} from '../npc-scene.js';
 import {createNpcCharacter} from './npc-character.js';
-import {askNpc} from '../npc-client.js';
+import {askNpc,NPC_SYSTEM_PROMPT} from '../npc-client.js';
 import {createNpcSession,createNpcSpeech} from '../npc-session.js';
 import {createNpcRecognition,embeddedBrowser,recognitionHint} from '../npc-recognition.js';
 import {createNpcGreeting} from '../npc-greeting.js';
 import {createNpcReactions} from '../npc-reactions.js';
 import {createCloudRecognition} from '../npc-audio.js';
 import {createCloudSpeech} from '../npc-cloud-speech.js';
+import {companionCommand} from './commands.js';
+import {createCompanionActions} from './companion-actions.js';
 import '../npc.css';
 
 const icons={
@@ -20,8 +22,9 @@ const icons={
  send:'<path d="M12 20V4m-6 6 6-6 6 6"/>',
 };
 const svg=name=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[name]}</svg>`;
+const companionPrompt=NPC_SYSTEM_PROMPT.replace('动作由页面控制，你不能自行走出舞台、跟随访客巡游或任意跳舞，不要声称已执行这些未实现动作。','这个“我和小蓝”独立入口还支持：右上角切换第一/第三人称；点麦克风说“小蓝过来”，或“一起合照”，页面就会执行走近、双人取景、3秒倒计时并生成带北京时间的1080×1440纪念海报，可长按保存后发朋友圈。也有合照按钮。动作由页面识别明确指令后执行，普通聊天回答不能执行动作。召唤仅在约6个场景单位内、可达的地面上生效，障碍无法通过时会提示。没有常驻语音唤醒，也没有持续跟随或跳舞。被问到能力时可介绍这些功能，不能只用语言声称已经完成动作、拍照或发布朋友圈。');
 
-export async function initNpc({viewer,navigation,base,stop,space}){
+export async function initNpc({viewer,navigation,base,stop,space,surface,companion}){
  const character=await createNpcCharacter(viewer,npcConfig,base,space,()=>navigation.getPose().position);
  const host=document.createElement('div');host.id='npc-ui';host.dataset.explorerUi='';
  host.innerHTML=`<div class="npc-experience"><span></span> NPC 独立体验</div>
@@ -44,7 +47,7 @@ export async function initNpc({viewer,navigation,base,stop,space}){
  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition,synth=window.speechSynthesis,container=embeddedBrowser(navigator.userAgent);
  const greeting=createNpcGreeting(),reactions=createNpcReactions();
  let recognitionPhase='idle',audioUnlocked=false,pendingGreeting=false,voiceGateway='';
- let config={},near=false,keyboardOpen=false,listening=false,thinking=false,speaking=false,playbackPending=false,disposed=false,lastReply='',note='',configError='',captionTimer,noteTimer;
+ let config={},near=false,callable=false,keyboardOpen=false,listening=false,thinking=false,speaking=false,playbackPending=false,disposed=false,lastReply='',note='',configError='',captionTimer,noteTimer;
  function setCaption(text){clearTimeout(captionTimer);caption.querySelector('p').textContent=text;caption.hidden=!text;}
  function setTranscript(text,confirmed=false){const element=$('.npc-transcript'),content=element.querySelector('p');element.querySelector('span').textContent=confirmed?'你说':'正在听';content.textContent=text;element.hidden=!text;content.scrollTop=confirmed?0:content.scrollHeight;}
  function scheduleCaptionDismiss(){clearTimeout(captionTimer);captionTimer=setTimeout(()=>{setCaption('');setTranscript('');},8000);}
@@ -53,17 +56,17 @@ export async function initNpc({viewer,navigation,base,stop,space}){
  function releasePointer(){stop();if(document.pointerLockElement)document.exitPointerLock();}
  function blurControls(){if(host.contains(document.activeElement))document.activeElement.blur();}
  function sync(){
-  const available=near&&Boolean(config.apiKey);
-  mic.disabled=!available;keyboard.disabled=!available;label.disabled=!near||listening||thinking||speaking;
+  const available=callable&&Boolean(config.apiKey)&&!companion.photoActive;
+  mic.disabled=!available;keyboard.disabled=!available;label.disabled=!callable||listening||thinking||speaking||companion.photoActive;
   $('.npc-send').disabled=!available||!input.value.trim();input.disabled=!available;
   mic.classList.toggle('listening',listening);mic.querySelector('span').textContent=recognitionPhase==='starting'?'取消':['ending','transcribing'].includes(recognitionPhase)?'识别中':listening?'说完了':speaking?'接着说':'说话';mic.setAttribute('aria-label',recognitionPhase==='starting'?'取消启动语音':recognitionPhase==='transcribing'?'取消语音识别':listening?'结束录音':'点击和小蓝说话');
   keyboard.setAttribute('aria-expanded',String(keyboardOpen));keyboard.classList.toggle('active',keyboardOpen);form.hidden=!keyboardOpen;
-  stopButton.hidden=!(listening||thinking||speaking||playbackPending);speaker.hidden=!stopButton.hidden||!lastReply;speaker.disabled=!near;
-  host.dataset.keyboard=String(keyboardOpen);host.dataset.near=String(near);
+  stopButton.hidden=!(listening||thinking||speaking||playbackPending||companion.action==='approaching');speaker.hidden=!stopButton.hidden||!lastReply;speaker.disabled=!callable;
+  host.dataset.keyboard=String(keyboardOpen);host.dataset.near=String(near);host.dataset.callable=String(callable);
   character.setEngaged(keyboardOpen||listening||thinking||speaking||playbackPending);
   character.setState(recognitionPhase==='listening'?'listening':thinking?'thinking':speaking?'speaking':'idle');
-  status.textContent=configError||(!near?'走近舞台上的小蓝':note||(recognitionPhase==='starting'?'正在启动麦克风…':recognitionPhase==='transcribing'?'正在识别你说的话…':recognitionPhase==='ending'?'正在确认识别结果…':listening?'我在听 · 说完自动发送':thinking?'小蓝正在想…':playbackPending?'文字已回复 · 正在准备语音…':speaking?'小蓝正在说话':!config.apiKey?'正在连接 DeepSeek…':keyboardOpen?'输入后发送，小蓝会直接回答':voiceGateway||container?'点麦克风或键盘，与小蓝聊聊':SpeechRecognition?'点麦克风说话，或用键盘输入':'可用手机键盘的语音输入'));
-  label.querySelector('small').textContent=listening?'我在听':thinking?'让我想想':playbackPending?'准备语音':speaking?'正在说话':near?'点我打招呼':'走近聊聊';
+  status.textContent=configError||(!callable?'离小蓝有点远，往舞台前走走再叫他':note||(recognitionPhase==='starting'?'正在启动麦克风…':recognitionPhase==='transcribing'?'正在识别你说的话…':recognitionPhase==='ending'?'正在确认识别结果…':listening?'我在听 · 说完自动发送':thinking?'小蓝正在想…':playbackPending?'文字已回复 · 正在准备语音…':speaking?'小蓝正在说话':companion.action==='approaching'?'小蓝正在向你走来':!config.apiKey?'正在连接 DeepSeek…':keyboardOpen?'也可以输入：小蓝过来、一起合照':'试试说“小蓝，过来”或“一起合照”'));
+  label.querySelector('small').textContent=listening?'我在听':thinking?'让我想想':playbackPending?'准备语音':speaking?'正在说话':near?'点我打招呼':callable?'叫我过来':'走近聊聊';
   host.dataset.phase=listening?recognitionPhase:thinking?'thinking':playbackPending?'preparing':speaking?'speaking':'idle';
  }
  const speechEvents={
@@ -75,16 +78,16 @@ export async function initNpc({viewer,navigation,base,stop,space}){
  const cloudSpeech=createCloudSpeech({...speechEvents,getEndpoint:()=>voiceGateway});
  function unlockAudio(){audioUnlocked=true;if(voiceGateway)cloudSpeech.unlock();}
  function playReply(text){speech.stop();cloudSpeech.stop();if(voiceGateway)cloudSpeech.speak(text);else speech.speak(text);}
- const session=createNpcSession({request:(history,text,signal)=>askNpc(config,history,text,{signal}),
+ const session=createNpcSession({request:(history,text,signal)=>askNpc(config,history,text,{signal,systemPrompt:companionPrompt}),
   onThinking(value){thinking=value;sync();},
-  onReply(reply){if(disposed||!near)return;lastReply=reply;setCaption(reply);note='';playReply(reply);},
+  onReply(reply){if(disposed||!callable)return;lastReply=reply;setCaption(reply);note='';playReply(reply);},
   onError(error,text){input.value=text;showNote(error.message);}});
  const recognitionEvents={
   onState(value){recognitionPhase=value;listening=value!=='idle';pauseMovement();sync();},
   onTranscript(text,{final=false}={}){setTranscript(text,final);input.value=text;sync();},
   onComplete(text){submit(text,{voice:true});},
   onFallback(error,draft){
-   if(disposed||!near)return;if(draft)input.value=draft;note='';setTranscript('');
+   if(disposed||!callable)return;if(draft)input.value=draft;note='';setTranscript('');
    if(!voiceGateway){setKeyboard(true);$('.npc-voice-help').textContent=recognitionHint(error,container);}
    else{$('.npc-voice-help').textContent=({'not-allowed':'请在系统设置中允许微信或飞书访问麦克风，然后重新点击说话。','audio-capture':'没有找到可用麦克风，请检查手机的麦克风权限。','no-speech':'没听清，再点一次麦克风告诉我吧。',timeout:'语音识别超时了，请重新说一次。'})[error]||error;}
    $('.npc-voice-help').hidden=false;
@@ -92,21 +95,24 @@ export async function initNpc({viewer,navigation,base,stop,space}){
  };
  const browserRecognition=createNpcRecognition({...recognitionEvents,Recognition:SpeechRecognition});
  const cloudRecognition=createCloudRecognition({...recognitionEvents,getEndpoint:()=>voiceGateway,workletUrl:base+'npc/pcm-capture-worklet.js',onLevel:level=>mic.style.setProperty('--voice-level',String(level))});
+ const actions=createCompanionActions({viewer,navigation,character,surface,companion,onChange:sync,say(text){greeting.dismiss();lastReply=text;setCaption(text);note='';if(audioUnlocked)playReply(text);else scheduleCaptionDismiss();sync();}});
+ function perform(action){if(!callable||disposed)return;unlockAudio();interrupt();setKeyboard(false);actions.perform(action);}
  function stopRecognition(){browserRecognition.cancel();cloudRecognition.cancel();}
  function interrupt({clear=false}={}){const unfinished=listening;pendingGreeting=false;clearTimeout(noteTimer);clearTimeout(captionTimer);session.cancel();stopRecognition();speech.stop();cloudSpeech.stop();if(clear)setCaption('');if(clear||unfinished)setTranscript('');note='';sync();}
  function setKeyboard(open){
-  if(open&&!near)return;
+  if(open&&(!callable||companion.photoActive))return;
   if(open)setTranscript('');
   keyboardOpen=open;if(!open)$('.npc-voice-help').hidden=true;releasePointer();pauseMovement();sync();updateViewport();
   if(open){stopRecognition();input.focus();}else{blurControls();if(!caption.hidden&&!speaking&&!thinking)scheduleCaptionDismiss();}
  }
  function submit(text,{voice=false}={}){
-  text=text.trim();if(!text||!near||!config.apiKey)return;unlockAudio();
+  text=text.trim();if(!text||!callable||!config.apiKey||companion.photoActive)return;unlockAudio();
   greeting.dismiss();interrupt();setKeyboard(false);input.value='';setCaption('');setTranscript(voice?text:'',true);
-  synth?.resume();session.submit(text);
+  synth?.resume();const command=companionCommand(text);
+  if(command){actions.perform(command);return;}actions.cancel();session.submit(text);
  }
  function listen(){
-  if(!near||!config.apiKey)return;
+  if(!callable||!config.apiKey||companion.photoActive)return;
   greeting.dismiss();
   if(['starting','transcribing'].includes(recognitionPhase)){stopRecognition();setTranscript('');return;}
   if(listening){(voiceGateway?cloudRecognition:browserRecognition).end();return;}
@@ -121,7 +127,7 @@ export async function initNpc({viewer,navigation,base,stop,space}){
   sync();
  }
  mic.onclick=()=>{unlockAudio();listen();if(!keyboardOpen)blurControls();};
- label.onclick=()=>{unlockAudio();greet(true);blurControls();};
+ label.onclick=()=>{unlockAudio();if(near)greet(true);else perform('come');blurControls();};
  input.addEventListener('input',sync);
  const onGesture=event=>{
   if(!event.isTrusted)return;unlockAudio();
@@ -132,10 +138,10 @@ export async function initNpc({viewer,navigation,base,stop,space}){
  $('.npc-fold').onclick=()=>setKeyboard(false);
  form.onsubmit=event=>{event.preventDefault();if(!event.isComposing)submit(input.value);};
  input.addEventListener('keydown',event=>{if(event.key==='Enter'&&event.isComposing)event.preventDefault();});
- speaker.onclick=()=>{if(near&&lastReply){unlockAudio();interrupt();playReply(lastReply);blurControls();}};
- stopButton.onclick=()=>{interrupt();scheduleCaptionDismiss();blurControls();};
+ speaker.onclick=()=>{if(callable&&lastReply){unlockAudio();interrupt();playReply(lastReply);blurControls();}};
+ stopButton.onclick=()=>{interrupt();actions.cancel();scheduleCaptionDismiss();blurControls();};
  if(!SpeechRecognition)mic.title='使用手机键盘的语音输入';
- function leave(){interrupt({clear:true});setKeyboard(false);}
+ function leave(){interrupt({clear:true});setKeyboard(false);if(actions.state!=='result')actions.cancel();}
  const viewport=window.visualViewport;
  function updateViewport(){const inset=keyboardOpen&&viewport?Math.max(0,innerHeight-viewport.height-viewport.offsetTop):0;host.style.setProperty('--npc-keyboard-inset',`${inset}px`);host.dataset.softKeyboard=String(inset>80);}
  viewport?.addEventListener('resize',updateViewport);viewport?.addEventListener('scroll',updateViewport);
@@ -150,10 +156,11 @@ export async function initNpc({viewer,navigation,base,stop,space}){
  const menuOpen=()=>leave();document.addEventListener('explorer-menu-open',menuOpen);
  const projected=new Vec3(),direction=new Vec3();
  function update(){
-  const camera=viewer.app.root.findComponents('camera')[0],player=navigation.getPose().position,p={x:player[0],y:player[1],z:player[2]},wasNear=near;
+  const camera=viewer.app.root.findComponents('camera')[0],player=navigation.getPose().position,p={x:player[0],y:player[1],z:player[2]},wasNear=near,wasCallable=callable;
   near=isNearNpc([p.x,p.y,p.z],near,{...npcConfig,position:character.position});character.setNear(near);
-  if(wasNear&&!near)leave();if(wasNear!==near)sync();
-  if(greeting.update(near,keyboardOpen||listening||thinking||speaking||playbackPending||document.hidden||Boolean(document.getElementById('about')?.open),performance.now()/1000))greet();
+  callable=isNearNpc([p.x,p.y,p.z],callable,{...npcConfig,position:character.position,approachRadius:6,leaveRadius:6.5});
+  if(wasCallable&&!callable)leave();if(wasNear!==near||wasCallable!==callable)sync();
+  if(greeting.update(near,actions.active||keyboardOpen||listening||thinking||speaking||playbackPending||document.hidden||Boolean(document.getElementById('about')?.open),performance.now()/1000))greet();
   const cp=character.position;reactions.update(performance.now()/1000,Math.hypot(cp[0]-p.x,cp[2]-p.z));host.dataset.npcPosition=cp.map(v=>v.toFixed(3)).join(',');host.dataset.moving=String(character.moving);
   const rect=document.getElementById('world').getBoundingClientRect();camera.worldToScreen(character.anchor,projected);direction.copy(character.anchor).sub(camera.entity.getPosition());
   label.hidden=direction.dot(camera.entity.forward)<0||projected.x<30||projected.x>rect.width-30||projected.y<80||projected.y>rect.height-60;
@@ -161,7 +168,7 @@ export async function initNpc({viewer,navigation,base,stop,space}){
  }
  const obstacle=space?.obstacles[0];
  if(obstacle)obstacle.onContact=()=>{
-  const busy=keyboardOpen||listening||thinking||speaking||playbackPending||document.hidden||Boolean(document.getElementById('about')?.open);
+  const busy=actions.active||keyboardOpen||listening||thinking||speaking||playbackPending||document.hidden||Boolean(document.getElementById('about')?.open);
   const text=reactions.contact(performance.now()/1000,busy);
   if(!text)return;character.react();greeting.dismiss();note='';lastReply=text;setCaption(text);
   if(audioUnlocked)playReply(text);else scheduleCaptionDismiss();sync();
@@ -172,7 +179,7 @@ export async function initNpc({viewer,navigation,base,stop,space}){
  try{const voice=await (await fetch(base+'npc/voice.json',{cache:'no-store'})).json();if(voice.gatewayUrl){const url=new URL(voice.gatewayUrl);if(url.protocol==='https:'||(['127.0.0.1','localhost'].includes(location.hostname)&&url.protocol==='http:'))voiceGateway=url.href.replace(/\/$/,'');}}catch{}
  if(voiceGateway)mic.title='点击录音，再点结束 · E';
  sync();
- function destroy(){disposed=true;if(obstacle)obstacle.onContact=null;leave();viewport?.removeEventListener('resize',updateViewport);viewport?.removeEventListener('scroll',updateViewport);viewer.app.off('update',update);window.removeEventListener('keydown',onKey);window.removeEventListener('pointerdown',onGesture);document.removeEventListener('visibilitychange',visibility);document.removeEventListener('explorer-menu-open',menuOpen);cloudSpeech.destroy();character.destroy();host.remove();}
+ function destroy(){disposed=true;if(obstacle)obstacle.onContact=null;leave();actions.destroy();viewport?.removeEventListener('resize',updateViewport);viewport?.removeEventListener('scroll',updateViewport);viewer.app.off('update',update);window.removeEventListener('keydown',onKey);window.removeEventListener('pointerdown',onGesture);document.removeEventListener('visibilitychange',visibility);document.removeEventListener('explorer-menu-open',menuOpen);cloudSpeech.destroy();character.destroy();host.remove();}
  window.addEventListener('pagehide',event=>event.persisted?leave():destroy());
- return {destroy};
+ return {destroy,perform};
 }

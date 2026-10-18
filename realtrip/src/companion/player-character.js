@@ -2,7 +2,7 @@ import {Entity,Color,ShaderChunks,StandardMaterial,Texture,BLEND_NORMAL} from 'p
 import {playerPlacement,createPlayerMotion} from './player-motion.js';
 import './player.css';
 
-export async function initPlayer({viewer,navigation,surface,modelUrl,stop}){
+export async function initPlayer({viewer,navigation,surface,modelUrl,stop,companion}){
  const app=viewer.app;
  const asset=await new Promise((resolve,reject)=>app.assets.loadFromUrl(modelUrl,'container',(error,asset)=>error?reject(error):resolve(asset)));
  const root=new Entity('My third-person character'),model=asset.resource.instantiateRenderEntity();root.addChild(model);app.root.addChild(root);
@@ -28,8 +28,13 @@ export async function initPlayer({viewer,navigation,surface,modelUrl,stop}){
  const reduced=matchMedia('(prefers-reduced-motion: reduce)'),motion=createPlayerMotion();
  const controls=document.createElement('div');controls.className='player-tools';controls.dataset.explorerUi='';
  controls.innerHTML='<button class="player-inspect" aria-label="看看我的人物模型"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="7" r="3.5"/><path d="M5 21v-3a7 7 0 0 1 14 0v3"/></svg><span>看看自己</span></button><button class="player-wave" aria-label="向小蓝挥手打招呼">挥手</button>';
+ const perspectiveButton=document.createElement('button');perspectiveButton.className='player-perspective';controls.prepend(perspectiveButton);
+ const photoButton=document.createElement('button');photoButton.className='player-photo';photoButton.textContent='合照';photoButton.setAttribute('aria-label','和小蓝拍纪念合照');controls.append(photoButton);
+ function syncPerspective(){const first=navigation.getPerspective()==='first';perspectiveButton.textContent=first?'第一人称':'第三人称';perspectiveButton.setAttribute('aria-label',first?'切换到第三人称视角':'切换到第一人称视角');perspectiveButton.title=first?'切换到第三人称':'切换到第一人称';}
+ perspectiveButton.onclick=()=>{navigation.setPerspective(navigation.getPerspective()==='first'?'third':'first');syncPerspective();perspectiveButton.blur();};syncPerspective();
+ photoButton.onclick=()=>{companion.npc?.perform('photo');photoButton.blur();};
  document.body.append(controls);
- const hint=document.createElement('p');hint.className='player-hint';hint.textContent='WASD / 摇杆移动 · 拖动画面转头 · 走近小蓝聊聊';hint.setAttribute('role','status');document.body.append(hint);
+ const hint=document.createElement('p');hint.className='player-hint';hint.textContent='WASD / 摇杆移动 · 右上角切换视角 · 点麦克风叫小蓝过来';hint.setAttribute('role','status');document.body.append(hint);
  const hintTimer=setTimeout(()=>hint.remove(),11000);
  const dialog=document.getElementById('about'),closeButton=document.getElementById('close-about');dialog.classList.add('avatar-view');
  const panel=document.createElement('section');panel.className='avatar-panel';
@@ -38,7 +43,7 @@ export async function initPlayer({viewer,navigation,surface,modelUrl,stop}){
  const viewContainer=panel.querySelector('.avatar-canvas'),wave=controls.querySelector('.player-wave');
  let preview=null,opening=0,disposed=false;
  async function openPreview(){
-  if(dialog.open)return;document.dispatchEvent(new Event('explorer-menu-open'));stop();if(document.pointerLockElement)document.exitPointerLock();navigation.setEnabled(false);dialog.showModal();
+  if(dialog.open||companion.photoActive)return;document.dispatchEvent(new Event('explorer-menu-open'));stop();if(document.pointerLockElement)document.exitPointerLock();navigation.setEnabled(false);dialog.showModal();
   const run=++opening;viewContainer.replaceChildren();const loading=document.createElement('p');loading.className='avatar-load';loading.textContent='正在准备你的形象…';viewContainer.append(loading);
   try{
    const module=await import(/* @vite-ignore */ new URL(__PLAYER_PREVIEW_FILE__,new URL('.',location.href)).href);
@@ -54,23 +59,26 @@ export async function initPlayer({viewer,navigation,surface,modelUrl,stop}){
  function onClose(){opening++;preview?.destroy();preview=null;viewContainer.replaceChildren();panel.querySelectorAll('[aria-pressed]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view==='full')));navigation.setEnabled(true);controls.querySelector('.player-inspect').blur();}
  dialog.addEventListener('close',onClose);
  wave.onclick=()=>{const label=document.querySelector('.npc-world-label');if(label&&!label.disabled){const npcPosition=document.getElementById('npc-ui')?.dataset.npcPosition?.split(',').map(Number);if(npcPosition?.length===3){const p=navigation.getPose().position;bodyYaw=Math.atan2(npcPosition[0]-p[0],npcPosition[2]-p[2])*180/Math.PI;}motion.wave();label.click();}wave.blur();};
- let frameClock=0,lastPosition=null,bodyYaw=navigation.getPose().yaw+180;
+ let frameClock=0,lastPosition=null,bodyYaw=navigation.getPose().yaw+180,photoYaw=null;
  function update(dt){
   if(document.hidden)return;const pose=navigation.getPose(),placement=playerPlacement(pose,surface.eyeHeight);
   root.setPosition(...placement.position);
   if(lastPosition){const dx=pose.position[0]-lastPosition[0],dz=pose.position[2]-lastPosition[2];if(Math.hypot(dx,dz)>.0002&&Math.hypot(dx,dz)<.2){const desired=Math.atan2(dx,dz)*180/Math.PI;bodyYaw+=((desired-bodyYaw+540)%360-180)*(1-Math.exp(-Math.min(dt,.05)*14));}else if(Math.hypot(dx,dz)>=.2)bodyYaw=pose.yaw+180;}
-  lastPosition=[...pose.position];root.setEulerAngles(0,bodyYaw,0);root.setLocalScale(placement.scale,placement.scale,placement.scale);
+  if(photoYaw!==null)bodyYaw=photoYaw;
+  lastPosition=[...pose.position];root.setEulerAngles(0,bodyYaw,0);root.setLocalScale(placement.scale,placement.scale,placement.scale);root.enabled=navigation.getPerspective()!=='first'||navigation.isPhotoView();
   const grounded=surface.physics?.getState().grounded??true;shadow.enabled=grounded;
   const state=motion.update(dt,pose.position,{reduced:reduced.matches,grounded});
+  if(photoYaw!==null)Object.assign(state,{armR:-42,elbowR:-82,rollR:-34,handR:12});
   for(const side of ['L','R']){joints['Leg'+side]?.setLocalEulerAngles(state['leg'+side],0,0);joints['Knee'+side]?.setLocalEulerAngles(state['knee'+side],0,0);joints['Arm'+side]?.setLocalEulerAngles(state['arm'+side],0,state['roll'+side]);joints['Elbow'+side]?.setLocalEulerAngles(state['elbow'+side],0,0);}
   joints.HandR?.setLocalEulerAngles(0,0,state.handR);joints.Body?.setLocalScale(1,state.breath,1);
   const npc=document.getElementById('npc-ui');wave.disabled=npc?.dataset.near!=='true'||Boolean(document.querySelector('.npc-world-label')?.disabled);
-  controls.hidden=Boolean(dialog.open)||npc?.dataset.keyboard==='true'||['listening','starting','transcribing','ending'].includes(npc?.dataset.phase);
+  photoButton.disabled=!companion.npc||npc?.dataset.callable!=='true';
+  controls.hidden=companion.photoActive||Boolean(dialog.open)||npc?.dataset.keyboard==='true'||['listening','starting','transcribing','ending'].includes(npc?.dataset.phase);
   document.body.dataset.avatarReady='true';document.body.dataset.avatarMotion=state.waving?'waving':state.weight>.1?'walking':'idle';
   frameClock+=Math.min(dt,.05);if(!reduced.matches&&frameClock>=1/30){app.renderNextFrame=true;frameClock=0;}
  }
  app.on('update',update);update(0);app.renderNextFrame=true;
  function destroy(){if(disposed)return;disposed=true;opening++;clearTimeout(hintTimer);app.off('update',update);preview?.destroy();dialog.removeEventListener('close',onClose);controls.remove();hint.remove();panel.remove();root.destroy();shadowMaterial.destroy();shadowTexture.destroy();lights.forEach(l=>l.destroy());app.assets.remove(asset);asset.unload();}
  window.addEventListener('pagehide',event=>{if(!event.persisted)destroy();else if(dialog.open)dialog.close();});
- return {destroy};
+ return {destroy,wave:()=>motion.wave(),setPhotoPose(yaw){photoYaw=yaw;app.renderNextFrame=true;}};
 }

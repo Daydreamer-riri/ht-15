@@ -88,7 +88,7 @@ area.onchange=()=>{location.href=sceneUrl(area.value);};
 $('area-picker').hidden=area.options.length<2;
 if(current.destination==='building2'){$('coverage').textContent='会议室 ↔ 门口 ↔ 连廊 · 连续步行';$('area-label').textContent='选择起点';$('area-help').textContent='直接穿过门口即可往返会议室与连廊，无需切换场景。起点菜单只用于快速定位。已更新会议室、门口与连廊的清晰模型；玻璃反射和少量细小物体仍有重建瑕疵。';}
 if(current.destination==='terrace'){$('coverage').textContent='入口 ↔ 中央空地 ↔ 观景端 · 连续步行';$('area-label').textContent='选择起点';$('area-help').textContent='三个起点都在同一片露台，可以直接走过去并原路返回。桌椅和花箱附近请绕行；护栏外、玻璃后的室内及远处楼宇没有开放通行。';}
-const status=$('loadingText');let viewer,ready=false,officeNav,walkSurface;
+const status=$('loadingText');let viewer,ready=false,officeNav,walkSurface;const companion={player:null,npc:null,photoActive:false,action:'idle'};
 let supplementsReady=!scene.supplements?.length;let screensReady=!scene.screens&&!scene.screensUrl;let supplementEntities=new Set();
 let walkingMotion=!window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 try{const saved=localStorage.getItem('walkingMotion');if(saved!==null)walkingMotion=saved==='true';}catch{}
@@ -116,8 +116,8 @@ function setReady(){
  ready=true;viewer.state.cameraMode='fly';viewer.state.gamingControls=true;viewer.state.inputEnabled=false;
  officeNav=createOfficeNavigation(viewer,null,scene.settings.cameras[0].initial,$('world'),walkSurface);
  officeNav?.setWalkingMotion(walkingMotion);
- import('./companion/player-character.js').then(({initPlayer})=>initPlayer({viewer,navigation:officeNav,surface:walkSurface,modelUrl:entryBase+__PLAYER_MODEL_FILE__,stop})).catch(error=>{console.error('Player avatar failed',error);const notice=document.createElement('p');notice.className='player-notice';notice.textContent='你的模型暂未加载，刷新后重试。';document.body.append(notice);});
- if(key==='hackathon-npc')import('./companion/npc-interaction.js').then(({initNpc})=>initNpc({viewer,navigation:officeNav,base,stop,space:walkSurface.characters})).catch(error=>{console.error('NPC initialization failed',error);const notice=document.createElement('p');notice.textContent='小蓝加载失败，请刷新页面重试。';notice.style.cssText='position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#132d3f;color:white;padding:14px;border-radius:12px;z-index:30';document.body.append(notice);});
+ import('./companion/player-character.js').then(({initPlayer})=>initPlayer({viewer,navigation:officeNav,surface:walkSurface,modelUrl:entryBase+__PLAYER_MODEL_FILE__,stop,companion})).then(player=>{companion.player=player;}).catch(error=>{console.error('Player avatar failed',error);const notice=document.createElement('p');notice.className='player-notice';notice.textContent='你的模型暂未加载，刷新后重试。';document.body.append(notice);});
+ if(key==='hackathon-npc')import('./companion/npc-interaction.js').then(({initNpc})=>initNpc({viewer,navigation:officeNav,base,stop,space:walkSurface.characters,surface:walkSurface,companion})).then(npc=>{companion.npc=npc;}).catch(error=>{console.error('NPC initialization failed',error);const notice=document.createElement('p');notice.textContent='小蓝加载失败，请刷新页面重试。';notice.style.cssText='position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#132d3f;color:white;padding:14px;border-radius:12px;z-index:30';document.body.append(notice);});
 
  queueMicrotask(tuneWalkingDetail);
  $('loading').hidden=true;$('pad').disabled=false;$('mode').textContent='步行中';
