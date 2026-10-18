@@ -67,7 +67,8 @@ export async function initNpc({viewer,navigation,base,stop,space,surface,compani
   host.dataset.keyboard=String(keyboardOpen);host.dataset.near=String(near);host.dataset.callable=String(callable);
   character.setEngaged(keyboardOpen||listening||thinking||speaking||playbackPending);
   character.setState(recognitionPhase==='listening'?'listening':thinking?'thinking':speaking?'speaking':'idle');
-  status.textContent=configError||(!callable?'离小蓝有点远，往舞台前走走再叫他':note||(recognitionPhase==='starting'?'正在启动麦克风…':recognitionPhase==='transcribing'?'正在识别你说的话…':recognitionPhase==='ending'?'正在确认识别结果…':listening?'我在听 · 说完自动发送':thinking?'小蓝正在想…':playbackPending?'文字已回复 · 正在准备语音…':speaking?'小蓝正在说话':companion.action==='approaching'?'小蓝正在向你走来':!voiceGateway?'正在连接小蓝…':keyboardOpen?'也可以输入：小蓝过来、一起合照':'试试说“小蓝，过来”或“一起合照”'));
+  status.textContent=configError||note||(callable?(recognitionPhase==='starting'?'正在启动麦克风…':recognitionPhase==='transcribing'?'正在识别你说的话…':recognitionPhase==='ending'?'正在确认识别结果…':listening?'我在听 · 说完自动发送':thinking?'小蓝正在想…':playbackPending?'文字已回复 · 正在准备语音…':speaking?'小蓝正在说话':companion.action==='approaching'?'小蓝正在向你走来':!voiceGateway?'正在连接小蓝…':''):'');
+  status.hidden=!status.textContent;
   label.querySelector('small').textContent=listening?'我在听':thinking?'让我想想':playbackPending?'准备语音':speaking?'正在说话':near?'点我打招呼':callable?'叫我过来':'走近聊聊';
   label.setAttribute('aria-label',near?'让小蓝挥手打招呼':'叫小蓝过来');
   host.dataset.phase=listening?recognitionPhase:thinking?'thinking':playbackPending?'preparing':speaking?'speaking':'idle';

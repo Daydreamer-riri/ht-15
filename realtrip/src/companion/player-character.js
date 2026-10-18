@@ -34,8 +34,6 @@ export async function initPlayer({viewer,navigation,surface,modelUrl,stop,compan
  perspectiveButton.onclick=()=>{navigation.setPerspective(navigation.getPerspective()==='first'?'third':'first');syncPerspective();perspectiveButton.blur();};syncPerspective();
  photoButton.onclick=()=>{companion.npc?.perform('photo');photoButton.blur();};
  document.body.append(controls);
- const hint=document.createElement('p');hint.className='player-hint';hint.textContent='WASD / 摇杆移动 · 右上角切换视角 · 点麦克风叫小蓝过来';hint.setAttribute('role','status');document.body.append(hint);
- const hintTimer=setTimeout(()=>hint.remove(),11000);
  const dialog=document.getElementById('about'),closeButton=document.getElementById('close-about');dialog.classList.add('avatar-view');
  const panel=document.createElement('section');panel.className='avatar-panel';
  panel.innerHTML='<div class="avatar-heading"><small>YOUR AVATAR</small><h2>在这里，也做自己。</h2><p>眼镜、黑色印花 T 恤，还有左手的手表。</p></div><div class="avatar-canvas" aria-label="你的三维人物模型，拖动旋转"><p class="avatar-load" role="status">正在准备你的形象…</p></div><div class="avatar-view-controls"><button data-view="full" aria-pressed="true">全身</button><button data-view="back" aria-pressed="false">背面</button><button data-view="face" aria-pressed="false">看脸</button><button data-view="wave">挥挥手</button></div><p class="avatar-footnote">拖动旋转 · 双指缩放</p><button class="avatar-return">回到漫游</button>';
@@ -78,7 +76,7 @@ export async function initPlayer({viewer,navigation,surface,modelUrl,stop,compan
   frameClock+=Math.min(dt,.05);if(!reduced.matches&&frameClock>=1/30){app.renderNextFrame=true;frameClock=0;}
  }
  app.on('update',update);update(0);app.renderNextFrame=true;
- function destroy(){if(disposed)return;disposed=true;opening++;clearTimeout(hintTimer);app.off('update',update);preview?.destroy();dialog.removeEventListener('close',onClose);controls.remove();hint.remove();panel.remove();root.destroy();shadowMaterial.destroy();shadowTexture.destroy();lights.forEach(l=>l.destroy());app.assets.remove(asset);asset.unload();}
+ function destroy(){if(disposed)return;disposed=true;opening++;app.off('update',update);preview?.destroy();dialog.removeEventListener('close',onClose);controls.remove();panel.remove();root.destroy();shadowMaterial.destroy();shadowTexture.destroy();lights.forEach(l=>l.destroy());app.assets.remove(asset);asset.unload();}
  window.addEventListener('pagehide',event=>{if(!event.persisted)destroy();else if(dialog.open)dialog.close();});
  return {destroy,wave:()=>motion.wave(),setPhotoPose(yaw){photoYaw=yaw;app.renderNextFrame=true;}};
 }
