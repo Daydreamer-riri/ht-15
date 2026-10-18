@@ -6,6 +6,14 @@
 
 网页麦克风 → 16 kHz 单声道 PCM WAV → `/api/npc/transcribe` → `qwen3-asr-flash` → 已有 DeepSeek 对话 → `/api/npc/speak` → `qwen3-tts-flash`（Ethan）→ 网页媒体播放器播放。
 
+`/walk-me/` 的对话改为同一网关的 `POST /api/npc/chat` → `qwen-plus` 原生联网搜索；`/walk/` 继续使用已有 DeepSeek 对话。ASR/TTS 接口不变。新接口复用服务端 `DASHSCOPE_API_KEY` 和 `DASHSCOPE_WORKSPACE_ID`，可通过 `NPC_CHAT_MODEL` 指定支持搜索的模型，默认 `qwen-plus`。前端只读取 `npc/voice.json`，不需要模型 Key。`GET /health` 的 `chatReady` 表示已配置凭据，实际模型权限需要调用 `/api/npc/chat` 验证。
+
+聊天请求为 `{ "text": "上海明天天气？", "history": [] }`；返回 `{ "reply": "…", "searched": true, "searchedAt": "…", "sources": [{ "index": 1, "title": "…", "url": "…", "cited": true }] }`。系统提示由服务端生成，附北京时间；只接受最近 5 轮文字历史。使用百炼原生 text-generation API，`enable_search: true`、`enable_source: true`，显式实时问题与短追问设置 `forced_search: true`，其余问题由模型判断是否检索。没有可核实来源时明确无法确认，不退回旧模型知识冒充实时结果。网页仅展示服务商返回的 HTTP(S) 来源，引用标记不会朗读。检索时间不等于来源更新时间，网页搜索不保证秒级行情、库存或天气。
+
+聊天最多 1200 字/条、64 KiB 请求，沿用网关 CORS、限流和并发上限，服务端 45 秒超时、前端 50 秒超时。取消或离开时停止等待，并丢弃迟到回答与来源。FC 事件运行时不能感知浏览器断开，上游调用可能运行到服务端超时。联网搜索和模型调用按阿里云现有账号规则计费，不新增独立搜索供应商。
+
+官方参数：[百炼联网搜索](https://help.aliyun.com/zh/model-studio/web-search)。
+
 云模式不依赖 SpeechRecognition。点击开始，再次点击或说完停顿约 1.35 秒后发送，最长 30 秒。录音结束立即释放麦克风；取消/离开/隐藏页面会停止录音和播放，并忽略迟到结果。录音走 AudioWorklet；不支持时使用 WebAudio ScriptProcessor。未获麦克风权限的 WebView 无法由云 ASR 绕过，需在微信/飞书系统权限中允许访问。实际 iOS、Android 微信/飞书需真机验证。
 
 录音约 1.4 秒后开始请求文字预览，后续最多每 3 秒一次、同时只允许一个预览请求；它复用 WAV 识别接口，不是逐字流式识别，会增加少量 ASR 调用。预览失败不影响录音，停止时取消预览并以整段录音的最终识别为准。最终内容以“你说”字幕保留到本轮回答结束后 8 秒；开始下一轮、取消录音或离开时清除。预览永不触发对话提交。
@@ -27,7 +35,7 @@ npm run test:voice
 
 ## 上传阿里云函数计算 FC 3.0
 
-1. 运行 `npm run package:voice`，得到 `target/npc-voice-fc.zip`。包内只有 4 个 .mjs 源文件，没有 Key 或录音。
+1. 运行 `npm run package:voice`，得到 `target/npc-voice-fc.zip`。包内只有 5 个 .mjs 源文件（包含 `chat-provider.mjs`），没有 Key 或录音。更新现有函数时上传此 ZIP 并部署代码，保留原有环境变量及触发器。
 2. 打开 [函数计算控制台](https://fcnext.console.aliyun.com/)，选择华北 2（北京），创建**事件函数**，名称可用 `hackathon-npc-voice`。运行环境选 **Node.js 20**，代码上传选本地 ZIP，上传上一步的包。
 3. 请求处理程序设为 **index.handler**；内存 512 MB、超时 60 秒，初期最大实例数 1、单实例并发 1（内置事件运行时）。开启公网访问以调用百炼。函数计算与模型调用分别按账号计费设置执行，不预设免费。
 4. 环境变量：`DASHSCOPE_API_KEY` 填百炼 Key；`NPC_ALLOWED_ORIGINS` 填 `https://pages.release.ctripcorp.com`。其余变量可不填，默认使用已验证的北京接口。

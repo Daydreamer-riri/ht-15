@@ -2,7 +2,8 @@
 import {Vec3} from 'playcanvas';
 import {npcConfig,isNearNpc} from '../npc-scene.js';
 import {createNpcCharacter} from './npc-character.js';
-import {askNpc} from '../npc-client.js';
+import {askSearchNpc} from '../npc-search-client.js';
+import {createNpcSources} from './npc-sources.js';
 import {createNpcSession,createNpcSpeech} from '../npc-session.js';
 import {createNpcRecognition,embeddedBrowser,recognitionHint} from '../npc-recognition.js';
 import {createNpcGreeting} from '../npc-greeting.js';
@@ -44,7 +45,8 @@ export async function initNpc({viewer,navigation,base,stop,space}){
  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition,synth=window.speechSynthesis,container=embeddedBrowser(navigator.userAgent);
  const greeting=createNpcGreeting(),reactions=createNpcReactions();
  let recognitionPhase='idle',audioUnlocked=false,pendingGreeting=false,voiceGateway='';
- let config={},near=false,keyboardOpen=false,listening=false,thinking=false,speaking=false,playbackPending=false,disposed=false,lastReply='',note='',configError='',captionTimer,noteTimer;
+ let near=false,keyboardOpen=false,listening=false,thinking=false,speaking=false,playbackPending=false,disposed=false,lastReply='',note='',configError='',captionTimer,noteTimer;
+ const sources=createNpcSources(caption);
  function setCaption(text){clearTimeout(captionTimer);caption.querySelector('p').textContent=text;caption.hidden=!text;}
  function setTranscript(text,confirmed=false){const element=$('.npc-transcript'),content=element.querySelector('p');element.querySelector('span').textContent=confirmed?'你说':'正在听';content.textContent=text;element.hidden=!text;content.scrollTop=confirmed?0:content.scrollHeight;}
  function scheduleCaptionDismiss(){clearTimeout(captionTimer);captionTimer=setTimeout(()=>{setCaption('');setTranscript('');},8000);}
@@ -53,7 +55,7 @@ export async function initNpc({viewer,navigation,base,stop,space}){
  function releasePointer(){stop();if(document.pointerLockElement)document.exitPointerLock();}
  function blurControls(){if(host.contains(document.activeElement))document.activeElement.blur();}
  function sync(){
-  const available=near&&Boolean(config.apiKey);
+  const available=near&&Boolean(voiceGateway);
   mic.disabled=!available;keyboard.disabled=!available;label.disabled=!near||listening||thinking||speaking;
   $('.npc-send').disabled=!available||!input.value.trim();input.disabled=!available;
   mic.classList.toggle('listening',listening);mic.querySelector('span').textContent=recognitionPhase==='starting'?'取消':['ending','transcribing'].includes(recognitionPhase)?'识别中':listening?'说完了':speaking?'接着说':'说话';mic.setAttribute('aria-label',recognitionPhase==='starting'?'取消启动语音':recognitionPhase==='transcribing'?'取消语音识别':listening?'结束录音':'点击和小蓝说话');
@@ -62,7 +64,7 @@ export async function initNpc({viewer,navigation,base,stop,space}){
   host.dataset.keyboard=String(keyboardOpen);host.dataset.near=String(near);
   character.setEngaged(keyboardOpen||listening||thinking||speaking||playbackPending);
   character.setState(recognitionPhase==='listening'?'listening':thinking?'thinking':speaking?'speaking':'idle');
-  status.textContent=configError||(!near?'走近舞台上的小蓝':note||(recognitionPhase==='starting'?'正在启动麦克风…':recognitionPhase==='transcribing'?'正在识别你说的话…':recognitionPhase==='ending'?'正在确认识别结果…':listening?'我在听 · 说完自动发送':thinking?'小蓝正在想…':playbackPending?'文字已回复 · 正在准备语音…':speaking?'小蓝正在说话':!config.apiKey?'正在连接 DeepSeek…':keyboardOpen?'输入后发送，小蓝会直接回答':voiceGateway||container?'点麦克风或键盘，与小蓝聊聊':SpeechRecognition?'点麦克风说话，或用键盘输入':'可用手机键盘的语音输入'));
+  status.textContent=configError||(!near?'走近舞台上的小蓝':note||(recognitionPhase==='starting'?'正在启动麦克风…':recognitionPhase==='transcribing'?'正在识别你说的话…':recognitionPhase==='ending'?'正在确认识别结果…':listening?'我在听 · 说完自动发送':thinking?'小蓝正在准备回答…':playbackPending?'文字已回复 · 正在准备语音…':speaking?'小蓝正在说话':!voiceGateway?'正在连接小蓝…':keyboardOpen?'输入后发送，小蓝会直接回答':'可以问我天气、新闻和最新信息'));
   label.querySelector('small').textContent=listening?'我在听':thinking?'让我想想':playbackPending?'准备语音':speaking?'正在说话':near?'点我打招呼':'走近聊聊';
   host.dataset.phase=listening?recognitionPhase:thinking?'thinking':playbackPending?'preparing':speaking?'speaking':'idle';
  }
@@ -75,8 +77,8 @@ export async function initNpc({viewer,navigation,base,stop,space}){
  const cloudSpeech=createCloudSpeech({...speechEvents,getEndpoint:()=>voiceGateway});
  function unlockAudio(){audioUnlocked=true;if(voiceGateway)cloudSpeech.unlock();}
  function playReply(text){speech.stop();cloudSpeech.stop();if(voiceGateway)cloudSpeech.speak(text);else speech.speak(text);}
- const session=createNpcSession({request:(history,text,signal)=>askNpc(config,history,text,{signal}),
-  onThinking(value){thinking=value;sync();},
+ const session=createNpcSession({request:(history,text,signal)=>askSearchNpc({gatewayUrl:voiceGateway},history,text,{signal,onSources:sources.show}),
+  onThinking(value){thinking=value;if(value)sources.clear();sync();},
   onReply(reply){if(disposed||!near)return;lastReply=reply;setCaption(reply);note='';playReply(reply);},
   onError(error,text){input.value=text;showNote(error.message);}});
  const recognitionEvents={
@@ -93,7 +95,7 @@ export async function initNpc({viewer,navigation,base,stop,space}){
  const browserRecognition=createNpcRecognition({...recognitionEvents,Recognition:SpeechRecognition});
  const cloudRecognition=createCloudRecognition({...recognitionEvents,getEndpoint:()=>voiceGateway,workletUrl:base+'npc/pcm-capture-worklet.js',onLevel:level=>mic.style.setProperty('--voice-level',String(level))});
  function stopRecognition(){browserRecognition.cancel();cloudRecognition.cancel();}
- function interrupt({clear=false}={}){const unfinished=listening;pendingGreeting=false;clearTimeout(noteTimer);clearTimeout(captionTimer);session.cancel();stopRecognition();speech.stop();cloudSpeech.stop();if(clear)setCaption('');if(clear||unfinished)setTranscript('');note='';sync();}
+ function interrupt({clear=false}={}){const unfinished=listening;pendingGreeting=false;clearTimeout(noteTimer);clearTimeout(captionTimer);session.cancel();stopRecognition();speech.stop();cloudSpeech.stop();if(clear){setCaption('');sources.clear();}if(clear||unfinished)setTranscript('');note='';sync();}
  function setKeyboard(open){
   if(open&&!near)return;
   if(open)setTranscript('');
@@ -101,12 +103,12 @@ export async function initNpc({viewer,navigation,base,stop,space}){
   if(open){stopRecognition();input.focus();}else{blurControls();if(!caption.hidden&&!speaking&&!thinking)scheduleCaptionDismiss();}
  }
  function submit(text,{voice=false}={}){
-  text=text.trim();if(!text||!near||!config.apiKey)return;unlockAudio();
+  text=text.trim();if(!text||!near||!voiceGateway)return;unlockAudio();
   greeting.dismiss();interrupt();setKeyboard(false);input.value='';setCaption('');setTranscript(voice?text:'',true);
   synth?.resume();session.submit(text);
  }
  function listen(){
-  if(!near||!config.apiKey)return;
+  if(!near||!voiceGateway)return;
   greeting.dismiss();
   if(['starting','transcribing'].includes(recognitionPhase)){stopRecognition();setTranscript('');return;}
   if(listening){(voiceGateway?cloudRecognition:browserRecognition).end();return;}
@@ -167,9 +169,8 @@ export async function initNpc({viewer,navigation,base,stop,space}){
   if(audioUnlocked)playReply(text);else scheduleCaptionDismiss();sync();
  };
  viewer.app.on('update',update);
- try{const response=await fetch(base+npcConfig.configUrl,{cache:'no-store'});if(!response.ok)throw Error();config=await response.json();if(!config.apiKey)configError='DeepSeek 还未配置。';}
- catch{configError='对话配置加载失败，请刷新重试。';}
  try{const voice=await (await fetch(base+'npc/voice.json',{cache:'no-store'})).json();if(voice.gatewayUrl){const url=new URL(voice.gatewayUrl);if(url.protocol==='https:'||(['127.0.0.1','localhost'].includes(location.hostname)&&url.protocol==='http:'))voiceGateway=url.href.replace(/\/$/,'');}}catch{}
+ if(!voiceGateway)configError='联网对话配置加载失败，请刷新重试。';
  if(voiceGateway)mic.title='点击录音，再点结束 · E';
  sync();
  function destroy(){disposed=true;if(obstacle)obstacle.onContact=null;leave();viewport?.removeEventListener('resize',updateViewport);viewport?.removeEventListener('scroll',updateViewport);viewer.app.off('update',update);window.removeEventListener('keydown',onKey);window.removeEventListener('pointerdown',onGesture);document.removeEventListener('visibilitychange',visibility);document.removeEventListener('explorer-menu-open',menuOpen);cloudSpeech.destroy();character.destroy();host.remove();}

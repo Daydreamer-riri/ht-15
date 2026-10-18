@@ -1,0 +1,6 @@
+.npc-sources{box-sizing:border-box;pointer-events:auto;width:min(440px,100%);max-height:24dvh;overflow:auto;border:1px solid #b9e7ff44;border-radius:14px;padding:0 12px;background:#102635ed;color:#d6f4ff;font-size:12px;line-height:1.5;backdrop-filter:blur(16px)}
+.npc-sources summary{cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:center;list-style:none;color:#a9edff}
+.npc-sources summary::-webkit-details-marker{display:none}.npc-sources summary:after{content:'⌄';margin-left:8px}.npc-sources[open] summary:after{content:'⌃'}
+.npc-source-links{display:grid;gap:3px}.npc-source-links a{display:flex;align-items:center;min-height:44px;color:#d6f4ff;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
+.npc-sources small{display:block;font-size:10px;color:#a8c1d1;padding:8px 0 12px}.npc-sources summary:focus-visible,.npc-source-links a:focus-visible{outline:2px solid #a1eeff;outline-offset:2px}
+#npc-ui[data-near=false] .npc-sources,#npc-ui[data-keyboard=true] .npc-sources{display:none}
