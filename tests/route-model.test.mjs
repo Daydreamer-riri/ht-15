@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { walkHrefFor } from '../src/atlas/walk-links.js';
 import { buildRouteModel, createJourney, sampleJourney, project, unproject, haversine, legsForDay, stopsForDay, validPosition } from '../src/route-3d/model.js';
 
 const data = JSON.parse(readFileSync(new URL('../src/route-3d/data/north-xinjiang.json', import.meta.url)));
@@ -51,4 +52,11 @@ test('empty/duplicate geometry, clamped progress and WGS84 coordinate order are 
   assert.equal(validPosition([44.60759,81.11595]), true);
   assert.equal(validPosition([95,81]), false);
   assert.equal(validPosition([NaN,81]), false);
+});
+
+test('Sayram Lake photo opens the alpine-lake walk scene; other stops stay unlinked', () => {
+  const lake = model.stops.find(stop => stop.name === '赛里木湖');
+  assert.equal(walkHrefFor(lake), '../walk/?scene=alpine-lake');
+  assert.ok(model.stops.filter(stop => stop !== lake).every(stop => walkHrefFor(stop) === null));
+  assert.equal(walkHrefFor(null), null);
 });

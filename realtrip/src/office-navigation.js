@@ -26,7 +26,7 @@ export function routeProject(route, x, z, progress = null) {
 export function createOfficeNavigation(viewer, route, initial, world, surface = null) {
  const cam=viewer.app.root.findComponents('camera')[0].entity;
  const physics=surface?.physics;
- let x,z,y,yaw,pitch=0,capturePitch=0,progress,jumpY=0,jumpV=0,moveX=0,moveZ=0,enabled=true,look=null;
+ let x,z,y,yaw,pitch=0,capturePitch=0,progress,jumpY=0,jumpV=0,moveX=0,moveZ=0,enabled=true,lookEnabled=true,look=null;
  const eye=surface?.eyeHeight??route?.eyeHeight??1.6;
  let velocityX=0,velocityZ=0,stride=0,bob=0,walkingMotion=true;
  const reducedMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)');
@@ -61,13 +61,13 @@ export function createOfficeNavigation(viewer, route, initial, world, surface = 
  function keyup(e){keys.delete(e.code);}
  function turn(dx,dy){yaw-=dx*.16;pitch=Math.max(-75,Math.min(75,pitch-dy*.16));}
  function pointerdown(e){
-  if(!enabled)return;
+  if(!lookEnabled)return;
   if(e.pointerType==='mouse'&&viewer.state.gamingControls&&canvas.requestPointerLock){canvas.requestPointerLock()?.catch?.(()=>{});}
   look={id:e.pointerId,x:e.clientX,y:e.clientY,start:performance.now(),travel:0,touch:e.pointerType!=='mouse'};
   if(e.pointerType!=='mouse')canvas.setPointerCapture(e.pointerId);
  }
  function pointermove(e){
-  if(!enabled)return;
+  if(!lookEnabled)return;
   if(document.pointerLockElement===canvas){turn(e.movementX,e.movementY);return;}
   if(look?.id===e.pointerId){const dx=e.clientX-look.x,dy=e.clientY-look.y;turn(dx,dy);look.travel+=Math.hypot(dx,dy);look.x=e.clientX;look.y=e.clientY;}
  }
@@ -129,5 +129,5 @@ export function createOfficeNavigation(viewer, route, initial, world, surface = 
  document.addEventListener('explorer-menu-open',stop);
  canvas.addEventListener('pointerdown',pointerdown);canvas.addEventListener('pointermove',pointermove);canvas.addEventListener('pointerup',pointerup);canvas.addEventListener('pointercancel',pointercancel);canvas.addEventListener('lostpointercapture',pointercancel);
  viewer.app.on('update',update);reset();
- return {getPose,restorePose,setWalkingMotion(v){walkingMotion=Boolean(v);if(!v)bob=0;},setMoveInput(a,b){moveX=a;moveZ=b;},reset,stop,jump,setEnabled(v){enabled=v;if(!v)stop();},destroy(){viewer.app.off('update',update);window.removeEventListener('keydown',keydown);window.removeEventListener('keyup',keyup);window.removeEventListener('blur',stop);document.removeEventListener('visibilitychange',visibility);document.removeEventListener('explorer-menu-open',stop);canvas.removeEventListener('pointerdown',pointerdown);canvas.removeEventListener('pointermove',pointermove);canvas.removeEventListener('pointerup',pointerup);canvas.removeEventListener('pointercancel',pointercancel);canvas.removeEventListener('lostpointercapture',pointercancel);}};
+ return {getPose,restorePose,setWalkingMotion(v){walkingMotion=Boolean(v);if(!v)bob=0;},setMoveInput(a,b){moveX=a;moveZ=b;},reset,stop,jump,setEnabled(v,{allowLook=false}={}){enabled=v;lookEnabled=v||allowLook;if(!v)stop();},destroy(){viewer.app.off('update',update);window.removeEventListener('keydown',keydown);window.removeEventListener('keyup',keyup);window.removeEventListener('blur',stop);document.removeEventListener('visibilitychange',visibility);document.removeEventListener('explorer-menu-open',stop);canvas.removeEventListener('pointerdown',pointerdown);canvas.removeEventListener('pointermove',pointermove);canvas.removeEventListener('pointerup',pointerup);canvas.removeEventListener('pointercancel',pointercancel);canvas.removeEventListener('lostpointercapture',pointercancel);}};
 }

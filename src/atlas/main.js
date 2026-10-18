@@ -6,6 +6,7 @@ import { buildDayTrip } from '../sky-soho/model.js';
 import { RouteScene } from '../route-3d/scene.js';
 import { SkySohoScene } from '../sky-soho/scene.js';
 import { hydrateIcons } from './icons.js';
+import { walkHrefFor } from './walk-links.js';
 import './style.css';
 
 const $ = s => document.querySelector(s);
@@ -95,6 +96,11 @@ export function startAtlas(kind) {
       img.src = src; img.alt = `${cleanName(cover.name)}，原行程照片`;
       img.referrerPolicy = 'no-referrer';
     }
+    // 有实景的地点（赛里木湖），照片可点击进入 /walk/ 对应场景
+    const walk = $('#detail-walk'), href = city ? null : walkHrefFor(cover);
+    if (href) { walk.href = href; walk.setAttribute('aria-label', `走进${cleanName(cover.name)}实景漫游`); }
+    else { walk.removeAttribute('href'); walk.removeAttribute('aria-label'); }
+    walk.querySelector('.detail-walk-tag').hidden = !href;
     document.title = `${city ? '一日游' : '北疆'}星球${selected ? ` · ${cleanName(selected.name)}` : ''} · RealTrip`;
     for (const b of document.querySelectorAll('[data-stop]')) b.setAttribute('aria-pressed', String(b.dataset.stop === selected?.id));
     $('#route-selected').textContent = selected ? `已点亮 · ${cleanName(selected.name)}` : day ? `第 ${day} 天 · ${dayNames[day]}` : '全部路线';

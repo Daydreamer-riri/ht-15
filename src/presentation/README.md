@@ -13,7 +13,7 @@ npm run dev:presentation
 # http://127.0.0.1:8845/presentation/
 ```
 
-`npm run build:presentation` 单独生成 `dist/presentation/`；完整 `npm run build` 也会包含它。构建后可以直接打开 `dist/presentation/index.html`；打开源码 `src/presentation/index.html` 也会引用生成的资源正常预览。静态产物可独立托管，链接使用相对路径。图片、二维码、字体回退和页面脚本不依赖外部 CDN；B 站播放和最后的实景入口需要联网。
+`npm run build:presentation` 单独生成 `dist/presentation/`；完整 `npm run build` 也会包含它。构建后可以直接打开 `dist/presentation/index.html`；打开源码 `src/presentation/index.html` 也会引用生成的资源正常预览。静态产物可独立托管，链接使用相对路径。图片、二维码、字体回退和页面脚本不依赖外部 CDN；最后的实景入口需要联网。
 
 ## 演讲控制
 
@@ -22,19 +22,18 @@ npm run dev:presentation
 3. 用户说「不行」。
 4. 第二代给出图文方案。
 5. 用户说「不行」。
-6. 第三代给出可点击播放的视频。
+6. 第三代给出可点击播放的一日游视频。
 7. 用户说「好像还差点意思」。
 8. 第四代给出 RealTrip 实景体验二维码。
 
-点击页面任意空白处、↓ / → 或空格，每次只新增一条消息。动画进行中再按一次，会立即完成当前消息，不会跳到下一步。旧消息保留，可滚动查看；新增时自动滚动到最新消息。↑ / ← 撤回最后一条（生成中的消息也会撤回）；`Home` / `R` 或右上重来按钮清空对话，`F` 全屏，`PageUp` / `PageDown` 支持常见翻页器。按住按键不会连续跳过多步。在设置输入框中，上下键保留原生行为。点击视频和链接不会推进对话。视频获得焦点后，键盘由第三方播放器处理；点击聊天区空白处可继续演示。
+点击页面任意空白处、↓ / → 或空格，每次只新增一条消息。动画进行中再按一次，会立即完成当前消息，不会跳到下一步。旧消息保留，可滚动查看；新增时自动滚动到最新消息。↑ / ← 撤回最后一条（生成中的消息也会撤回）；`Home` / `R` 或右上重来按钮清空对话，`F` 全屏，`T` 或顶栏架构图按钮打开技术架构图（`src/assets/技术图.jpg`，构建时复制为 `assets/tech-diagram.jpg`，Esc 或点背景关闭），`PageUp` / `PageDown` 支持常见翻页器。按住按键不会连续跳过多步。点击视频和链接不会推进对话。视频获得焦点后，空格和方向键由播放器处理；点击聊天区空白处可继续演示。
 
 步骤不会自动前进。切换消息时会停止播放器并恢复视频封面，已出现的视频消息仍可重新播放。页面刷新回到空白开场，二维码仅在最后一条消息出现，保留「这一次，你来走一走。」。底部输入框只用于展示，不接受键盘输入。
 
 ## 替换内容
 
-- 默认视频：`config.js` 中的 `DEFAULT_VIDEO_URL`。当前为用户提供的 `BV1ZBpX6iEw6`。
-- 临时换视频：右上角「演示设置」，支持完整 B 站视频链接或 BV 号，保存在当前浏览器的 localStorage。分 P 链接保留 `p` 参数。
+- 视频：`assets/demo.mp4`（30 秒，720p），由 `src/assets/视频.mp4` 压缩得到；封面 `assets/demo-poster.jpg`。更换素材时执行：
+  `ffmpeg -i src/assets/视频.mp4 -c:v libx264 -preset slow -crf 23 -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a 128k src/presentation/assets/demo.mp4`
 - 二维码目标：`config.js` 中的 `EXPERIENCE_URL`。构建时用 qrcode 生成静态 SVG，与页面链接共用同一常量。当前严格指向 `https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/sky-soho/?view=planet`。
-- 文案和图文内容：`main.js`。时间表在 `schedule`，步行数据来自一日游行程快照；图片在构建时从 `src/sky-soho/assets/scenes/` 复制。第三代仍为用户指定的临时 B 站视频，第四代进入一日游星球，再选择实景空间。
+- 文案和图文内容：`main.js`。时间表在 `schedule`，步行数据来自一日游行程快照；图片在构建时从 `src/sky-soho/assets/scenes/` 复制。第三代为本地视频，第四代进入一日游星球，再选择实景空间。
 
-B 站官方播放器仅在点击后加载，不下载视频。若外部服务限制内嵌、要求登录或浏览器拒绝自动播放，可在播放器中操作，或点击下方「在 B 站打开」。

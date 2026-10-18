@@ -46,6 +46,13 @@ body.sunset { --ground: #241e22; --surface: #3a2c2c; --surface-2: #4a3734; }
   .detail-photo img.is-loaded { animation: drift 14s var(--ease-out) both; }
 }
 @keyframes drift { from { transform: scale(1.06); } }
+.detail-walk { display: block; width: 100%; height: 100%; }
+.detail-walk[href] { cursor: pointer; }
+.detail-walk[href]:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 16px; }
+.detail-walk-tag { position: absolute; left: 10px; bottom: 10px; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: #0b1f27cc; color: #e8eee6; font-size: var(--fs-small); font-weight: 600; transition: background-color var(--t-hover) ease; }
+.detail-walk-tag[hidden] { display: none; }
+.detail-walk-tag .icon { width: 16px; height: 16px; }
+.detail-walk[href]:hover .detail-walk-tag { background: var(--accent); color: var(--accent-ink); }
 .detail-credit { margin-top: 12px; }
 .detail-copy { padding: 16px 6px 4px; }
 .detail-copy .head { margin: 0 0 2px; }

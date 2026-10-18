@@ -1,13 +1,10 @@
-import { DEFAULT_VIDEO_URL, EXPERIENCE_URL, STEPS, parseVideo, videoUrls } from './config.js';
+import { EXPERIENCE_URL, STEPS, VIDEO } from './config.js';
 import { days as dayTrip } from '../sky-soho/data/itinerary.json';
 
 const $ = selector => document.querySelector(selector);
-const storageKey = 'realtrip-presentation-video-v1';
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 let step = -1;
-let videoUrl = DEFAULT_VIDEO_URL;
 let toastTimer;
-try { const saved = localStorage.getItem(storageKey); if (saved && parseVideo(saved)) videoUrl = saved; } catch { /* Browser storage is optional. */ }
 
 const aiAvatar = '<svg viewBox="0 0 24 24"><path d="m12 3 2.4 6.6L21 12l-6.6 2.4L12 21l-2.4-6.6L3 12l6.6-2.4Z"/></svg>';
 const icons = {
@@ -87,7 +84,7 @@ function messageContent(index) {
   if (index === 5) {
     return '<p>那就让画面动起来。先看看这一天：</p>'
       + `<div class="video-frame" id="video-frame">${videoCover()}</div>`
-      + `<div class="video-caption"><span>临时演示视频</span><a class="video-link" id="watch-video" href="${videoUrls(videoUrl).watch}" target="_blank" rel="noopener noreferrer">在 B 站打开 ↗</a></div>`;
+      + `<div class="video-caption"><span>${VIDEO.title} · ${VIDEO.duration}</span><a class="video-link" href="${VIDEO.src}" target="_blank" rel="noopener">新窗口播放 ↗</a></div>`;
   }
   return '<p>说再多，不如亲自去一趟。</p>'
     + `<div class="experience-card"><div class="experience-copy"><span class="event-day">REALTRIP · 实景体验</span><h2>这一次，<br>你来走一走。</h2><p>从淞虹路地铁站出发，走进凌空 SOHO 的 5 个真实空间。</p><a class="experience-link" href="${EXPERIENCE_URL}" target="_blank" rel="noopener noreferrer">打开凌空 SOHO 一日游 ↗</a></div>`
@@ -271,17 +268,23 @@ function goBack(target) {
 }
 
 function stopVideo() {
-  if ($('#video-frame iframe')) $('#video-frame').innerHTML = videoCover();
+  const video = $('#video-frame video');
+  if (!video) return;
+  video.pause();
+  $('#video-frame').innerHTML = videoCover();
 }
 
 function playVideo() {
-  const frame = document.createElement('iframe');
-  frame.src = videoUrls(videoUrl).embed;
-  frame.title = '一日游演示视频';
-  frame.allow = 'autoplay; fullscreen; picture-in-picture';
-  frame.allowFullscreen = true;
-  frame.referrerPolicy = 'strict-origin-when-cross-origin';
-  $('#video-frame').replaceChildren(frame);
+  const video = document.createElement('video');
+  video.src = VIDEO.src;
+  video.poster = VIDEO.poster;
+  video.controls = true;
+  video.playsInline = true;
+  video.preload = 'auto';
+  video.setAttribute('aria-label', `${VIDEO.title}演示视频`);
+  $('#video-frame').replaceChildren(video);
+  // 点击即播放；浏览器拒绝带声音自动播放时，保留控制条让演讲者手动点
+  video.play().catch(() => {});
 }
 
 function toast(message) {
@@ -305,7 +308,7 @@ $('#restart').addEventListener('click', () => goBack(-1));
 $('#fullscreen-button').addEventListener('click', toggleFullscreen);
 $('.chat-app').addEventListener('click', event => {
   if (event.target.closest('#play-video')) { playVideo(); return; }
-  if (event.target.closest('a, button, iframe, video') || window.getSelection()?.toString()) return;
+  if (event.target.closest('a, button, video') || window.getSelection()?.toString()) return;
   advance();
 });
 window.addEventListener('resize', () => scrollToLatest(false));
@@ -315,38 +318,27 @@ document.addEventListener('fullscreenchange', () => {
   $('#fullscreen-button').title = `${label}（F）`;
 });
 
-$('#settings-button').addEventListener('click', () => {
-  $('#video-url').value = videoUrl;
-  $('#settings-error').textContent = '';
-  $('#settings-dialog').showModal();
-});
-$('#close-settings').addEventListener('click', () => $('#settings-dialog').close());
-$('#reset-video').addEventListener('click', () => { $('#video-url').value = DEFAULT_VIDEO_URL; });
-$('#settings-form').addEventListener('submit', event => {
-  event.preventDefault();
-  const value = $('#video-url').value.trim();
-  if (!parseVideo(value)) {
-    $('#settings-error').textContent = '请输入完整的 bilibili.com/video/BV… 链接或 BV 号。';
-    $('#video-url').focus();
-    return;
-  }
-  videoUrl = value;
-  let saved = true;
-  try { localStorage.setItem(storageKey, videoUrl); } catch { saved = false; }
+function openDiagram() {
+  const image = $('#diagram-image');
+  if (!image.src) image.src = './assets/tech-diagram.jpg';
   stopVideo();
-  if ($('#watch-video')) $('#watch-video').href = videoUrls(videoUrl).watch;
-  $('#settings-dialog').close();
-  toast(saved ? '视频已更新。' : '视频已更新，本次打开有效。');
-});
+  $('#diagram-dialog').showModal();
+}
+$('#diagram-button').addEventListener('click', openDiagram);
+$('#close-diagram').addEventListener('click', () => $('#diagram-dialog').close());
+// 点击图片外的背景关闭
+$('#diagram-dialog').addEventListener('click', event => { if (event.target === event.currentTarget) event.currentTarget.close(); });
 
 document.addEventListener('keydown', event => {
-  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || $('#settings-dialog').open || event.target.closest('input, textarea, select, [contenteditable="true"]')) return;
-  if (event.code === 'Space' && event.target.closest('button, a')) return;
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || $('#diagram-dialog').open || event.target.closest('input, textarea, select, [contenteditable="true"]')) return;
+  // 视频获得焦点时，空格和方向键交给播放器（播放/暂停、快进）
+  if (event.target.closest('video') || (event.code === 'Space' && event.target.closest('button, a'))) return;
   if (event.repeat) { if (['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Space'].includes(event.code)) event.preventDefault(); return; }
   if (['ArrowRight', 'ArrowDown', 'PageDown', 'Space'].includes(event.code)) { event.preventDefault(); advance(); }
   else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(event.code)) { event.preventDefault(); goBack(step - 1); }
   else if (event.code === 'Home' || event.key.toLowerCase() === 'r') { event.preventDefault(); goBack(-1); }
   else if (event.key.toLowerCase() === 'f') { event.preventDefault(); toggleFullscreen(); }
+  else if (event.key.toLowerCase() === 't') { event.preventDefault(); openDiagram(); }
 });
 
 updateChrome();

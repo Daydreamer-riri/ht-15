@@ -6,12 +6,13 @@
   <meta name="theme-color" content="#212121">
   <meta name="description" content="一段关于凌空 SOHO 一日游的对话。">
   <title>凌空 SOHO 一日游 · RealTrip</title>
-  <link rel="stylesheet" href="./presentation.css?v=eaab11ee7e26">
+  <link rel="stylesheet" href="./presentation.css?v=a14e7bbf3666">
   <link rel="icon" type="image/svg+xml" href="./assets/mark.svg?v=51019d661724">
   <link rel="preload" as="image" href="./assets/hackathon.jpg">
   <link rel="preload" as="image" href="./assets/terrace.jpg">
   <link rel="preload" as="image" href="./assets/cafeteria.jpg">
   <link rel="preload" as="image" href="./assets/experience-qr.svg?v=b03fd2334893">
+  <link rel="preload" as="image" href="./assets/demo-poster.jpg">
 </head>
 <body>
   <div class="chat-app is-empty">
@@ -24,8 +25,10 @@
       </div>
       <h1 class="chat-title">凌空 SOHO 一日游</h1>
       <div class="tools">
+        <!-- 跳到「我和小蓝」第三人称漫游；新标签打开，不打断演示进度 -->
+        <a id="walk-me-link" class="icon-button" href="../walk-me/" target="_blank" rel="noopener" title="我和小蓝 · 走进会场" aria-label="打开我和小蓝，走进会场"><svg viewBox="0 0 24 24"><circle cx="13" cy="4.5" r="1.8"/><path d="m9.5 21 2.2-5.4L14 17.5V21m-2.3-5.4 1-5.1M7 12.2l2.6-2.6 3.1-.1 2.4 3.2 2.9.8"/></svg></a>
+        <button id="diagram-button" class="icon-button" title="技术架构图（T）" aria-label="查看技术架构图" aria-haspopup="dialog"><svg viewBox="0 0 24 24"><rect x="3" y="3.5" width="7" height="5" rx="1.2"/><rect x="14" y="3.5" width="7" height="5" rx="1.2"/><rect x="8.5" y="15.5" width="7" height="5" rx="1.2"/><path d="M6.5 8.5v3h11v-3M12 11.5v4"/></svg></button>
         <button id="restart" class="icon-button" title="重新开始（R）" aria-label="重新开始"><svg viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 2 8M4 4v6h6"/></svg></button>
-        <button id="settings-button" class="icon-button" title="演示设置" aria-label="演示设置"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3"/><circle cx="15" cy="17" r="3"/></svg></button>
         <button id="fullscreen-button" class="icon-button" title="全屏（F）" aria-label="全屏"><svg viewBox="0 0 24 24"><path d="M8 4H4v4m12-4h4v4M4 16v4h4m12-4v4h-4"/></svg></button>
       </div>
     </header>
@@ -51,16 +54,12 @@
       <p class="disclaimer">大模型也可能会犯错，出行前请核对重要信息。</p>
     </div>
   </div>
-  <dialog id="settings-dialog" aria-labelledby="settings-title">
-    <form id="settings-form">
-      <div class="dialog-heading"><h2 id="settings-title">演示设置</h2><button type="button" id="close-settings" class="icon-button" aria-label="关闭设置">×</button></div>
-      <p>替换演示中使用的视频，设置保存在当前浏览器。</p>
-      <label for="video-url">B 站视频链接或 BV 号</label><input id="video-url" name="videoUrl" type="text" autocomplete="off" spellcheck="false" required>
-      <p id="settings-error" class="error-message" role="alert"></p>
-      <div class="dialog-actions"><button type="button" id="reset-video" class="quiet-button">恢复默认视频</button><button type="submit" class="primary-button">保存</button></div>
-    </form>
+  <!-- 技术架构图：点击背景、关闭按钮或 Esc 关闭；图片打开时才加载 -->
+  <dialog id="diagram-dialog" class="diagram-dialog" aria-label="技术架构图">
+    <button type="button" id="close-diagram" class="icon-button diagram-close" aria-label="关闭技术架构图">×</button>
+    <img id="diagram-image" alt="RealTrip 技术架构图：多模态采集、3DGS 训练、空间模型与交互、Web 端与智能化体验" width="1448" height="1086">
   </dialog>
   <p id="toast" class="toast" role="status" hidden></p>
-  <script defer src="./presentation.js?v=16cde5603d6d"></script>
+  <script defer src="./presentation.js?v=b55c4b4f6a6a"></script>
 </body>
 </html>

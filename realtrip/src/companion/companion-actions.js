@@ -4,12 +4,12 @@ import {photoView,createSouvenirPoster} from './photo-composition.js';
 export function createCompanionActions({viewer,navigation,character,surface,companion,say,onChange=()=>{}}){
  let state='idle',generation=0,timer=null,url=null,captured=null,disposed=false;
  const hud=document.createElement('section');hud.className='photo-hud';hud.dataset.explorerUi='';hud.hidden=true;
- hud.innerHTML='<p role="status"></p><strong aria-live="polite"></strong><button type="button">取消合照</button>';document.body.append(hud);
+ hud.innerHTML='<p role="status"></p><small hidden>站位已固定 · 拖动画面可转动视角</small><strong aria-live="polite"></strong><button type="button">取消合照</button>';document.body.append(hud);
  const dialog=document.createElement('dialog');dialog.className='photo-result';dialog.setAttribute('aria-label','我和小蓝的纪念合照');dialog.dataset.explorerUi='';
  dialog.innerHTML='<div class="photo-result-title"><div><small>MEMORY SAVED</small><h2>这一刻，值得留念。</h2></div><button class="photo-close" aria-label="关闭纪念合照">×</button></div><img alt="你和小蓝的 Hackathon 纪念合照，含拍摄日期与时间"><p class="photo-save-note" role="status">长按图片可保存；也可以下载或分享。</p><div class="photo-result-actions"><button class="photo-save">保存图片</button><button class="photo-share" hidden>分享图片</button><button class="photo-retake">再拍一张</button></div><button class="photo-return">回到漫游</button>';document.body.append(dialog);
- const status=hud.querySelector('p'),count=hud.querySelector('strong'),image=dialog.querySelector('img'),note=dialog.querySelector('.photo-save-note');
+ const status=hud.querySelector('p'),lookHint=hud.querySelector('small'),count=hud.querySelector('strong'),image=dialog.querySelector('img'),note=dialog.querySelector('.photo-save-note');
  function transition(next){state=next;companion.action=next;companion.photoActive=['approaching-photo','countdown','capturing','result'].includes(next);document.body.dataset.companionAction=next;onChange();}
- function clearPhoto(){navigation.setPhotoView(null);navigation.setInteractionLocked(false);companion.player?.setPhotoPose(null);character.setPhotoPose(null);hud.hidden=true;}
+ function clearPhoto(){navigation.setPhotoView(null);navigation.setInteractionLocked(false);companion.player?.setPhotoPose(null);character.setPhotoPose(null);hud.hidden=true;lookHint.hidden=true;}
  function cancel(){generation++;clearTimeout(timer);timer=null;character.cancelMove();clearPhoto();transition('idle');if(dialog.open)dialog.close();if(url)URL.revokeObjectURL(url);url=null;captured=null;image.removeAttribute('src');}
  function fail(message){cancel();say(message);}
  function composition(aspect){return photoView(navigation.getPose().position,character.position,{eyeHeight:surface.eyeHeight,aspect,cast:surface.cameraCast});}
@@ -34,6 +34,7 @@ export function createCompanionActions({viewer,navigation,character,surface,comp
   if(run!==generation)return;
   const frame=composition(document.getElementById('world').clientWidth/document.getElementById('world').clientHeight);
   if(!frame){fail('这里镜头有点挤，换个开阔的位置再合照吧。');return;}
+  navigation.setInteractionLocked(true);if(document.pointerLockElement)document.exitPointerLock();lookHint.hidden=true;
   navigation.setPhotoView(frame);character.setPhotoPose(frame.yaw);companion.player?.setPhotoPose(frame.yaw);
   transition('countdown');hud.hidden=false;status.textContent='看镜头，留下这一刻';let left=3;count.textContent=String(left);
   const step=()=>{if(run!==generation)return;if(--left>0){count.textContent=String(left);timer=setTimeout(step,1000);}else capture(run);};timer=setTimeout(step,1000);
@@ -47,7 +48,7 @@ export function createCompanionActions({viewer,navigation,character,surface,comp
   if(surface.physics?.getState().grounded===false){say('先站稳，我们再互动吧。');return;}
   if(photo&&!companion.player){say('你的形象还在准备，等一下再合照吧。');return;}
   const player=navigation.getPose(),candidates=approachCandidates(player.position,character.position,player.yaw,{photo});
-  if(photo){navigation.stop();navigation.setInteractionLocked(true);if(document.pointerLockElement)document.exitPointerLock();hud.hidden=false;status.textContent='小蓝正在找你身边的位置…';count.textContent='';}
+  if(photo){navigation.stop();navigation.setInteractionLocked(true,{allowLook:true});if(document.pointerLockElement)document.exitPointerLock();hud.hidden=false;lookHint.hidden=false;status.textContent='小蓝正在找你身边的位置…';count.textContent='';}
   transition(photo?'approaching-photo':'approaching');
   const started=character.moveTo(candidates,success=>{
    if(run!==generation||disposed)return;
