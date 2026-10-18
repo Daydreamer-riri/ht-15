@@ -14,7 +14,7 @@
 
 ## 对话部署方式
 
-用户要求所有代码和运行页面都放在 `haojiaxu/hackathon-15`，并明确接受演示 Key 可见。采用纯静态浏览器直连 DeepSeek，**没有私有后端**。`realtrip/public/npc/service.json` 的演示 Key 随 `dist/walk/npc/service.json` 发布；它不是秘密保护机制，访问者能读取并调用。不要将此方式用于生产密钥。删除或替换它后重新构建、发布；撤销旧 Key 需要在 DeepSeek 控制台操作，Git 历史不是保密存储。
+用户要求所有代码和运行页面都放在 `ding.zhao/hackathon-15`，并明确接受演示 Key 可见。采用纯静态浏览器直连 DeepSeek，**没有私有后端**。`realtrip/public/npc/service.json` 的演示 Key 随 `dist/walk/npc/service.json` 发布；它不是秘密保护机制，访问者能读取并调用。不要将此方式用于生产密钥。删除或替换它后重新构建、发布；撤销旧 Key 需要在 DeepSeek 控制台操作，Git 历史不是保密存储。
 
 模型通过 DeepSeek `/chat/completions` 调用，使用 `deepseek-flash`、关闭思考、最多 400 输出 token，保留最近 5 轮对话，35 秒请求超时。这里只做浏览器单请求并发控制，无法防止访客提取 Key 或绕过页面调用。401/402/429/断网/超时明确显示，不生成假回答。
 

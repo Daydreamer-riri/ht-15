@@ -1,4 +1,5 @@
-export const EXPERIENCE_URL = 'https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/sky-soho/?view=planet';
+// 相对 /presentation/ 的地址；页面运行时解析成完整链接并生成二维码，不绑定部署域名或项目前缀
+export const EXPERIENCE_PATH = '../sky-soho/?view=planet';
 // 第三代的演示视频，本地打包；源文件 src/assets/视频.mp4，构建前用 ffmpeg 压缩并前置 moov（见 README）
 export const VIDEO = { src: './assets/demo.mp4', poster: './assets/demo-poster.jpg', title: '凌空 SOHO 一日游', duration: '30 秒' };
 

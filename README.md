@@ -2,15 +2,15 @@
 
 所有页面由同一个 GitLab Pages 站点发布：
 
-- [北疆行程首页](https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/)：保留原有七套行程风格。
-- [演讲演示](https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/presentation/)：点击或 ↓ 逐条推进，↑ 回退，R 重来，F 全屏；最后的二维码进入携程 Hackathon 一日游沙盘。
-- [实景漫游](https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/walk/)：默认Hackathon主会场；菜单仅包含Hackathon主会场、健身房、会议室、露台和食堂。前两个场景来自 junhaoqin/realtrip-walk-hackathon26，统一使用本站的界面和移动控制。
-- [凌空星球](https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/sky-soho/?view=planet)：携程 Hackathon 一日游，沙盘标记与下方卡片可直接进入主会场、健身房、会议室、露台、食堂五个实景。支持旋转、缩放、俯瞰和复位；其他页面收在右上角菜单。
-- [北疆星球](https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/route-3d/?view=planet)：保留七日行程界面，可在顶部切换到一日游，也可返回实景漫游。
+- [北疆行程首页](https://pages.release.ctripcorp.com/ding.zhao/hackathon-15/)：保留原有七套行程风格。
+- [演讲演示](https://pages.release.ctripcorp.com/ding.zhao/hackathon-15/presentation/)：点击或 ↓ 逐条推进，↑ 回退，R 重来，F 全屏；最后的二维码进入携程 Hackathon 一日游沙盘。
+- [实景漫游](https://pages.release.ctripcorp.com/ding.zhao/hackathon-15/walk/)：默认Hackathon主会场；菜单仅包含Hackathon主会场、健身房、会议室、露台和食堂。前两个场景来自 junhaoqin/realtrip-walk-hackathon26，统一使用本站的界面和移动控制。
+- [凌空星球](https://pages.release.ctripcorp.com/ding.zhao/hackathon-15/sky-soho/?view=planet)：携程 Hackathon 一日游，沙盘标记与下方卡片可直接进入主会场、健身房、会议室、露台、食堂五个实景。支持旋转、缩放、俯瞰和复位；其他页面收在右上角菜单。
+- [北疆星球](https://pages.release.ctripcorp.com/ding.zhao/hackathon-15/route-3d/?view=planet)：保留七日行程界面，可在顶部切换到一日游，也可返回实景漫游。
 
 山湖保留独立入口 `/walk/?scene=alpine-lake`，不加入公开场景菜单。旧场景参数如 `building2` 和 `cafeteria-original` 在 `/walk/` 下仍可使用。
 
-小蓝 NPC 保留独立入口 [`/walk/?scene=hackathon-npc`](https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/walk/?scene=hackathon-npc)：舞台上的蓝白卡通角色支持靠近交互、DeepSeek 对话、语音/键盘按钮输入和角色直接朗读（无聊天面板），不加入场景菜单。纯前端演示配置与模型构建说明见 [NPC-WORKFLOW.md](NPC-WORKFLOW.md)。
+小蓝 NPC 保留独立入口 [`/walk/?scene=hackathon-npc`](https://pages.release.ctripcorp.com/ding.zhao/hackathon-15/walk/?scene=hackathon-npc)：舞台上的蓝白卡通角色支持靠近交互、DeepSeek 对话、语音/键盘按钮输入和角色直接朗读（无聊天面板），不加入场景菜单。纯前端演示配置与模型构建说明见 [NPC-WORKFLOW.md](NPC-WORKFLOW.md)。
 
 ## 开发与构建
 

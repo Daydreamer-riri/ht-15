@@ -1,4 +1,5 @@
-import { EXPERIENCE_URL, STEPS, VIDEO } from './config.js';
+import QRCode from 'qrcode';
+import { EXPERIENCE_PATH, STEPS, VIDEO } from './config.js';
 import { days as dayTrip } from '../sky-soho/data/itinerary.json';
 
 const $ = selector => document.querySelector(selector);
@@ -13,6 +14,13 @@ const icons = {
   down: '<svg viewBox="0 0 24 24"><path d="M17 13V4h2.5a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-.5.5H17Zm0 0-4 7.5a2 2 0 0 1-3.7-1.3L10 15H5a2 2 0 0 1-2-2.3l1.2-7A2 2 0 0 1 6.2 4H17"/></svg>',
   retry: '<svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5"/></svg>',
 };
+
+// 二维码在浏览器里按当前地址生成，不再写死某个部署域名
+const EXPERIENCE_URL = new URL(EXPERIENCE_PATH, location.href).href;
+let experienceQr = '';
+QRCode.toString(EXPERIENCE_URL, { type: 'svg', errorCorrectionLevel: 'M', margin: 4, width: 360, color: { dark: '#123d35', light: '#ffffff' } }, (error, svg) => {
+  if (!error) experienceQr = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+});
 
 const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 const isUserStep = index => index === 0 || !!STEPS[index].reaction;
@@ -88,7 +96,7 @@ function messageContent(index) {
   }
   return '<p>说再多，不如亲自去一趟。</p>'
     + `<div class="experience-card"><div class="experience-copy"><span class="event-day">REALTRIP · 实景体验</span><h2>这一次，<br>你来走一走。</h2><p>从淞虹路地铁站出发，走进凌空 SOHO 的 5 个真实空间。</p><a class="experience-link" href="${EXPERIENCE_URL}" target="_blank" rel="noopener noreferrer">打开凌空 SOHO 一日游 ↗</a></div>`
-    + `<a class="qr-link" href="${EXPERIENCE_URL}" target="_blank" rel="noopener noreferrer" aria-label="打开凌空 SOHO 一日游星球"><img src="${__EXPERIENCE_QR_URL__}" alt="扫码打开凌空 SOHO 一日游星球" width="256" height="256"><span>扫码，立即出发</span></a></div>`;
+    + `<a class="qr-link" href="${EXPERIENCE_URL}" target="_blank" rel="noopener noreferrer" aria-label="打开凌空 SOHO 一日游星球"><img src="${experienceQr}" alt="扫码打开凌空 SOHO 一日游星球" width="256" height="256"><span>扫码，立即出发</span></a></div>`;
 }
 
 /* ---------------- 消息 ---------------- */

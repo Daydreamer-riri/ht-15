@@ -14,8 +14,8 @@ test('Hackathon entrances cover the five walk scenes without changing source iti
  assert.deepEqual(new Set(experience.stops.map(stop => stop.id)), new Set(model.stops.map(stop => stop.id)));
  const html = readFileSync(new URL('../dist/sky-soho/index.html', import.meta.url), 'utf8');
  for (const stop of experience.stops) {
-  const target = new URL(sceneHref(stop.sceneId), 'https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/sky-soho/');
-  assert.equal(target.pathname, '/haojiaxu/hackathon-15/walk/');
+  const target = new URL(sceneHref(stop.sceneId), 'https://pages.release.ctripcorp.com/ding.zhao/hackathon-15/sky-soho/');
+  assert.equal(target.pathname, '/ding.zhao/hackathon-15/walk/');
   assert.equal(target.searchParams.get('scene'), stop.sceneId);
   assert.ok(html.includes(`href="${sceneHref(stop.sceneId)}"`), `${stop.name} must work without WebGL or JavaScript`);
   assert.deepEqual(stop.position, model.stops.find(item => item.id === stop.id).position);
@@ -72,8 +72,8 @@ test('room excerpt retains the source bends and endpoint without adding a corrid
 test('direct links and view switches retain the selected location under a GitLab Pages subpath',()=>{
  const selected=resolveSelection(model,'sky-soho-pantry');assert.equal(selected.stop.name,'茶水间');
  assert.equal(resolveSelection(model,'missing').stop.name,'8号楼');
- const url=pageUrl('https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/sky-soho/?unrelated=1',selected.stop.id,'overview');
- assert.equal(url.pathname,'/haojiaxu/hackathon-15/sky-soho/');assert.equal(url.searchParams.get('poi'),'sky-soho-pantry');assert.equal(url.searchParams.get('view'),'top');assert.equal(url.searchParams.get('unrelated'),'1');
+ const url=pageUrl('https://pages.release.ctripcorp.com/ding.zhao/hackathon-15/sky-soho/?unrelated=1',selected.stop.id,'overview');
+ assert.equal(url.pathname,'/ding.zhao/hackathon-15/sky-soho/');assert.equal(url.searchParams.get('poi'),'sky-soho-pantry');assert.equal(url.searchParams.get('view'),'top');assert.equal(url.searchParams.get('unrelated'),'1');
 });
 
 

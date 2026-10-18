@@ -31,7 +31,8 @@ export function startAtlas(kind) {
   $('#rail-caption').textContent = city ? '一天的节奏' : '七天的远方';
   $('#route-meta').textContent = city ? '地铁站往返 · 36 分钟步行' : '全程道路 · 7 天 6 晚 · 上海往返航段未画出';
   $('#source-copy').textContent = city ? '路线来自凌空一日游，包含 5 个地点、6 段连接与 26 个坐标。室内和楼栋点位为示意，建筑、绿地和水景均为艺术化模型。' : '路线来自北疆七日行程，保留 18 段道路、1,517 个坐标及返程。山脉、湖泊轮廓、植被和建筑为艺术化模型，不代表真实高程或景区覆盖。地点照片来自原行程。';
-  $('#source-link').href = city ? sohoData.provenance.page : 'https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/?v=cinema';
+  // 原行程在同一 Pages 项目的根入口，用相对地址避免写死项目前缀
+  $('#source-link').href = city ? '../#/route/sky-soho' : '../?v=cinema';
   $('#extras').hidden = !city;
   $('#day-tabs').hidden = city;
   for (const link of document.querySelectorAll('[data-trip-link]')) if (link.dataset.tripLink === kind) link.setAttribute('aria-current', 'page');

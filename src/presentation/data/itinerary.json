@@ -1,7 +1,7 @@
 {
   "name": "七天六晚北疆",
   "source": {
-    "repository": "https://git.dev.sh.ctripcorp.com/haojiaxu/hackathon-15",
+    "repository": "https://git.dev.sh.ctripcorp.com/ding.zhao/hackathon-15",
     "path": "src/data/itinerary.ts",
     "commit": "053ec16e64aa151ca953296d10d6f8999d9407ef",
     "sha256": "ff9b57b021c136ec63af9101283cb1a127fcb8bc94dbce2cd69965a9d0cd0d90"

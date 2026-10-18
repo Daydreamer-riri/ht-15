@@ -2,10 +2,10 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { explorerScenes, explorerScenePath } from '../realtrip/src/explorer-ui.js';
-import { EXPERIENCE_URL } from '../src/presentation/config.js';
+import { EXPERIENCE_PATH } from '../src/presentation/config.js';
 
 const root = new URL('../', import.meta.url);
-const pages = 'https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/';
+const pages = 'https://pages.release.ctripcorp.com/ding.zhao/hackathon-15/';
 const walkBase = new URL('walk/', pages);
 
 test('all entry documents resolve their own assets under the Pages project prefix', () => {
@@ -29,7 +29,7 @@ test('scene switches and the presentation QR stay on the migrated site', () => {
     assert.ok(target.href.startsWith(walkBase.href));
     assert.equal(target.searchParams.get('scene'), scene);
   }
-  assert.equal(EXPERIENCE_URL, new URL('sky-soho/?view=planet', pages).href);
+  assert.equal(new URL(EXPERIENCE_PATH, new URL('presentation/', pages)).href, new URL('sky-soho/?view=planet', pages).href);
   const scene = JSON.parse(readFileSync(new URL('dist/walk/honor-corridor/scene.json', root)));
   assert.ok(new URL(scene.homeUrl, new URL('honor-corridor/', walkBase)).href.startsWith(walkBase.href));
 });

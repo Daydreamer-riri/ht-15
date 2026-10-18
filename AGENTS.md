@@ -20,6 +20,6 @@ Use `npx --yes pnpm@10.11.0 install --frozen-lockfile` for reproducible dependen
 
 ## Deployment
 
-The main-branch Pages pipeline publishes the checked-in `dist/` without a frontend rebuild. Include fresh artifacts when shipping source changes. Keep local resources relative so the site works under `/haojiaxu/hackathon-15/`. The presentation QR has an absolute Pages URL in `src/presentation/config.js` and must be regenerated when its destination changes. Preserve original itinerary variants and existing scene aliases.
+The main-branch Pages pipeline publishes the checked-in `dist/` without a frontend rebuild. Include fresh artifacts when shipping source changes. Keep local resources relative so the site works under `/ding.zhao/hackathon-15/`. The presentation QR target is the relative `EXPERIENCE_PATH` in `src/presentation/config.js`; the page resolves it against its own URL and renders the QR in the browser, so do not hard-code a Pages host or project prefix. Preserve original itinerary variants and existing scene aliases.
 
 Imported scenes are pinned by `realtrip/scripts/imported-scenes.json`. Preserve their original model/physics coordinates. Their controls share `office-navigation.js`; `dynamic-navigation.js` adapts solid and voxel collision. The build-only viewer physics exports depend on SuperSplat Viewer 1.37.0; verify the integration tests before changing that dependency.

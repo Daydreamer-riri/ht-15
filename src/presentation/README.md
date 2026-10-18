@@ -1,6 +1,6 @@
 # RealTrip 演讲演示
 
-部署入口：[打开演示](https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/presentation/)。由本仓库的 GitLab Pages 流水线发布。
+部署入口：[打开演示](https://pages.release.ctripcorp.com/ding.zhao/hackathon-15/presentation/)。由本仓库的 GitLab Pages 流水线发布。
 
 独立入口 `/presentation/`。界面按主流 chatbot 的样式：居中单栏、深色背景、用户消息为右侧灰色气泡、大模型回答无气泡、底部固定输入框。开场只显示「有什么可以帮你的？」和居中的输入框，不展示代际导航、总步数、未来内容或结尾。
 
@@ -34,6 +34,6 @@ npm run dev:presentation
 
 - 视频：`assets/demo.mp4`（30 秒，720p），由 `src/assets/视频.mp4` 压缩得到；封面 `assets/demo-poster.jpg`。更换素材时执行：
   `ffmpeg -i src/assets/视频.mp4 -c:v libx264 -preset slow -crf 23 -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a 128k src/presentation/assets/demo.mp4`
-- 二维码目标：`config.js` 中的 `EXPERIENCE_URL`。构建时用 qrcode 生成静态 SVG，与页面链接共用同一常量。当前严格指向 `https://pages.release.ctripcorp.com/haojiaxu/hackathon-15/sky-soho/?view=planet`。
+- 二维码目标：`config.js` 中的相对地址 `EXPERIENCE_PATH`（`../sky-soho/?view=planet`）。页面运行时按当前地址解析成完整链接，并在浏览器里生成二维码，与页面链接共用同一结果；换部署地址无需重新生成。
 - 文案和图文内容：`main.js`。时间表在 `schedule`，步行数据来自一日游行程快照；图片在构建时从 `src/sky-soho/assets/scenes/` 复制。第三代为本地视频，第四代进入一日游星球，再选择实景空间。
 

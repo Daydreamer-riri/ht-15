@@ -56,7 +56,7 @@ function controller(body,initial){
 
 test('five scenes and old aliases stay within the same Pages entrance',()=>{
  assert.deepEqual(explorerScenes.map(([id])=>id),['hackathon','two-floor','building2','terrace','cafeteria']);
- const base='/haojiaxu/hackathon-15/walk/';
+ const base='/ding.zhao/hackathon-15/walk/';
  assert.equal(explorerScenePath('hackathon',base),base+'?scene=hackathon');
  assert.equal(explorerScenePath('honor-corridor',base),base+'?scene=two-floor');
  assert.throws(()=>exposeViewerPhysics('changed upstream'),/hook changed/);

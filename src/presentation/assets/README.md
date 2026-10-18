@@ -1,6 +1,6 @@
 # 演示图片
 
-当前使用 `haojiaxu/hackathon-15/src/data/itinerary.ts` 对应的景点照片：
+当前使用 `ding.zhao/hackathon-15/src/data/itinerary.ts` 对应的景点照片：
 
 - `sayram.jpg`：赛里木湖（第 4–5 天），https://dimg04.c-ctrip.com/images/0105212000a2cvssuAE2B.jpg
 - `baihaba.jpg`：白哈巴景区（第 2 天），https://dimg04.c-ctrip.com/images/0102512000rw5341cEB50.jpg
